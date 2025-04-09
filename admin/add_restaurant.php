@@ -1,0 +1,198 @@
+<?php
+session_start();
+error_reporting(E_ALL);
+include "Index.php";
+$index = new Index;
+
+// backend
+if (isset($_POST['submit'])) {
+    // Collect form data
+    $res_name = $_POST['res_name'];
+    $email    = $_POST['email'];
+    $phone    = $_POST['phone'];
+    $url      = $_POST['url'];
+    $o_hr     = $_POST['o_hr'];
+    $c_hr     = $_POST['c_hr'];
+    $o_days   = $_POST['o_days'];
+    $c_name   = $_POST['c_name'];
+
+    // Call the model function with image path
+    $result = $index->addRestaurant(
+        $res_name,
+        $email,
+        $phone,
+        $url,
+        $o_hr,
+        $c_hr,
+        $o_days,
+        $c_name,
+    );
+
+    if ($result) {
+        $_SESSION['message'] = ['type' => 'success', 'message' => 'Restaurant registered successfully!'];
+    } else {
+        $_SESSION['message'] = ['type' => 'danger', 'message' => 'Failed to register. Email might already exist.'];
+    }
+
+    header("Location: add_restaurant.php");
+    exit();
+}
+
+
+?>
+
+<?php include 'layouts/header.php' ?>
+
+<body class="fix-header">
+
+
+    <div id="main-wrapper">
+
+        <?php include 'layouts/navbar.php' ?>
+        <?php include 'layouts/sidebar.php' ?>
+
+
+
+        <div class="page-wrapper">
+
+
+
+            <div class="container-fluid">
+
+                <div class="col-lg-12">
+                    <div class="card card-outline-primary">
+                        <div class="card-header">
+                            <h4 class="m-b-0 text-white">Add Stall</h4>
+                        </div>
+                        <div class="card-body">
+                            <?php include 'layouts/alert.php' ?>
+
+                            <form action="add_restaurant.php" method="post" enctype="multipart/form-data">
+                                <div class="form-body">
+                                    <hr>
+                                    <div class="row p-t-20">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Stall Name</label>
+                                                <input type="text" name="res_name" class="form-control" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group has-danger">
+                                                <label class="control-label">Business E-mail</label>
+                                                <input type="email" name="email" class="form-control form-control-danger" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row p-t-20">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Phone</label>
+                                                <input type="text" name="phone" class="form-control" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group has-danger">
+                                                <label class="control-label">Website URL</label>
+                                                <input type="text" name="url" class="form-control form-control-danger" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Open Hours</label>
+                                                <select name="o_hr" class="form-control custom-select" data-placeholder="Choose a Category" required>
+                                                    <option>--Select your Hours--</option>
+                                                    <option value="6am">6am</option>
+                                                    <option value="7am">7am</option>
+                                                    <option value="8am">8am</option>
+                                                    <option value="9am">9am</option>
+                                                    <option value="10am">10am</option>
+                                                    <option value="11am">11am</option>
+                                                    <option value="12pm">12pm</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Close Hours</label>
+                                                <select name="c_hr" class="form-control custom-select" data-placeholder="Choose a Category" required>
+                                                    <option>--Select your Hours--</option>
+                                                    <option value="3pm">3pm</option>
+                                                    <option value="4pm">4pm</option>
+                                                    <option value="5pm">5pm</option>
+                                                    <option value="6pm">6pm</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Open Days</label>
+                                                <select name="o_days" class="form-control custom-select" required>
+                                                    <option>--Select your Days--</option>
+                                                    <option value="Mon-Tue">Mon-Tue</option>
+                                                    <option value="Mon-Wed">Mon-Wed</option>
+                                                    <option value="Mon-Thu">Mon-Thu</option>
+                                                    <option value="Mon-Fri">Mon-Fri</option>
+                                                    <option value="Mon-Sat">Mon-Sat</option>
+                                                    <option value="24hr-x7">24hr-x7</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group has-danger">
+                                                <label class="control-label">Image</label>
+                                                <input type="file" name="file" class="form-control form-control-danger">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label">Select Category</label>
+                                            <select name="c_name" class="form-control custom-select" data-placeholder="Choose a Category" tabindex="1">
+                                                <option>Select Category</option>
+                                                <?php
+                                                $resultType = $index->getRestCategory();
+                                                while ($row = mysqli_fetch_array($resultType)) {
+                                                    $c_id = $row['c_id'];
+                                                    $c_name = $row['c_name'];
+
+                                                    // Fixed the echo statement by properly concatenating the variables
+                                                    echo '<option value="' . $c_id . '">' . $c_name . '</option>';
+                                                }
+                                                ?>
+
+
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <button type="submit" name="submit" class="btn btn-success">Add Restaurant</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    </div>
+
+    <?php include 'layouts/footer.php' ?>
