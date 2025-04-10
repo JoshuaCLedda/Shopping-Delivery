@@ -11,7 +11,7 @@
                         <li><a class="has-arrow" href="#" aria-expanded="false"><i class="fa fa-motorcycle  f-s-20 "></i><span class="hide-menu">Rider</span></a>
                             <ul aria-expanded="false" class="collapse">
                                 <li><a href="registration_rider.php">Add Rider</a></li>
-                                <li><a href="rider_details.php">View Details</a></li>
+                                <li><a href="rider_details.php">View Riders</a></li>
                             </ul>
                          </li>
                         <li><a class="has-arrow" href="#" aria-expanded="false"><i class="fa fa-archive f-s-20 color-warning"></i><span class="hide-menu">Restaurant</span></a>

@@ -1,7 +1,7 @@
 <?php
 session_start();
 error_reporting(E_ALL);
-include "../admin/Index.php";
+include "../admin/Main.php";
 $index = new Index;
 
 // get the id from the rider
@@ -18,8 +18,8 @@ if (isset($_POST['submit'])) {
     // Call the model function with image path
     $result = $index->acceptOrderRider(
         $rider_id,
-        $transaction_id,
-    
+        $transaction_id
+
     );
 
     if ($result) {
@@ -35,7 +35,6 @@ if (isset($_POST['submit'])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -47,13 +46,11 @@ if (isset($_POST['submit'])) {
     <link href="../admin/css/lib/bootstrap/bootstrap.min.css" rel="stylesheet">
     <link href="../admin/css/helper.css" rel="stylesheet">
     <link href="../admin/css/style.css" rel="stylesheet">
+    <link href="../css/helper.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- FontAwesome (for icons) -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-
-    <!-- jQuery and Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
@@ -91,11 +88,11 @@ if (isset($_POST['submit'])) {
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav">
                         <li class="nav-devider"></li>
-                        <li class="nav-label">Home</li>
+                     
+                        <li><a href="index.php"><i class="fa fa-tachometer"></i><span>Dashboard</span></a></li>
 
-                        <li class="nav-label">Log</li>
-
-                        <li><a href="index.php"><i class="fa fa-shopping-cart" aria-hidden="true"></i><span>Orders</span></a></li>
+                        </li>
+    
                     </ul>
                 </nav>
             </div>
@@ -104,23 +101,19 @@ if (isset($_POST['submit'])) {
     </div>
 
     <div class="page-wrapper">
-        
-    <div class="container-fluid">
+
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
                     <div class="col-lg-12">
                         <div class="card card-outline-primary">
-                            <div class="card-header my-2">
-                                <h4 class="m-b-0 text-white">All Orders</h4>
-                            </div>
-
+                            <h4>All Orders</h4>
                             <?php
-            include '../layouts/alert.php';
-            ?>
-
-                            <div class="table-responsive m-t-40">
-                                <table id="myTable" class="table table-bordered table-striped">
-                                    <thead class="thead-dark">
+                            include '../layouts/alert.php';
+                            ?>
+                            <div class="table-responsive">
+                                <table id="myTable" class="table table-bordered table-hover align-middle">
+                                    <thead>
                                         <tr>
                                             <th>User</th>
                                             <th>Total Price</th>
@@ -149,7 +142,7 @@ if (isset($_POST['submit'])) {
                                             echo '<form action="" method="POST">';
                                             echo '<input type="hidden" name="rider_id" value="' . $UserId . '">';
                                             echo '<input type="hidden" name="transaction_id" value="' . $row['transacID'] . '">';
-                                            
+
                                             echo '<button type="submit" name="submit" class="btn btn-sm btn-success">Accept</button>';
 
                                             echo '</form>';
@@ -162,46 +155,41 @@ if (isset($_POST['submit'])) {
 
                                 </table>
                             </div>
-                          
-            
+
+
                         </div>
                     </div>
                 </div>
             </div>
-        </d>
-        <footer class="footer">© 2024-DMMMSU-NLUC-BSIS-STUDENT</footer>
-    </div>
+            </d>
+            <footer class="footer">© 2024-DMMMSU-NLUC-BSIS-STUDENT</footer>
+        </div>
 
-    <script src="js/lib/jquery/jquery.min.js"></script>
-    <script src="js/lib/bootstrap/js/popper.min.js"></script>
-    <script src="js/lib/bootstrap/js/bootstrap.min.js"></script>
-    <script src="js/jquery.slimscroll.js"></script>
-    <script src="js/sidebarmenu.js"></script>
-    <script src="js/lib/sticky-kit-master/dist/sticky-kit.min.js"></script>
-    <script src="js/custom.min.js"></script>
 
-    <!-- Modal for Order Details -->
-    <script>
-        $(document).ready(function() {
-            $(".view-details-btn").click(function() {
-                var transId = $(this).data('trans-id');
-                $.ajax({
-                    url: "get_order_details.php",
-                    type: "GET",
-                    data: {
-                        trans_id: transId
-                    },
-                    success: function(response) {
-                        $('#orderDetailsContent').html(response);
-                        $('#orderDetailsModal').modal('show');
-                    },
-                    error: function() {
-                        alert("Error fetching order details.");
-                    }
+        <?php include '../layouts/footer.php' ?>
+
+        <!-- Modal for Order Details -->
+        <script>
+            $(document).ready(function() {
+                $(".view-details-btn").click(function() {
+                    var transId = $(this).data('trans-id');
+                    $.ajax({
+                        url: "get_order_details.php",
+                        type: "GET",
+                        data: {
+                            trans_id: transId
+                        },
+                        success: function(response) {
+                            $('#orderDetailsContent').html(response);
+                            $('#orderDetailsModal').modal('show');
+                        },
+                        error: function() {
+                            alert("Error fetching order details.");
+                        }
+                    });
                 });
             });
-        });
-    </script>
+        </script>
 
 </body>
 
