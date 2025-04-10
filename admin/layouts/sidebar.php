@@ -28,6 +28,8 @@
                             </ul>
                         </li>
                         <li><a href="all_orders.php"><i class="fa fa-shopping-cart" aria-hidden="true"></i><span>Orders</span></a></li>
+                        <li><a href="userprofile.php"><i class="fa fa-user" aria-hidden="true"></i><span>Profile</span></a></li>
+
                     </ul>
                 </nav>
             </div>

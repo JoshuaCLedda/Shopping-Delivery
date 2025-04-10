@@ -136,8 +136,9 @@ if (isset($_POST['submit'])) {
           <input type="submit" id="buttn" name="submit" value="Login" />
         </form>
       </div>
+      <div class="cta">Register as a Rider?<a href="rider_registration.php" style="color:#5c4ac7;"> Click Here</a></div>
 
-      <div class="cta">Not registered?<a href="registration.php" style="color:#5c4ac7;"> Create an account</a></div>
+      <div class="cta">Register as a Customer?<a href="registration.php" style="color:#5c4ac7;"> Create an account</a></div>
     </div>
 
     <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>

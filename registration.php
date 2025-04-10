@@ -119,6 +119,9 @@ if(isset($_POST['submit']))
                         <div class="col-md-12">
                             <div class="widget">
                                 <div class="widget-body">
+                                <center>
+                                <h2>Customer Registration</h2>
+                            </center>
                                     <form action="" method="post">
                                         <div class="row">
                                             <div class="form-group col-sm-12">

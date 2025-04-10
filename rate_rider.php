@@ -5,7 +5,7 @@ include "admin/Index.php";
 $index = new Index;
 
 
-$rider_name = ''; // Default value
+$rider_name = ''; 
 
 if (isset($_GET['rider_id'])) {
     $rider_id = $_GET['rider_id'];
@@ -37,7 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit();
 }
 
-
 ?>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -46,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="card shadow rounded-4">
         <div class="card-body p-4">
             <h3 class="card-title text-center mb-4">Rate a Rider</h3>
+        <?php include 'layouts/alert.php' ?>
 
             <form action="" method="POST">
 
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="rider" class="form-label">Rider:</label>
                     <input type="text" class="form-control" id="rider" name="rider_name"
                         value="<?php echo htmlspecialchars($rider_name); ?>" readonly>
-                        <input type="hidden" name="rider_id" value="<?php echo $rider_id; ?>">
+                    <input type="hidden" name="rider_id" value="<?php echo $rider_id; ?>">
 
                 </div>
 
@@ -70,13 +70,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
 
-                <div class="mb-3">
+                <div class="my-3">
                     <label for="complaint" class="form-label">Feedback:</label>
                     <textarea name="complaint" class="form-control" rows="4" placeholder="Describe your complaint or feedback (if any)..."></textarea>
                 </div>
 
-                <div class="text-end">
-                    <button type="submit" class="btn btn-primary px-4">Submit Rating</button>
+                <div class="text-end my-2">
+                    <button type="submit" class="btn btn-primary px-4 mt-2">Submit Rating</button>
                 </div>
             </form>
         </div>

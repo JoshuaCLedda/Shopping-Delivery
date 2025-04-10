@@ -6,6 +6,8 @@ session_start();
 if (empty($_SESSION['user_id'])) {
     header('location:login.php');
 } else {
+
+}
 ?>
     <?php include 'layouts/header.php' ?>
     <?php include 'layouts/navbar.php' ?>
@@ -41,6 +43,7 @@ if (empty($_SESSION['user_id'])) {
                                                 $stall = $row['stall'];
                                                 $status = $row['status'];
                                                 $rider_id = $row['rider_id'];
+                                                $rs_id = $row['rs_id'];
 
                                         ?>
                                                 <tr>
@@ -62,13 +65,12 @@ if (empty($_SESSION['user_id'])) {
                                                             </a>
                                                         <?php } else if ($status === 'Order_Received') { ?>
 
-                                                            <a href="rate_rider.php?rider_id=<?php echo $rider_id; ?>" class="badge badge-success custom-badge">Rate Rider
-                                                            <?php echo $rider_id; ?>
+                                                            <a href="rate_rider.php?rider_id=<?php echo $rider_id; ?>" class="mx-2 badge badge-success custom-badge">Rate Rider
 
                                                             </a>
 
 
-                                                            <a href="rate_stall.php" class="badge badge-success custom-badge">Rate Stall</a>
+                                                            <a href="rate_stall.php?restaurant_id=<?php echo $rs_id; ?>" class="badge badge-success custom-badge">Rate Stall</a>
                                                         <?php } else if ($status === 'Order_Canceled') { ?>
                                                             <span class="badge badge-danger">Order Canceled</span>
                                                         <?php } ?>
@@ -117,4 +119,3 @@ if (empty($_SESSION['user_id'])) {
     </body>
 
     </html>
-<?php } ?>

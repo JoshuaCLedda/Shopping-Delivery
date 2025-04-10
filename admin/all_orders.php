@@ -24,20 +24,8 @@ $total_orders = mysqli_fetch_assoc($count_query)['total'];
 $total_pages = ceil($total_orders / $limit);
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
+<?php include 'layouts/header.php' ?>
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <title>Admin Panel</title>
-    <link href="css/lib/bootstrap/bootstrap.min.css" rel="stylesheet">
-    <link href="css/helper.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
-</head>
 
 <body class="fix-header fix-sidebar">
 
@@ -47,78 +35,22 @@ $total_pages = ceil($total_orders / $limit);
         </svg>
     </div>
     <div id="main-wrapper">
-        <div class="header">
-            <nav class="navbar top-navbar navbar-expand-md navbar-light">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="dashboard.php">
-                        <span><img src="images/icn.png" alt="homepage" class="dark-logo" /></span>
-                    </a>
-                </div>
-                <div class="navbar-collapse">
-                    <ul class="navbar-nav mr-auto mt-md-0"></ul>
-                    <ul class="navbar-nav my-lg-0">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-muted" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="images/bookingSystem/user-icn.png" alt="user" class="profile-pic" /></a>
-                            <div class="dropdown-menu dropdown-menu-right animated zoomIn">
-                                <ul class="dropdown-user">
-                                    <li><a href="logout.php"><i class="fa fa-power-off"></i> Logout</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
+    <?php include 'layouts/navbar.php' ?>
 
-        <div class="left-sidebar">
-            <div class="scroll-sidebar">
-                <nav class="sidebar-nav">
-                    <ul id="sidebarnav">
-                        <li class="nav-devider"></li>
-                        <li class="nav-label">Home</li>
-                        <li><a href="dashboard.php"><i class="fa fa-tachometer"></i><span>Dashboard</span></a></li>
-                        <li class="nav-label">Log</li>
-                        <li><a href="all_users.php"><i class="fa fa-user f-s-20 "></i>Users</a></li>
-                        <li><a class="has-arrow" href="#" aria-expanded="false"><i class="fa fa-motorcycle  f-s-20 "></i><span class="hide-menu">Rider</span></a>
-                            <ul aria-expanded="false" class="collapse">
-                                <li><a href="registration_rider.php">Add Rider</a></li>
-                                <li><a href="rider_details.php">View Details</a></li>
-                            </ul>
-                         </li>
-                        <li><a class="has-arrow" href="#" aria-expanded="false"><i class="fa fa-archive f-s-20 color-warning"></i><span class="hide-menu">Stall</span></a>
-                            <ul aria-expanded="false" class="collapse">
-                                <li><a href="all_restaurant.php">All Stall</a></li>
-                                <li><a href="add_category.php">Add Category</a></li>
-                                <li><a href="add_restaurant.php">Add Stall</a></li>
-                            </ul>
-                        </li>
-                        <li><a class="has-arrow" href="#" aria-expanded="false"><i class="fa fa-cutlery" aria-hidden="true"></i><span class="hide-menu">Menu</span></a>
-                            <ul aria-expanded="false" class="collapse">
-                                <li><a href="all_menu.php">All Menues</a></li>
-                                <li><a href="add_menu.php">Add Menu</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="all_orders.php"><i class="fa fa-shopping-cart" aria-hidden="true"></i><span>Orders</span></a></li>
-                       
-                    </ul>
-                </nav>
-            </div>
-        </div>
 
-    </div>
+<?php include 'layouts/sidebar.php' ?>
 
+   
     <div class="page-wrapper">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
                     <div class="col-lg-12">
                         <div class="card card-outline-primary">
-                            <div class="card-header">
-                                <h4 class="m-b-0 text-white">All Orders</h4>
-                            </div>
-                            <div class="table-responsive m-t-40">
-                                <table id="myTable" class="table table-bordered table-striped">
-                                    <thead class="thead-dark">
+                                <h4>All Orders</h4>
+                            <div class="table-responsive">
+                            <table id="myTable" class="table table-bordered table-hover align-middle">
+                            <thead>
                                         <tr>
                                             <th>User</th>
                                             <th>Total Price</th>
@@ -129,101 +61,115 @@ $total_pages = ceil($total_orders / $limit);
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php
-                                        if (!mysqli_num_rows($query) > 0) {
-                                            echo '<tr><td colspan="6"><center>No Orders</center></td></tr>';
-                                        } else {
-                                            while ($rows = mysqli_fetch_array($query)) {
-                                                echo '<tr>
-                                                            <td>' . $rows['username'] . '</td>
-                                                            <td>₱' . number_format($rows['total_price'], 2) . '</td>
-                                                            <td>' . $rows['stall_id'] . '</td>
-                                                            <td class="status-cell">' . $rows['status'] . '</td>
-                                                            <td>' . date("F j, Y, g:i a", strtotime($rows['order_date'])) . '</td>
-                                                            <td>
-                                                                <button class="btn btn-info btn-sm view-details-btn" data-trans-id="' . $rows['id'] . '"><i class="fa fa-eye"></i> View Details</button>
-                                                            </td>
-                                                        </tr>';
-                                            }
-                                        }
-                                        ?>
-                                    </tbody>
+    <?php
+    if (!mysqli_num_rows($query) > 0) {
+        echo '<tr><td colspan="6"><center>No Orders</center></td></tr>';
+    } else {
+        while ($rows = mysqli_fetch_array($query)) {
+            // Get the status value
+            $status = $rows['status'];
+            
+            // Define the status message and badge class
+            switch ($status) {
+                case 'order_confirmation':
+                    $statusText = 'Confirmed';
+                    $badgeClass = 'badge-success'; // Green for Confirmed
+                    break;
+                case 'Order_Canceled':
+                    $statusText = 'Cancel';
+                    $badgeClass = 'badge-danger'; // Red for Cancel
+                    break;
+                case 'Order_Received':
+                    $statusText = 'Received';
+                    $badgeClass = 'badge-primary'; // Blue for Received
+                    break;
+                default:
+                    $statusText = 'Unknown';
+                    $badgeClass = 'badge-secondary'; // Gray for Unknown status
+                    break;
+            }
+            
+            // Output the row
+            echo '<tr>
+                    <td>' . $rows['username'] . '</td>
+                    <td>₱' . number_format($rows['total_price'], 2) . '</td>
+                    <td>' . $rows['stall_id'] . '</td>
+                    <td class="status-cell">
+                        <span class="badge ' . $badgeClass . '">' . $statusText . '</span>
+                    </td>
+                    <td>' . date("F j, Y, g:i a", strtotime($rows['order_date'])) . '</td>
+                    <td>
+                        <button class="btn btn-info btn-sm view-details-btn" data-trans-id="' . $rows['id'] . '"><i class="fa fa-eye"></i> View Details</button>
+                    </td>
+                </tr>';
+        }
+    }
+    ?>
+</tbody>
+
                                 </table>
                             </div>
-<!-- Modal for User Details -->
-<div class="modal fade" id="userDetailsModal" tabindex="-1" role="dialog" aria-labelledby="userDetailsLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="userDetailsLabel">User Information</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="userDetailsContent">
-                <!-- User information will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-<script>$(document).ready(function () {
-    $(".view-details-btn").click(function () {
-        var transId = $(this).data('trans-id'); // Get the trans_id
-        $.ajax({
-            url: "get_user_details.php", // PHP file to fetch user details
-            type: "GET",
-            data: { trans_id: transId },
-            success: function (response) {
-                $('#userDetailsContent').html(response); // Display user details in modal
-                $('#userDetailsModal').modal('show'); // Show the modal
-            },
-            error: function () {
-                alert("Error fetching user details.");
-            }
-        });
-    }); 
-});
-</script>
-                            <!-- Pagination -->
-                            <nav aria-label="Page navigation">
-                                <ul class="pagination">
-                                    <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
-                                    <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
-                                        <li class="page-item"><a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a></li>
-                                    <?php } ?>
-                                    <li class="page-item"><a class="page-link" href="?page=<?php echo $total_pages; ?>">Last</a></li>
-                                </ul>
-                            </nav>
+                            <!-- Modal for User Details -->
+                            <div class="modal fade" id="userDetailsModal" tabindex="-1" role="dialog" aria-labelledby="userDetailsLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="userDetailsLabel">User Information</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body" id="userDetailsContent">
+                                            <!-- User information will be loaded here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <script>
+                                $(document).ready(function() {
+                                    $(".view-details-btn").click(function() {
+                                        var transId = $(this).data('trans-id'); // Get the trans_id
+                                        $.ajax({
+                                            url: "get_user_details.php", // PHP file to fetch user details
+                                            type: "GET",
+                                            data: {
+                                                trans_id: transId
+                                            },
+                                            success: function(response) {
+                                                $('#userDetailsContent').html(response); // Display user details in modal
+                                                $('#userDetailsModal').modal('show'); // Show the modal
+                                            },
+                                            error: function() {
+                                                alert("Error fetching user details.");
+                                            }
+                                        });
+                                    });
+                                });
+                            </script>
+                          
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <footer class="footer">© 2024-DMMMSU-NLUC-BSIS-STUDENT</footer>
+      
     </div>
 
-    <script src="js/lib/jquery/jquery.min.js"></script>
-    <script src="js/lib/bootstrap/js/popper.min.js"></script>
-    <script src="js/lib/bootstrap/js/bootstrap.min.js"></script>
-    <script src="js/jquery.slimscroll.js"></script>
-    <script src="js/sidebarmenu.js"></script>
-    <script src="js/lib/sticky-kit-master/dist/sticky-kit.min.js"></script>
-    <script src="js/custom.min.js"></script>
-
-    <!-- Modal for Order Details -->
     <script>
-        $(document).ready(function () {
-            $(".view-details-btn").click(function () {
+        $(document).ready(function() {
+            $(".view-details-btn").click(function() {
                 var transId = $(this).data('trans-id');
                 $.ajax({
                     url: "get_order_details.php",
                     type: "GET",
-                    data: { trans_id: transId },
-                    success: function (response) {
+                    data: {
+                        trans_id: transId
+                    },
+                    success: function(response) {
                         $('#orderDetailsContent').html(response);
                         $('#orderDetailsModal').modal('show');
                     },
-                    error: function () {
+                    error: function() {
                         alert("Error fetching order details.");
                     }
                 });
@@ -231,6 +177,8 @@ $total_pages = ceil($total_orders / $limit);
         });
     </script>
 
-</body>
+<?php include 'layouts/footer.php' ?>
 
-</html>
+
+   
+

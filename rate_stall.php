@@ -1,5 +1,55 @@
+<?php
+session_start();
+error_reporting(E_ALL);
+include "admin/Index.php";
+$index = new Index;
+
+
+$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+
+// Default value
+$stall_name = ''; 
+
+// Get the restaurant (stall) details if ID is passed
+if (isset($_GET['restaurant_id'])) {
+    $restaurant_id = $_GET['restaurant_id'];
+    $stall = $index->getStallById($restaurant_id);
+    if ($stall) {
+        $stall_name = $stall['title'];
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Sanitize inputs
+    $stall_name     = trim($_POST['stall_name']);
+    $restaurant_id  = trim($_POST['restaurant_id']);
+    $rating         = trim($_POST['rating']);
+    $complaint      = trim($_POST['complaint']);
+
+    if ($user_id && $restaurant_id && $rating && $stall_name) {
+        // Call the method to insert rating
+        $result = $index->addRestaurantRating($stall_name, $restaurant_id, $rating, $complaint, $user_id);
+
+        if ($result) {
+            $_SESSION['message'] = ['type' => 'success', 'message' => 'Restaurant rating submitted successfully!'];
+        } else {
+            $_SESSION['message'] = ['type' => 'danger', 'message' => 'Restaurant rating submission failed. Please try again.'];
+        }
+    } else {
+        $_SESSION['message'] = ['type' => 'danger', 'message' => 'Invalid input. Please check all required fields.'];
+    }
+
+    header("Location: " . $_SERVER['HTTP_REFERER']);
+    exit();
+}
+
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,7 +86,9 @@
             margin: 10px 0 5px;
         }
 
-        select, textarea, button {
+        select,
+        textarea,
+        button {
             width: 100%;
             padding: 8px;
             margin-top: 5px;
@@ -57,7 +109,8 @@
             transition: color 0.3s;
         }
 
-        .star:hover, .star.selected {
+        .star:hover,
+        .star.selected {
             color: gold;
         }
 
@@ -75,74 +128,50 @@
             background-color: #218838;
         }
     </style>
+    <!-- for the meantime -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
+
 <body>
 
-<?php
-include("connection/connect.php");
-session_start();
 
-if (!isset($_SESSION['user_id'])) {
-    echo "<script>alert('You must be logged in to rate a rider!'); window.location.href='login.php';</script>";
-    exit();
-}
 
-$user_id = $_SESSION['user_id'];
+    <div class="rating-container">
+        <h2>Rate a Stall</h2>
 
-// Fetch riders from the database
-$query = "SELECT * FROM restaurant";
-$result = mysqli_query($db, $query);
-?>
+        <?php include 'layouts/alert.php' ?>
+        <form action="" method="POST">
 
-<div class="rating-container">
-    <h2>Rate a Stall</h2>
+            <div class="mb-3">
+                <label for="rider" class="form-label">Select Restaurant:</label>
+                <input type="text" class="form-control" id="rider" name="stall_name"
+                    value="<?php echo htmlspecialchars($stall_name); ?>" readonly>
+                <input type="hidden" name="restaurant_id" value="<?php echo $restaurant_id; ?>">
 
-    <form action="submit_rider_rating.php" method="POST">
-        <label for="rider">Select Stall:</label>
-        <select name="rider_id" required>
-            <option value="">-- Select Stall --</option>
-            <?php while ($row = mysqli_fetch_assoc($result)) { ?>
-                <option value="<?php echo $row['c_id']; ?>">
-                    <?php echo htmlspecialchars($row['title']); ?>
-                </option>
-            <?php } ?>
-        </select>
+            </div>
 
-        <label>Rate Rider:</label>
-        <div class="rating">
-            <i class="fa fa-star star" data-value="1"></i>
-            <i class="fa fa-star star" data-value="2"></i>
-            <i class="fa fa-star star" data-value="3"></i>
-            <i class="fa fa-star star" data-value="4"></i>
-            <i class="fa fa-star star" data-value="5"></i>
-        </div>
-        <input type="hidden" id="rider_rating" name="rider_rating" value="0">
+            <div class="mb-3">
+                    <label class="form-label d-block">Rate Stall (1 to 5):</label>
+                    <div class="d-flex justify-content-between">
+                        <?php for ($i = 1; $i <= 5; $i++): ?>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="rating" id="rating<?= $i ?>" value="<?= $i ?>" required>
+                                <label class="form-check-label" for="rating<?= $i ?>"><?= $i ?></label>
+                            </div>
+                        <?php endfor; ?>
+                    </div>
+                </div>
 
-        <label for="complaint">Feedback:</label>
-        <textarea name="complaint" class="form-control" placeholder="Describe your complaint or feedback (if any)..."></textarea>
 
-        <button type="submit">Submit Rating</button>
-    </form>
-</div>
+            <label for="complaint">Feedback:</label>
+            <textarea name="complaint" class="form-control" placeholder="Describe your complaint or feedback (if any)..."></textarea>
 
-<script>
-    document.querySelectorAll(".star").forEach(star => {
-        star.addEventListener("click", function () {
-            let rating = this.getAttribute("data-value");
-            document.getElementById("rider_rating").value = rating;
+            <button type="submit" class="my-2">Submit Rating</button>
+        </form>
+    </div>
 
-            // Remove "selected" class from all stars
-            document.querySelectorAll(".star").forEach(s => {
-                s.classList.remove("selected");
-            });
 
-            // Highlight selected stars
-            for (let i = 1; i <= rating; i++) {
-                document.querySelector(`.star[data-value='${i}']`).classList.add("selected");
-            }
-        });
-    });
-</script>
 
 </body>
+
 </html>

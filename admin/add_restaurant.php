@@ -25,8 +25,9 @@ if (isset($_POST['submit'])) {
         $o_hr,
         $c_hr,
         $o_days,
-        $c_name,
+        $c_name  // Removed the comma here
     );
+
 
     if ($result) {
         $_SESSION['message'] = ['type' => 'success', 'message' => 'Restaurant registered successfully!'];
@@ -57,137 +58,132 @@ if (isset($_POST['submit'])) {
 
 
 
-            <div class="container-fluid">
-
-                <div class="col-lg-12">
-                    <div class="card card-outline-primary">
-                        <div class="card-header">
-                            <h4 class="m-b-0 text-white">Add Stall</h4>
-                        </div>
-                        <div class="card-body">
-                            <?php include 'layouts/alert.php' ?>
-
-                            <form action="add_restaurant.php" method="post" enctype="multipart/form-data">
-                                <div class="form-body">
-                                    <hr>
-                                    <div class="row p-t-20">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label">Stall Name</label>
-                                                <input type="text" name="res_name" class="form-control" required>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="form-group has-danger">
-                                                <label class="control-label">Business E-mail</label>
-                                                <input type="email" name="email" class="form-control form-control-danger" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row p-t-20">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label">Phone</label>
-                                                <input type="text" name="phone" class="form-control" required>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="form-group has-danger">
-                                                <label class="control-label">Website URL</label>
-                                                <input type="text" name="url" class="form-control form-control-danger" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label">Open Hours</label>
-                                                <select name="o_hr" class="form-control custom-select" data-placeholder="Choose a Category" required>
-                                                    <option>--Select your Hours--</option>
-                                                    <option value="6am">6am</option>
-                                                    <option value="7am">7am</option>
-                                                    <option value="8am">8am</option>
-                                                    <option value="9am">9am</option>
-                                                    <option value="10am">10am</option>
-                                                    <option value="11am">11am</option>
-                                                    <option value="12pm">12pm</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label">Close Hours</label>
-                                                <select name="c_hr" class="form-control custom-select" data-placeholder="Choose a Category" required>
-                                                    <option>--Select your Hours--</option>
-                                                    <option value="3pm">3pm</option>
-                                                    <option value="4pm">4pm</option>
-                                                    <option value="5pm">5pm</option>
-                                                    <option value="6pm">6pm</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label">Open Days</label>
-                                                <select name="o_days" class="form-control custom-select" required>
-                                                    <option>--Select your Days--</option>
-                                                    <option value="Mon-Tue">Mon-Tue</option>
-                                                    <option value="Mon-Wed">Mon-Wed</option>
-                                                    <option value="Mon-Thu">Mon-Thu</option>
-                                                    <option value="Mon-Fri">Mon-Fri</option>
-                                                    <option value="Mon-Sat">Mon-Sat</option>
-                                                    <option value="24hr-x7">24hr-x7</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="form-group has-danger">
-                                                <label class="control-label">Image</label>
-                                                <input type="file" name="file" class="form-control form-control-danger">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label class="control-label">Select Category</label>
-                                            <select name="c_name" class="form-control custom-select" data-placeholder="Choose a Category" tabindex="1">
-                                                <option>Select Category</option>
-                                                <?php
-                                                $resultType = $index->getRestCategory();
-                                                while ($row = mysqli_fetch_array($resultType)) {
-                                                    $c_id = $row['c_id'];
-                                                    $c_name = $row['c_name'];
-
-                                                    // Fixed the echo statement by properly concatenating the variables
-                                                    echo '<option value="' . $c_id . '">' . $c_name . '</option>';
-                                                }
-                                                ?>
+        <div class="container-fluid">
+    <div class="col-lg-12">
+        <div class="card">
 
 
-                                            </select>
-                                        </div>
-                                    </div>
+            <h4>Add Stall</h4>
+            
+            <div class="card-body">
+                <?php include 'layouts/alert.php' ?>
 
-                                    <div class="form-actions">
-                                        <button type="submit" name="submit" class="btn btn-success">Add Restaurant</button>
-                                    </div>
+                <form action="add_restaurant.php" method="post" enctype="multipart/form-data">
+                    <div class="form-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Stall Name</label>
+                                    <input type="text" name="res_name" class="form-control" required>
                                 </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+                            </div>
 
+                            <div class="col-md-6">
+                                <div class="form-group has-danger">
+                                    <label class="control-label">Business E-mail</label>
+                                    <input type="email" name="email" class="form-control form-control-danger" required>
+                                </div>
+                            </div>
+                    
+
+                      
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Phone</label>
+                                    <input type="text" name="phone" class="form-control" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group has-danger">
+                                    <label class="control-label">Website URL</label>
+                                    <input type="text" name="url" class="form-control form-control-danger" required>
+                                </div>
+                            </div>
+                       
+                       
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Open Hours</label>
+                                    <select name="o_hr" class="form-control custom-select" required>
+                                        <option>--Select your Hours--</option>
+                                        <option value="6am">6am</option>
+                                        <option value="7am">7am</option>
+                                        <option value="8am">8am</option>
+                                        <option value="9am">9am</option>
+                                        <option value="10am">10am</option>
+                                        <option value="11am">11am</option>
+                                        <option value="12pm">12pm</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Close Hours</label>
+                                    <select name="c_hr" class="form-control custom-select" required>
+                                        <option>--Select your Hours--</option>
+                                        <option value="3pm">3pm</option>
+                                        <option value="4pm">4pm</option>
+                                        <option value="5pm">5pm</option>
+                                        <option value="6pm">6pm</option>
+                                    </select>
+                                </div>
+                            </div>
+                  
+
+                      
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Open Days</label>
+                                    <select name="o_days" class="form-control custom-select" required>
+                                        <option>--Select your Days--</option>
+                                        <option value="Mon-Tue">Mon-Tue</option>
+                                        <option value="Mon-Wed">Mon-Wed</option>
+                                        <option value="Mon-Thu">Mon-Thu</option>
+                                        <option value="Mon-Fri">Mon-Fri</option>
+                                        <option value="Mon-Sat">Mon-Sat</option>
+                                        <option value="24hr-x7">24hr-x7</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Image</label>
+                                    <input type="file" name="file" class="form-control">
+                                </div>
+                            </div>
+                        
+
+                       
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Select Category</label>
+                                    <select name="c_name" class="form-control custom-select" required>
+                                        <option>Select Category</option>
+                                        <?php
+                                        $resultType = $index->getRestCategory();
+                                        while ($row = mysqli_fetch_array($resultType)) {
+                                            $c_id = $row['c_id'];
+                                            $c_name = $row['c_name'];
+                                            echo '<option value="' . $c_id . '">' . $c_name . '</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                  
+                    </div>
+                    <div class="form-actions">
+                            <button type="submit" name="submit" class="btn btn-success">Add Restaurant</button>
+                        </div>
+                </form>
             </div>
+        </div>
+    </div>
+</div>
+
 
         </div>
 
