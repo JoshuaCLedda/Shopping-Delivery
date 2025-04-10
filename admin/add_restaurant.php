@@ -1,7 +1,7 @@
 <?php
 session_start();
 error_reporting(E_ALL);
-include "Index.php";
+include "Main.php";
 $index = new Index;
 
 // backend

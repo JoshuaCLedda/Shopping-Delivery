@@ -1,7 +1,7 @@
 <?php
 session_start();
 error_reporting(E_ALL);
-include "admin/Index.php";
+include "admin/Main.php";
 $index = new Index;
 
 
