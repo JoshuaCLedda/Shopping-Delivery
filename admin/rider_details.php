@@ -71,11 +71,11 @@ session_start();
                                                              
                                                                 <div class="btn-group">
                                                                     <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                        Change Status
+                                                                        Manage
                                                                     </button>
                                                                     <div class="dropdown-menu">
-                                                                        <a class="dropdown-item" href="update_rider_status.php?id=' . $rows['id'] . '&status=active">Mark as Active</a>
-                                                                        <a class="dropdown-item" href="update_rider_status.php?id=' . $rows['id'] . '&status=inactive">Mark as Inactive</a>
+                                                                        <a class="dropdown-item" href="update_rider_status.php?id=' . $rows['id'] . '&status=active">Approve</a>
+                                                                        <a class="dropdown-item" href="update_rider_status.php?id=' . $rows['id'] . '&status=inactive">Dissaprove</a>
                                                                     </div>
                                                                 </div>
                                                             </td>
