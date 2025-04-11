@@ -27,6 +27,8 @@
                                 <li><a href="add_menu.php">Add Menu</a></li>
                             </ul>
                         </li>
+                        <li><a href="backup/backup.php"><i class="fa fa-database"></i><span>Back Up</span></a></li>
+
                         <li><a href="all_orders.php"><i class="fa fa-shopping-cart" aria-hidden="true"></i><span>Orders</span></a></li>
                         <li><a href="userprofile.php"><i class="fa fa-user" aria-hidden="true"></i><span>Profile</span></a></li>
 

@@ -112,10 +112,11 @@ class Index
 
     public function getInProcessTransac()
     {
-        // Correct SQL query
+        // Corrected SQL query
         $sql = "SELECT id AS transacID, u_id, total_price, stall_id, status, order_date 
-        FROM transaction 
-        WHERE status = 'in_process' ";
+                FROM transaction 
+                WHERE status = 'place_order'
+                AND rider_id = 0";
         
         $result = mysqli_query($this->con, $sql);
         
@@ -125,6 +126,7 @@ class Index
         
         return $result;
     }
+    
 
 
     public function acceptOrderRider($rider_id, $transaction_id)

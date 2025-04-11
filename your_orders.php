@@ -9,24 +9,22 @@ if (empty($_SESSION['user_id'])) {
 ?>
 
 <?php include 'layouts/header.php' ?>
-
-<!-- DataTables CSS & JS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-
 <?php include 'layouts/navbar.php' ?>
+
 
 <div class="page-wrapper py-4">
     <section class="container">
         <div class="row">
             <div class="col-lg-12">
-                <h3 class="mb-4">My Orders</h3>
-                <div class="card shadow m-4">
-                    <div class="card-body">
+
+                <div class="card shadow-sm rounded-4">
+
+
+                    <div class="card-body p-4">
+                    <h3>My Orders</h3>
+
                         <div class="table-responsive">
-                            <table id="myTable" class="p-4 table table-bordered table-hover align-middle text-center">
+                            <table id="myTable" class="table table-bordered table-hover align-middle text-center">
                                 <thead class="table-dark">
                                     <tr>
                                         <th>Date</th>
@@ -51,32 +49,46 @@ if (empty($_SESSION['user_id'])) {
                                             $rs_id = $row['rs_id'];
                                     ?>
                                             <tr>
-                                                <td><?php echo $date; ?></td>
+                                                <td><?php echo $id; ?>
+                                               </td>
                                                 <td><?php echo $total_price; ?></td>
                                                 <td><?php echo $stall; ?></td>
                                                 <td>
                                                     <?php if ($status === 'Order_Received') : ?>
                                                         <span class="badge bg-success">Order Received</span>
-                                                    <?php elseif ($status === 'Order_Canceled') : ?>
-                                                        <span class="badge bg-danger">Order Canceled</span>
+                                                    <?php elseif ($status === 'Order_Canceled' || $status === 'Order_Cancelled') : ?>
+                                                        <span class="badge bg-danger">Order Cancelled</span>
                                                     <?php else : ?>
-                                                        <span class="badge bg-warning text-dark"><?php echo $status; ?></span>
+                                                        <span class="badge bg-warning text-dark">
+                                                            <?php echo ucwords(str_replace('_', ' ', strtolower($status))); ?>
+                                                        </span>
                                                     <?php endif; ?>
+
                                                 </td>
                                                 <td>
-                                                    <?php if ($status !== 'Order_Received' && $status !== 'Order_Canceled') { ?>
-                                                        <a href="update_order_status.php?order_id=<?php echo $id; ?>"
-                                                           onclick="return confirm('Are you sure you have received your order?');"
-                                                           class="btn btn-success btn-sm mb-1">Received</a>
+    <?php if ($status !== 'Order_Received' && $status !== 'Order_Canceled' && $status !== 'Order_Cancelled') { ?>
 
-                                                        <a href="cancel_order.php?order_id=<?php echo $id; ?>"
-                                                           onclick="return confirm('Are you sure you want to cancel this order?');"
-                                                           class="btn btn-danger btn-sm mb-1">Cancel</a>
-                                                    <?php } elseif ($status === 'Order_Received') { ?>
-                                                        <a href="rate_rider.php?rider_id=<?php echo $rider_id; ?>" class="btn btn-outline-success btn-sm mb-1">Rate Rider</a>
-                                                        <a href="rate_stall.php?rider_id=<?php echo $rs_id; ?>" class="btn btn-outline-success btn-sm mb-1">Rate Stall</a>
-                                                    <?php } ?>
-                                                </td>
+        <!-- Check if rider_id is not null or not 0 -->
+        <?php if (!empty($rider_id) && $rider_id != 0): ?>
+            <a href="update_order_status.php?order_id=<?php echo $id; ?>"
+                onclick="return confirm('Are you sure you have received your order?');"
+                class="btn btn-success btn-sm mb-1">Received</a>
+        <?php else: ?>
+            <button class="btn btn-success btn-sm mb-1" disabled>Received</button>
+        <?php endif; ?>
+
+        <a href="cancel_order.php?order_id=<?php echo $id; ?>"
+            onclick="return confirm('Are you sure you want to cancel this order?');"
+            class="btn btn-danger btn-sm mb-1">Cancel</a>
+
+    <?php } elseif ($status === 'Order_Received') { ?>
+        <a href="rate_rider.php?rider_id=<?php echo $rider_id; ?>"
+            class="btn btn-outline-success btn-sm mb-1">Rate Rider<?php echo $rider_id; ?></a>
+        <a href="rate_stall.php?rider_id=<?php echo $rs_id; ?>"
+            class="btn btn-outline-success btn-sm mb-1">Rate Stall<?php echo $rs_id; ?></a>
+    <?php } ?>
+</td>
+
                                             </tr>
                                         <?php
                                         }
@@ -84,46 +96,124 @@ if (empty($_SESSION['user_id'])) {
                                         ?>
                                         <tr>
                                             <td colspan="5">
-                                                <div class="text-center text-muted">You have no orders placed yet.</div>
+                                                <div class="text-center text-muted py-3">You have no orders placed yet.</div>
                                             </td>
                                         </tr>
                                     <?php } ?>
                                 </tbody>
                             </table>
-                        </div> <!-- /.table-responsive -->
-                    </div> <!-- /.card-body -->
-                </div> <!-- /.card -->
-            </div> <!-- /.col-lg-12 -->
-        </div> <!-- /.row -->
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
-</div> <!-- /.page-wrapper -->
+</div>
+
+
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('#myTable').DataTable({
             "pageLength": 10,
-            "order": [[0, "desc"]],
-            "columnDefs": [
-                { "orderable": false, "targets": 4 } // Disable sorting for "Action"
+            "order": [
+                [0, "desc"]
+            ],
+            "columnDefs": [{
+                    "orderable": false,
+                    "targets": 4
+                } 
             ]
         });
     });
 </script>
 
-<footer class="footer mt-5">
-    <div class="row bottom-footer bg-light py-4">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-3">
-                    <h5>Payment Options</h5>
-                    <ul class="list-unstyled d-flex gap-2">
-                        <li><a href="#"><img src="images/paypal.png" alt="Paypal" width="60"></a></li>
-                        <li><a href="#"><img src="images/gcash.png" alt="GCash" width="60"></a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</footer>
+<style>
+    /* CARD STYLING */
+    .card {
+        margin: 15px ;
+        background-color: #fff;
+        border: none;
+        box-shadow: 0 0 1.25rem rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease-in-out;
+    }
 
-<?php include 'layouts/footer.php' ?>
+    .card:hover {
+        box-shadow: 0 0 1.75rem rgba(0, 0, 0, 0.08);
+    }
+
+    /* CARD BODY PADDING */
+    .card-body {
+        padding: 2rem;
+    }
+
+    /* HEADING STYLING */
+    h3.mb-4 {
+        font-weight: 600;
+        color: #333;
+    }
+
+    /* TABLE STYLING */
+    .table {
+        border-radius: 1rem;
+        overflow: hidden;
+    }
+
+    .table thead th {
+        background-color: #343a40 !important;
+        color: #fff;
+        vertical-align: middle;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        padding: 1rem;
+        border: none;
+    }
+
+    .table tbody td {
+        padding: 0.95rem 1rem;
+        vertical-align: middle;
+        font-size: 0.95rem;
+        color: #444;
+        border-color: #dee2e6;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+        transition: background-color 0.3s ease;
+    }
+
+    /* BADGE STYLING */
+    .badge {
+        font-size: 0.8rem;
+        padding: 0.5em 0.50em;
+    }
+
+    /* BUTTONS */
+    .btn-sm {
+        padding: 0.35rem 0.75rem;
+        font-size: 0.8rem;
+        border-radius: 0.4rem;
+    }
+
+    /* ACTION COLUMN WIDTH */
+    td:last-child {
+        min-width: 180px;
+    }
+
+    /* RESPONSIVE TEXT CENTERING ON SMALL SCREENS */
+    @media (max-width: 576px) {
+        .table thead {
+            font-size: 0.8rem;
+        }
+
+        .table tbody td {
+            font-size: 0.85rem;
+        }
+
+        h3.mb-4 {
+            font-size: 1.25rem;
+        }
+    }
+</style>

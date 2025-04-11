@@ -136,8 +136,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-    <div class="rating-container">
-        <h2>Rate a Stall</h2>
+
+<div class="container my-5">
+    <div class="card shadow rounded-4">
+        <div class="card-body p-4">
+            <h3 class="card-title text-center mb-4">Rate a Stall</h3>
 
         <?php include 'layouts/alert.php' ?>
         <form action="" method="POST">

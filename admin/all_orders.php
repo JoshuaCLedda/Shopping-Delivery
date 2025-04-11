@@ -35,62 +35,62 @@ $total_pages = ceil($total_orders / $limit);
         </svg>
     </div>
     <div id="main-wrapper">
-    <?php include 'layouts/navbar.php' ?>
+        <?php include 'layouts/navbar.php' ?>
 
 
-<?php include 'layouts/sidebar.php' ?>
+        <?php include 'layouts/sidebar.php' ?>
 
-   
-    <div class="page-wrapper">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="col-lg-12">
-                        <div class="card card-outline-primary">
+
+        <div class="page-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="col-lg-12">
+                            <div class="card card-outline-primary">
                                 <h4>All Orders</h4>
-                            <div class="table-responsive">
-                            <table id="myTable" class="table table-bordered table-hover align-middle">
-                            <thead>
-                                        <tr>
-                                            <th>User</th>
-                                            <th>Total Price</th>
-                                            <th>Stall</th>
-                                            <th>Status</th>
-                                            <th>Order Date</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-    <?php
-    if (!mysqli_num_rows($query) > 0) {
-        echo '<tr><td colspan="6"><center>No Orders</center></td></tr>';
-    } else {
-        while ($rows = mysqli_fetch_array($query)) {
-            // Get the status value
-            $status = $rows['status'];
-            
-            // Define the status message and badge class
-            switch ($status) {
-                case 'order_confirmation':
-                    $statusText = 'Confirmed';
-                    $badgeClass = 'badge-success'; // Green for Confirmed
-                    break;
-                case 'Order_Canceled':
-                    $statusText = 'Cancel';
-                    $badgeClass = 'badge-danger'; // Red for Cancel
-                    break;
-                case 'Order_Received':
-                    $statusText = 'Received';
-                    $badgeClass = 'badge-primary'; // Blue for Received
-                    break;
-                default:
-                    $statusText = 'Unknown';
-                    $badgeClass = 'badge-secondary'; // Gray for Unknown status
-                    break;
-            }
-            
-            // Output the row
-            echo '<tr>
+                                <div class="table-responsive">
+                                    <table id="myTable" class="table table-bordered table-hover align-middle">
+                                        <thead>
+                                            <tr>
+                                                <th>User</th>
+                                                <th>Total Price</th>
+                                                <th>Stall</th>
+                                                <th>Status</th>
+                                                <th>Order Date</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            if (!mysqli_num_rows($query) > 0) {
+                                                echo '<tr><td colspan="6"><center>No Orders</center></td></tr>';
+                                            } else {
+                                                while ($rows = mysqli_fetch_array($query)) {
+                                                    // Get the status value
+                                                    $status = $rows['status'];
+
+                                                    // Define the status message and badge class
+                                                    switch ($status) {
+                                                        case 'order_confirmation':
+                                                            $statusText = 'Confirmed';
+                                                            $badgeClass = 'badge-success'; // Green for Confirmed
+                                                            break;
+                                                        case 'Order_Canceled':
+                                                            $statusText = 'Cancel';
+                                                            $badgeClass = 'badge-danger'; // Red for Cancel
+                                                            break;
+                                                        case 'Order_Received':
+                                                            $statusText = 'Received';
+                                                            $badgeClass = 'badge-primary'; // Blue for Received
+                                                            break;
+                                                        default:
+                                                            $statusText = 'Unknown';
+                                                            $badgeClass = 'badge-secondary'; // Gray for Unknown status
+                                                            break;
+                                                    }
+
+                                                    // Output the row
+                                                    echo '<tr>
                     <td>' . $rows['username'] . '</td>
                     <td>₱' . number_format($rows['total_price'], 2) . '</td>
                     <td>' . $rows['stall_id'] . '</td>
@@ -102,83 +102,79 @@ $total_pages = ceil($total_orders / $limit);
                         <button class="btn btn-info btn-sm view-details-btn" data-trans-id="' . $rows['id'] . '"><i class="fa fa-eye"></i> View Details</button>
                     </td>
                 </tr>';
-        }
-    }
-    ?>
-</tbody>
+                                                }
+                                            }
+                                            ?>
+                                        </tbody>
 
-                                </table>
-                            </div>
-                            <!-- Modal for User Details -->
-                            <div class="modal fade" id="userDetailsModal" tabindex="-1" role="dialog" aria-labelledby="userDetailsLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-lg" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="userDetailsLabel">User Information</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body" id="userDetailsContent">
-                                            <!-- User information will be loaded here -->
+                                    </table>
+                                </div>
+                                <!-- Modal for User Details -->
+                                <div class="modal fade" id="userDetailsModal" tabindex="-1" role="dialog" aria-labelledby="userDetailsLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="userDetailsLabel">User Information</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body" id="userDetailsContent">
+                                                <!-- User information will be loaded here -->
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <script>
-                                $(document).ready(function() {
-                                    $(".view-details-btn").click(function() {
-                                        var transId = $(this).data('trans-id'); // Get the trans_id
-                                        $.ajax({
-                                            url: "get_user_details.php", // PHP file to fetch user details
-                                            type: "GET",
-                                            data: {
-                                                trans_id: transId
-                                            },
-                                            success: function(response) {
-                                                $('#userDetailsContent').html(response); // Display user details in modal
-                                                $('#userDetailsModal').modal('show'); // Show the modal
-                                            },
-                                            error: function() {
-                                                alert("Error fetching user details.");
-                                            }
+                                <script>
+                                    $(document).ready(function() {
+                                        $(".view-details-btn").click(function() {
+                                            var transId = $(this).data('trans-id'); // Get the trans_id
+                                            $.ajax({
+                                                url: "get_user_details.php", // PHP file to fetch user details
+                                                type: "GET",
+                                                data: {
+                                                    trans_id: transId
+                                                },
+                                                success: function(response) {
+                                                    $('#userDetailsContent').html(response); // Display user details in modal
+                                                    $('#userDetailsModal').modal('show'); // Show the modal
+                                                },
+                                                error: function() {
+                                                    alert("Error fetching user details.");
+                                                }
+                                            });
                                         });
                                     });
-                                });
-                            </script>
-                          
+                                </script>
+
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-      
-    </div>
 
-    <script>
-        $(document).ready(function() {
-            $(".view-details-btn").click(function() {
-                var transId = $(this).data('trans-id');
-                $.ajax({
-                    url: "get_order_details.php",
-                    type: "GET",
-                    data: {
-                        trans_id: transId
-                    },
-                    success: function(response) {
-                        $('#orderDetailsContent').html(response);
-                        $('#orderDetailsModal').modal('show');
-                    },
-                    error: function() {
-                        alert("Error fetching order details.");
-                    }
+        </div>
+
+        <script>
+            $(document).ready(function() {
+                $(".view-details-btn").click(function() {
+                    var transId = $(this).data('trans-id');
+                    $.ajax({
+                        url: "get_order_details.php",
+                        type: "GET",
+                        data: {
+                            trans_id: transId
+                        },
+                        success: function(response) {
+                            $('#orderDetailsContent').html(response);
+                            $('#orderDetailsModal').modal('show');
+                        },
+                        error: function() {
+                            alert("Error fetching order details.");
+                        }
+                    });
                 });
             });
-        });
-    </script>
+        </script>
 
-<?php include 'layouts/footer.php' ?>
-
-
-   
-
+        <?php include 'layouts/footer.php' ?>

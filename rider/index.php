@@ -55,141 +55,110 @@ if (isset($_POST['submit'])) {
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
 </head>
+<?php include '../layouts/header.php' ?>
 
 <body class="fix-header fix-sidebar">
 
 
     <div id="main-wrapper">
-        <div class="header">
-            <nav class="navbar top-navbar navbar-expand-md navbar-light">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="dashboard.php">
-                        <span><img src="../admin/images/icon.png" alt="homepage" class="dark-logo" /></span>
-                    </a>
-                </div>
-                <div class="navbar-collapse">
-                    <ul class="navbar-nav mr-auto mt-md-0"></ul>
-                    <ul class="navbar-nav my-lg-0">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-muted" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="images/bookingSystem/user-icn.png" alt="user" class="profile-pic" /></a>
-                            <div class="dropdown-menu dropdown-menu-right animated zoomIn">
-                                <ul class="dropdown-user">
-                                    <li><a href="../admin/logout.php"><i class="fa fa-power-off"></i> Logout</a></li>
-                                </ul>
+        <?php include '../layouts/navbar.php' ?>
+        <?php include '../layouts/rider/sidebar.php' ?>
+
+
+
+   
+
+
+        <div class="page-wrapper">
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="col-lg-12">
+                            <div class="card card-outline-primary">
+                                <h4>All Orders</h4>
+                                <?php
+                                include '../layouts/alert.php';
+                                ?>
+                                <div class="table-responsive">
+                                    <table id="myTable" class="table table-bordered table-hover align-middle">
+                                        <thead>
+                                            <tr>
+                                                <th>User</th>
+                                                <th>Total Price</th>
+                                                <th>Stall</th>
+                                                <th>Status</th>
+                                                <th>Order Date</th>
+                                                <th>Action</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            $result = $index->getInProcessTransac();
+                                            while ($row = mysqli_fetch_array($result)) {
+                                                echo '<tr>';
+                                                echo '<td>' . $row['u_id'] . '</td>';
+                                                echo '<td>' . $row['total_price'] . '</td>';
+                                                echo '<td>' . $row['stall_id'] . '</td>';
+                                                echo '<td>' . $row['status'] . '</td>';
+                                                echo '<td>' . $row['order_date'] . '</td>';
+
+                                                // Use session user_id
+                                                $UserId = $_SESSION['user_id'];
+
+                                                echo '<td>';
+                                                echo '<form action="" method="POST">';
+                                                echo '<input type="hidden" name="rider_id" value="' . $UserId . '">';
+                                                echo '<input type="hidden" name="transaction_id" value="' . $row['transacID'] . '">';
+
+                                                echo '<button type="submit" name="submit" class="btn btn-sm btn-success">Accept</button>';
+
+                                                echo '</form>';
+                                                echo '</td>';
+
+                                                echo '</tr>';
+                                            }
+                                            ?>
+                                        </tbody>
+
+                                    </table>
+                                </div>
+
+
                             </div>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
-
-        <div class="left-sidebar">
-            <div class="scroll-sidebar">
-                <nav class="sidebar-nav">
-                    <ul id="sidebarnav">
-                        <li class="nav-devider"></li>
-                     
-                        <li><a href="index.php"><i class="fa fa-tachometer"></i><span>Dashboard</span></a></li>
-
-                        </li>
-    
-                    </ul>
-                </nav>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="page-wrapper">
-
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="col-lg-12">
-                        <div class="card card-outline-primary">
-                            <h4>All Orders</h4>
-                            <?php
-                            include '../layouts/alert.php';
-                            ?>
-                            <div class="table-responsive">
-                                <table id="myTable" class="table table-bordered table-hover align-middle">
-                                    <thead>
-                                        <tr>
-                                            <th>User</th>
-                                            <th>Total Price</th>
-                                            <th>Stall</th>
-                                            <th>Status</th>
-                                            <th>Order Date</th>
-                                            <th>Action</th>
-
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
-                                        $result = $index->getInProcessTransac();
-                                        while ($row = mysqli_fetch_array($result)) {
-                                            echo '<tr>';
-                                            echo '<td>' . $row['u_id'] . '</td>';
-                                            echo '<td>' . $row['total_price'] . '</td>';
-                                            echo '<td>' . $row['stall_id'] . '</td>';
-                                            echo '<td>' . $row['status'] . '</td>';
-                                            echo '<td>' . $row['order_date'] . '</td>';
-
-                                            // Use session user_id
-                                            $UserId = $_SESSION['user_id'];
-
-                                            echo '<td>';
-                                            echo '<form action="" method="POST">';
-                                            echo '<input type="hidden" name="rider_id" value="' . $UserId . '">';
-                                            echo '<input type="hidden" name="transaction_id" value="' . $row['transacID'] . '">';
-
-                                            echo '<button type="submit" name="submit" class="btn btn-sm btn-success">Accept</button>';
-
-                                            echo '</form>';
-                                            echo '</td>';
-
-                                            echo '</tr>';
-                                        }
-                                        ?>
-                                    </tbody>
-
-                                </table>
-                            </div>
-
-
                         </div>
                     </div>
                 </div>
+                </d>
+                <footer class="footer">© 2024-DMMMSU-NLUC-BSIS-STUDENT</footer>
             </div>
-            </d>
-            <footer class="footer">© 2024-DMMMSU-NLUC-BSIS-STUDENT</footer>
-        </div>
 
 
-        <?php include '../layouts/footer.php' ?>
+            <?php include '../layouts/footer.php' ?>
 
-        <!-- Modal for Order Details -->
-        <script>
-            $(document).ready(function() {
-                $(".view-details-btn").click(function() {
-                    var transId = $(this).data('trans-id');
-                    $.ajax({
-                        url: "get_order_details.php",
-                        type: "GET",
-                        data: {
-                            trans_id: transId
-                        },
-                        success: function(response) {
-                            $('#orderDetailsContent').html(response);
-                            $('#orderDetailsModal').modal('show');
-                        },
-                        error: function() {
-                            alert("Error fetching order details.");
-                        }
+            <!-- Modal for Order Details -->
+            <script>
+                $(document).ready(function() {
+                    $(".view-details-btn").click(function() {
+                        var transId = $(this).data('trans-id');
+                        $.ajax({
+                            url: "get_order_details.php",
+                            type: "GET",
+                            data: {
+                                trans_id: transId
+                            },
+                            success: function(response) {
+                                $('#orderDetailsContent').html(response);
+                                $('#orderDetailsModal').modal('show');
+                            },
+                            error: function() {
+                                alert("Error fetching order details.");
+                            }
+                        });
                     });
                 });
-            });
-        </script>
+            </script>
 
 </body>
 

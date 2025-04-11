@@ -138,7 +138,7 @@ if(isset($_POST['submit']))
                                             </div>
                                             <div class="form-group col-sm-6">
                                                 <label for="exampleInputEmail1">Email Address</label>
-                                                <input type="text" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp">
+                                                <input type="email" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp">
                                             </div>
                                             <div class="form-group col-sm-6">
                                                 <label for="exampleInputEmail1">Phone number</label>
