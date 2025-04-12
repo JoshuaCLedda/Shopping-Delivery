@@ -37,35 +37,47 @@ if (isset($_POST['submit'])) {
 }
 ?>
 <?php include 'layouts/header.php' ?>
+<?php include 'layouts/sidebar.php' ?>
+<?php include 'layouts/navbar.php' ?>
 
-<body class="fix-header fix-sidebar">
-
-<div class="preloader">
-    <svg class="circular" viewBox="25 25 50 50">
-        <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" />
-    </svg>
-</div>
-<div id="main-wrapper">
-    <?php include 'layouts/navbar.php' ?>
+<div id="main">
+  <div class="main-container">
 
 
-    <?php include 'layouts/sidebar.php' ?>
 
-    <div class="page-wrapper">
+  <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb" class="rounded-3 mb-4">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Register Rider</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
 
 
-    <div class="container-fluid my-1">
+        <div class="d-flex justify-content-end my-2">
+            <a href="rider_details.php" class="btn btn-primary">Back</a>
+        </div>
+
+
 
             <?php include 'layouts/alert.php'; ?>
 
             <div class="row justify-content-center">
                 <div class="col-md-12">
-                    <!-- Card starts here -->
-                    <div class="widget card shadow-sm">
+          <div class="card card-outline-primary">
+                    
+                    <div class="card-header bg-primary">
+                        <h5 class="mb-0 text-white">Rider Details</h5>
+                    </div>
+
+                    <div class="widget card-body shadow-sm">
+
                         <div class="widget-body">
-                            <div class="text-left">
-                                <h4>Rider Registration</h4>
-                            </div>
+                            
                             <form action="" method="post">
                                 <div class="row">
                                     <div class="form-group col-sm-6">
@@ -115,9 +127,9 @@ if (isset($_POST['submit'])) {
                                         <input type="text" class="form-control" name="security_answer" placeholder="Answer" required>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row my-2">
                                     <div class="col-sm-12">
-                                        <button type="submit" value="Register" name="submit" class="btn btn-success">Register Rider</button>
+                                        <button type="submit" value="Register" name="submit" class="btn btn-primary">Register Rider</button>
                                     </div>
                                 </div>
                             </form>

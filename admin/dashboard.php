@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
 <?php
 include("../connection/connect.php");
 error_reporting(0);
@@ -9,190 +7,351 @@ session_start();
 //     header('location:index.php');
 // }
 ?>
-<?php include 'layouts/header.php' ?>
-<body class="fix-header">
-    <div id="main-wrapper">
+    <?php include 'layouts/header.php' ?>
+    <?php include 'layouts/sidebar.php' ?>
     <?php include 'layouts/navbar.php' ?>
 
-    <?php include 'layouts/sidebar.php' ?>
+    <div id="main">
+    <div class="main-container">
 
-        <div class="page-wrapper">
-            <div class="container-fluid">
+
                 <div class="col-lg-12">
-                    <div class="card card-outline-primary">
-                        <div class="card-header">
-                            <h4 class="m-b-0 text-white">Admin Dashboard</h4>
+
+                <div class="d-flex align-items-center gap-2">
+    <i class='bx bx-grid-alt text-success fs-5'></i>
+    <h4 class="mb-0 text-success">Dashboard</h4>
+</div>
+
+
+
+                        <div class="row g-4">
+
+    <!-- Stalls -->
+<div class="col-xxl-3 col-md-6">
+    <div class="card info-card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <i class='bx bx-home text-primary display-5 me-3'></i>
+                    <div>
+                        <h6 class="mb-1 fw-semibold">Stalls</h6>
+                        <small class="text-muted">Total Restaurants</small>
+                    </div>
+                </div>
+                <h1 class="fw-bold text-primary mb-0">
+                    <?php 
+                        $sql = "SELECT * FROM restaurant";
+                        $result = mysqli_query($db, $sql); 
+                        echo mysqli_num_rows($result);
+                    ?>
+                </h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dishes -->
+<div class="col-xxl-3 col-md-6">
+    <div class="card info-card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <i class='bx bx-restaurant text-success display-5 me-3'></i>
+                    <div>
+                        <h6 class="mb-1 fw-semibold">Dishes</h6>
+                        <small class="text-muted">Total Menu Items</small>
+                    </div>
+                </div>
+                <h1 class="fw-bold text-success mb-0">
+                    <?php 
+                        $sql = "SELECT * FROM dishes";
+                        $result = mysqli_query($db, $sql); 
+                        echo mysqli_num_rows($result);
+                    ?>
+                </h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Users -->
+<div class="col-xxl-3 col-md-6">
+    <div class="card info-card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <i class='bx bx-user text-info display-5 me-3'></i>
+                    <div>
+                        <h6 class="mb-1 fw-semibold">Users</h6>
+                        <small class="text-muted">Registered Users</small>
+                    </div>
+                </div>
+                <h1 class="fw-bold text-info mb-0">
+                    <?php 
+                        $sql = "SELECT * FROM users";
+                        $result = mysqli_query($db, $sql); 
+                        echo mysqli_num_rows($result);
+                    ?>
+                </h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Total Orders -->
+<div class="col-xxl-3 col-md-6">
+    <div class="card info-card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <i class='bx bx-cart text-warning display-5 me-3'></i>
+                    <div>
+                        <h6 class="mb-1 fw-semibold">Total Orders</h6>
+                        <small class="text-muted">All Time Orders</small>
+                    </div>
+                </div>
+                <h1 class="fw-bold text-warning mb-0">
+                    <?php 
+                        $sql = "SELECT * FROM users_orders";
+                        $result = mysqli_query($db, $sql); 
+                        echo mysqli_num_rows($result);
+                    ?>
+                </h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Restro Categories -->
+<div class="col-xxl-3 col-md-6">
+    <div class="card info-card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <i class='bx bx-category text-secondary display-5 me-3'></i>
+                    <div>
+                        <h6 class="mb-1 fw-semibold">Restro Categories</h6>
+                        <small class="text-muted">Food Categories</small>
+                    </div>
+                </div>
+                <h1 class="fw-bold text-secondary mb-0">
+                    <?php 
+                        $sql = "SELECT * FROM res_category";
+                        $result = mysqli_query($db, $sql); 
+                        echo mysqli_num_rows($result);
+                    ?>
+                </h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Processing Orders -->
+<div class="col-xxl-3 col-md-6">
+    <div class="card info-card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <i class='bx bx-loader-alt text-primary display-5 me-3'></i>
+                    <div>
+                        <h6 class="mb-1 fw-semibold">Processing</h6>
+                        <small class="text-muted">Orders In Process</small>
+                    </div>
+                </div>
+                <h1 class="fw-bold text-primary mb-0">
+                    <?php 
+                        $sql = "SELECT * FROM users_orders WHERE status = 'in process'";
+                        $result = mysqli_query($db, $sql); 
+                        echo mysqli_num_rows($result);
+                    ?>
+                </h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delivered Orders -->
+<div class="col-xxl-3 col-md-6">
+    <div class="card info-card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <i class='bx bx-check-circle text-success display-5 me-3'></i>
+                    <div>
+                        <h6 class="mb-1 fw-semibold">Delivered</h6>
+                        <small class="text-muted">Completed Orders</small>
+                    </div>
+                </div>
+                <h1 class="fw-bold text-success mb-0">
+                    <?php 
+                        $sql = "SELECT * FROM users_orders WHERE status = 'closed'";
+                        $result = mysqli_query($db, $sql); 
+                        echo mysqli_num_rows($result);
+                    ?>
+                </h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cancelled Orders -->
+<div class="col-xxl-3 col-md-6">
+    <div class="card info-card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <i class='bx bx-x-circle text-danger display-5 me-3'></i>
+                    <div>
+                        <h6 class="mb-1 fw-semibold">Cancelled</h6>
+                        <small class="text-muted">Rejected Orders</small>
+                    </div>
+                </div>
+                <h1 class="fw-bold text-danger mb-0">
+                    <?php 
+                        $sql = "SELECT * FROM users_orders WHERE status = 'rejected'";
+                        $result = mysqli_query($db, $sql); 
+                        echo mysqli_num_rows($result);
+                    ?>
+                </h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="col-md-6">
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+        <h5 class="card-title fw-semibold mb-4">Charts</h5>
+
+            <div class="mb-4">
+                <label for="filter" class="form-label">Select Filter:</label>
+                <select id="filter" onchange="changeFilter()" class="form-select">
+                    <option value="monthly" <?php if(isset($_GET['filter']) && $_GET['filter'] == 'monthly') echo 'selected'; ?>>Monthly</option>
+                    <option value="quarterly" <?php if(isset($_GET['filter']) && $_GET['filter'] == 'quarterly') echo 'selected'; ?>>Quarterly</option>
+                </select>
+            </div>
+
+            <!-- Chart Canvas -->
+            <canvas id="earningsChart"></canvas>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+<div class="col-lg-6 d-flex align-items-stretch">
+  <div class="card w-100">
+    <div class="card-body p-4">
+      <h5 class="card-title fw-semibold mb-4">Recent Transactions</h5>
+      <div class="table">
+        <table class="table text-nowrap mb-0 align-middle">
+          <thead class="text-dark fs-4">
+            <tr>
+              <th class="border-bottom-0"><h6 class="fw-semibold mb-0">ID</h6></th>
+              <th class="border-bottom-0"><h6 class="fw-semibold mb-0">Customer</h6></th>
+              <th class="border-bottom-0"><h6 class="fw-semibold mb-0">Food Item</h6></th>
+              <th class="border-bottom-0"><h6 class="fw-semibold mb-0">Status</h6></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="border-bottom-0"><h6 class="fw-semibold mb-0">1</h6></td>
+              <td class="border-bottom-0">
+                <h6 class="fw-semibold mb-1">Ana Reyes</h6>
+                <span class="fw-normal">#ORD-1001</span>                          
+              </td>
+              <td class="border-bottom-0">
+                <p class="mb-0 fw-normal">Cheeseburger Combo</p>
+              </td>
+              <td class="border-bottom-0">
+                <span class="badge bg-primary rounded-3 fw-semibold">Pending</span>
+              </td>
+            </tr> 
+            <tr>
+              <td class="border-bottom-0"><h6 class="fw-semibold mb-0">2</h6></td>
+              <td class="border-bottom-0">
+                <h6 class="fw-semibold mb-1">Mark Villanueva</h6>
+                <span class="fw-normal">#ORD-1002</span>                          
+              </td>
+              <td class="border-bottom-0">
+                <p class="mb-0 fw-normal">Spaghetti & Garlic Bread</p>
+              </td>
+              <td class="border-bottom-0">
+                <span class="badge bg-secondary rounded-3 fw-semibold">On Hold</span>
+              </td>
+            </tr> 
+            <tr>
+              <td class="border-bottom-0"><h6 class="fw-semibold mb-0">3</h6></td>
+              <td class="border-bottom-0">
+                <h6 class="fw-semibold mb-1">Maria Lopez</h6>
+                <span class="fw-normal">#ORD-1003</span>                          
+              </td>
+              <td class="border-bottom-0">
+                <p class="mb-0 fw-normal">Beef Tapa with Rice</p>
+              </td>
+              <td class="border-bottom-0">
+                <span class="badge bg-danger rounded-3 fw-semibold">Cancelled</span>
+              </td>
+            </tr>      
+            <tr>
+              <td class="border-bottom-0"><h6 class="fw-semibold mb-0">4</h6></td>
+              <td class="border-bottom-0">
+                <h6 class="fw-semibold mb-1">John Santos</h6>
+                <span class="fw-normal">#ORD-1004</span>                          
+              </td>
+              <td class="border-bottom-0">
+                <p class="mb-0 fw-normal">Chicken Wings & Fries</p>
+              </td>
+              <td class="border-bottom-0">
+                <span class="badge bg-success rounded-3 fw-semibold">Completed</span>
+              </td>
+            </tr>                       
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+     </div>
+    
+
+
+
+
+                          
                         </div>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="card p-30">
-                                    <div class="media">
-                                        <div class="media-left meida media-middle">
-                                            <span><i class="fa fa-home f-s-40 "></i></span>
-                                        </div>
-                                        <div class="media-body media-text-right">
-                                            <h2><?php 
-                                                $sql = "SELECT * FROM restaurant";
-                                                $result = mysqli_query($db, $sql); 
-                                                $rws = mysqli_num_rows($result);
-                                                echo $rws;
-                                            ?></h2>
-                                            <p class="m-b-0">Stalls</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <div class="card p-30">
-                                    <div class="media">
-                                        <div class="media-left meida media-middle">
-                                            <span><i class="fa fa-cutlery f-s-40" aria-hidden="true"></i></span>
-                                        </div>
-                                        <div class="media-body media-text-right">
-                                            <h2><?php 
-                                                $sql = "SELECT * FROM dishes";
-                                                $result = mysqli_query($db, $sql); 
-                                                $rws = mysqli_num_rows($result);
-                                                echo $rws;
-                                            ?></h2>
-                                            <p class="m-b-0">Dishes</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <div class="card p-30">
-                                    <div class="media">
-                                        <div class="media-left meida media-middle">
-                                            <span><i class="fa fa-users f-s-40"></i></span>
-                                        </div>
-                                        <div class="media-body media-text-right">
-                                            <h2><?php 
-                                                $sql = "SELECT * FROM users";
-                                                $result = mysqli_query($db, $sql); 
-                                                $rws = mysqli_num_rows($result);
-                                                echo $rws;
-                                            ?></h2>
-                                            <p class="m-b-0">Users</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <div class="card p-30">
-                                    <div class="media">
-                                        <div class="media-left meida media-middle"> 
-                                            <span><i class="fa fa-shopping-cart f-s-40" aria-hidden="true"></i></span>
-                                        </div>
-                                        <div class="media-body media-text-right">
-                                            <h2><?php 
-                                                $sql = "SELECT * FROM users_orders";
-                                                $result = mysqli_query($db, $sql); 
-                                                $rws = mysqli_num_rows($result);
-                                                echo $rws;
-                                            ?></h2>
-                                            <p class="m-b-0">Total Orders</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>                     
-                        </div>     
-
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="card p-30">
-                                    <div class="media">
-                                        <div class="media-left meida media-middle"> 
-                                            <span><i class="fa fa-th-large f-s-40" aria-hidden="true"></i></span>
-                                        </div>
-                                        <div class="media-body media-text-right">
-                                            <h2><?php 
-                                                $sql = "SELECT * FROM res_category";
-                                                $result = mysqli_query($db, $sql); 
-                                                $rws = mysqli_num_rows($result);
-                                                echo $rws;
-                                            ?></h2>
-                                            <p class="m-b-0">Restro Categories</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="col-md-3">
-                                <div class="card p-30">
-                                    <div class="media">
-                                        <div class="media-left meida media-middle"> 
-                                            <span><i class="fa fa-spinner f-s-40" aria-hidden="true"></i></span>
-                                        </div>
-                                        <div class="media-body media-text-right">
-                                            <h2><?php 
-                                                $sql = "SELECT * FROM users_orders WHERE status = 'in process'";
-                                                $result = mysqli_query($db, $sql); 
-                                                $rws = mysqli_num_rows($result);
-                                                echo $rws;
-                                            ?></h2>
-                                            <p class="m-b-0">Processing Orders</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <div class="card p-30">
-                                    <div class="media">
-                                        <div class="media-left meida media-middle"> 
-                                            <span><i class="fa fa-check f-s-40" aria-hidden="true"></i></span>
-                                        </div>
-                                        <div class="media-body media-text-right">
-                                            <h2><?php 
-                                                $sql = "SELECT * FROM users_orders WHERE status = 'closed'";
-                                                $result = mysqli_query($db, $sql); 
-                                                $rws = mysqli_num_rows($result);
-                                                echo $rws;
-                                            ?></h2>
-                                            <p class="m-b-0">Delivered Orders</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        
 
 
-                            <div class="col-md-3">
-                                <div class="card p-30">  
-                                    <div class="media">
-                                        <div class="media-left meida media-middle"> 
-                                            <span><i class="fa fa-times f-s-40" aria-hidden="true"></i></span>
-                                        </div>
-                                        <div class="media-body media-text-right">
-                                            <h2><?php 
-                                                $sql = "SELECT * FROM users_orders WHERE status = 'rejected'";
-                                                $result = mysqli_query($db, $sql); 
-                                                $rws = mysqli_num_rows($result);
-                                                echo $rws;
-                                            ?></h2>
-                                            <p class="m-b-0">Cancelled Orders</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                            <div class="col-md-6">
-                                <div class="card p-100">
-                                    <!-- Dropdown for Filter -->
-                                    <label for="filter">Select Filter: </label>
-                                    <select id="filter" onchange="changeFilter()" class="form-control">
-                                        <option value="monthly" <?php if(isset($_GET['filter']) && $_GET['filter'] == 'monthly') echo 'selected'; ?>>Monthly</option>
-                                        <option value="quarterly" <?php if(isset($_GET['filter']) && $_GET['filter'] == 'quarterly') echo 'selected'; ?>>Quarterly</option>
-                                    </select>
 
-                                    <canvas id="earningsChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                         <?php 
                         // Get filter type (monthly or quarterly)
@@ -268,13 +427,4 @@ session_start();
                 </div>
             </div>
         </div>
-
-        <script src="js/lib/jquery/jquery.min.js"></script>
-        <script src="js/lib/bootstrap/js/popper.min.js"></script>
-        <script src="js/lib/bootstrap/js/bootstrap.min.js"></script>
-        <script src="js/jquery.slimscroll.js"></script>
-        <script src="js/sidebarmenu.js"></script>
-        <script src="js/lib/sticky-kit-master/dist/sticky-kit.min.js"></script>
-        <script src="js/custom.min.js"></script>
-    </body>
-</html>
+        <?php include 'layouts/footer.php' ?>

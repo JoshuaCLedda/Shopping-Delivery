@@ -30,9 +30,9 @@ if (isset($_POST['submit'])) {
 
 
     if ($result) {
-        $_SESSION['message'] = ['type' => 'success', 'message' => 'Restaurant registered successfully!'];
+        $_SESSION['message'] = ['type' => 'success', 'message' => 'Restaurant Registered Successfully!'];
     } else {
-        $_SESSION['message'] = ['type' => 'danger', 'message' => 'Failed to register. Email might already exist.'];
+        $_SESSION['message'] = ['type' => 'danger', 'message' => 'Failed to Register. Email Might Already Exist.'];
     }
 
     header("Location: add_restaurant.php");
@@ -43,29 +43,44 @@ if (isset($_POST['submit'])) {
 ?>
 
 <?php include 'layouts/header.php' ?>
+<?php include 'layouts/sidebar.php' ?>
+<?php include 'layouts/navbar.php' ?>
 
-<body class="fix-header">
-
-
-    <div id="main-wrapper">
-
-        <?php include 'layouts/navbar.php' ?>
-        <?php include 'layouts/sidebar.php' ?>
+<div id="main">
+  <div class="main-container">
 
 
 
-        <div class="page-wrapper">
+  <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb" class="rounded-3 mb-4">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Register Rider</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+
+        <div class="d-flex justify-content-end my-2">
+            <a href="all_restaurant.php" class="btn btn-primary">Back</a>
+        </div>
 
 
 
         <div class="container-fluid">
-    <div class="col-lg-12">
-        <div class="card">
+        <div class="card card-outline-primary">
+                    
+                    <div class="card-header bg-primary">
+                        <h5 class="mb-0 text-white">Register Stall</h5>
+                    </div>
+
+                    <div class="widget card-body shadow-sm">
 
 
-            <h4>Add Stall</h4>
-            
-            <div class="card-body">
+
                 <?php include 'layouts/alert.php' ?>
 
                 <form action="add_restaurant.php" method="post" enctype="multipart/form-data">
@@ -175,7 +190,7 @@ if (isset($_POST['submit'])) {
                             </div>
                   
                     </div>
-                    <div class="form-actions">
+                    <div class="form-actions my-2">
                             <button type="submit" name="submit" class="btn btn-success">Add Restaurant</button>
                         </div>
                 </form>

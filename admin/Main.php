@@ -201,6 +201,46 @@ class Index
         return mysqli_query($this->con, $sql);
     }
     
-       
+    public function getStallRatings()
+    {
+        // Corrected SQL query
+        $sql = "SELECT restaurant_ratings.id AS restoId,
+        users.f_name, users.l_name, 
+        restaurant.title AS restaurant, restaurant_ratings.rating
+                FROM restaurant_ratings
+                LEFT JOIN restaurant ON
+                restaurant.rs_id = restaurant_ratings.restaurant_id
+                LEFT JOIN users ON
+                users.u_id = restaurant_ratings.user_id";
+        
+        $result = mysqli_query($this->con, $sql);
+        
+        if (!$result) {
+            die('Query failed: ' . mysqli_error($this->con));
+        }
+        
+        return $result;
+    }
+
+
+    public function getRidersRatings()
+    {
+        // Corrected SQL query
+        $sql = "SELECT rating_rider.id AS riderId,
+        users.f_name, users.l_name, rating_rider.rating, rider_name 
+                FROM rating_rider
+                LEFT JOIN users ON
+                users.u_id = rating_rider.user_id";
+        
+        $result = mysqli_query($this->con, $sql);
+        
+        if (!$result) {
+            die('Query failed: ' . mysqli_error($this->con));
+        }
+        
+        return $result;
+    }
+    
+
 
 }

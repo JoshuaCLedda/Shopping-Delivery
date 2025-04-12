@@ -1,15 +1,28 @@
-<script src="../js/lib/jquery/jquery.min.js"></script>
-    <script src="../js/lib/bootstrap/js/popper.min.js"></script>
-    <script src="../js/lib/bootstrap/js/bootstrap.min.js"></script>
-    <script src="../js/jquery.slimscroll.js"></script>
-    <script src="../js/sidebarmenu.js"></script>
-    <script src="../js/lib/sticky-kit-master/dist/sticky-kit.min.js"></script>
-    <script src="../js/custom.min.js"></script>
-    <script src="../js/lib/datatables/datatables.min.js"></script>
-    <script src="../js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>
-    <script src="../js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js"></script>
-    <script src="../js/lib/datatables/cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
-    <script src="../js/lib/datatables/cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
-    <script src="../js/lib/datatables/cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
-    <script src="../js/lib/datatables/cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
-    <script src="../js/lib/datatables/datatables-init.js"></script>
+<div class="py-6 px-6 text-center">
+          <p class="mb-0 fs-4"></p>
+        </div>
+</div>
+      
+</div>
+<script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+  <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+  <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
+  <!-- Js -->
+  <script src="../assets/js/app.min.js"></script>
+  <script src="../assets/js/sidebarmenu.js"></script>
+  <script src="../assets/js/dashboard.js"></script>
+ 
+ 
+  <!-- Other Assets -->
+  <script src="../assets/vendor/chart.js/chart.umd.js"></script>
+  <script src="../assets/vendor/simple-datatables/simple-datatables.js"></script>
+  <script src="../assets/vendor/tinymce/tinymce.min.js"></script>
+
+ 
+
+
+
+</body>
+
+</html>

@@ -1,36 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
 <?php
 include("../connection/connect.php");
 error_reporting(0);
 session_start();
 ?>
-<?php include 'layouts/header.php' ?>
-
-<body class="fix-header fix-sidebar">
 
 
-    <div id="main-wrapper">
+    <?php include 'layouts/header.php' ?>
+    <?php include 'layouts/sidebar.php' ?>
+    <?php include 'layouts/navbar.php' ?>
+    <div id="main">
+    <div class="main-container">
 
-        <?php include 'layouts/navbar.php' ?>
+    <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb" class="rounded-3 mb-4">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Menu</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
 
 
-        <?php include 'layouts/sidebar.php' ?>
+        <div class="d-flex justify-content-end my-2">
+            <a href="add_menu.php" class="btn btn-primary">Add Menu</a>
+        </div>
 
+    <div class="row">
+      <div class="col-12">
+        <div class="col-lg-12">
+          <div class="card card-outline-primary">
+   
+            <div class="card-header bg-primary">
+        <h5 class="mb-0 text-white">Menu Details</h5>
+    </div>
 
-        <div class="page-wrapper">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="col-lg-12">
-                            <div class="card card-outline-primary">
-                                <h4>All Menu</h4>
-                                <div class="table-responsive">
-
-                                    <table id="myTable" class="table table-bordered table-hover align-middle">
-
-
-                                        <thead>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table datatable table-striped table-hover" 
+                id="datatable">
+                  <thead>
                                             <tr>
                                                 <th>Stall</th>
                                                 <th>Dish</th>
@@ -69,26 +80,27 @@ session_start();
                         </div>
                     </td>
                     <td>
-                        <span class="badge badge-' . ($rows['status'] == 'available' ? 'success' : 'danger') . '">' . $statusText . '</span>
+                        <span class="text-black badge badge-' . ($rows['status'] == 'available' ? 'success' : 'danger') . '">' . $statusText . '</span>
                     </td>
                       
                     <td>
                       
                         <div class="btn-group">
-                            <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Status
-                            </button>
-                            <div class="dropdown-menu">
+                           <button type="button" class="btn btn-sm btn-warning dropdown-toggle" 
+        data-bs-toggle="dropdown" aria-expanded="false">
+        Status
+    </button>
+                              <ul class="dropdown-menu">
                                 <a class="dropdown-item" href="update_status.php?menu_id=' . $rows['d_id'] . '&status=available">Mark as Available</a>
                                 <a class="dropdown-item" href="update_status.php?menu_id=' . $rows['d_id'] . '&status=not_available">Mark as Not Available</a>
-                            </div>
+                            </ul>
                         </div>
                
                         <a href="delete_menu.php?menu_del=' . $rows['d_id'] . '" class="btn btn-danger btn-flat btn-xs">
-                            <i class="fa fa-trash-o" style="font-size:16px"></i>
+                   <i class="bx bx-trash" style="font-size:16px"></i>
                         </a> 
                         <a href="update_menu.php?menu_upd=' . $rows['d_id'] . '" class="btn btn-info btn-flat btn-xs">
-                            <i class="fa fa-edit"></i>
+                             <i class="bx bx-edit" style="font-size:16px"></i
                         </a>
                     </td>
 

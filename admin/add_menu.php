@@ -1,21 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
 <?php
 include("../connection/connect.php");
 error_reporting(0);
 session_start();
 
 
-
-
 if (isset($_POST['submit'])) {
-
-
-
-
-
-
-
     if (empty($_POST['d_name']) || empty($_POST['about']) || $_POST['price'] == '' || $_POST['res_name'] == '') {
         $error =     '<div class="alert alert-danger alert-dismissible fade show">
 																<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -69,54 +58,52 @@ if (isset($_POST['submit'])) {
     }
 }
 
-
-
-
-
-
-
-
 ?>
-
 <?php include 'layouts/header.php' ?>
+<?php include 'layouts/sidebar.php' ?>
+<?php include 'layouts/navbar.php' ?>
 
-<body class="fix-header">
-
-    <div class="preloader">
-        <svg class="circular" viewBox="25 25 50 50">
-            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" />
-        </svg>
-    </div>
-
-    <div id="main-wrapper">
-        <?php include 'layouts/navbar.php' ?>
-
-
-        <?php include 'layouts/sidebar.php' ?>
+<div id="main">
+  <div class="main-container">
 
 
 
-
-        <div class="page-wrapper">
-
-
-
-            <div class="container-fluid">
-                <!-- Start Page Content -->
-
-
-                <?php echo $error;
-                echo $success; ?>
-
-
+  <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb" class="rounded-3 mb-4">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Register Menu</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
 
 
-                <div class="col-lg-12">
-                    <div class="card card-outline-primary">
-                        <h4 class="m-b-0">Add Menu</h4>
-                        <div class="card-body">
-                            <form action='' method='post' enctype="multipart/form-data">
-                                <div class="form-body">
+        <div class="d-flex justify-content-end my-2">
+            <a href="all_menu.php" class="btn btn-primary">Back</a>
+        </div>
+
+
+
+            <?php include 'layouts/alert.php'; ?>
+
+
+            <div class="row justify-content-center">
+                <div class="col-md-12">
+          <div class="card card-outline-primary">
+                    
+                    <div class="card-header bg-primary">
+                        <h5 class="mb-0 text-white">Register Menu</h5>
+                    </div>
+
+                    <div class="widget card-body shadow-sm">
+
+                        <div class="widget-body">
+                        
+                        <form action='' method='post' enctype="multipart/form-data">
+                     
 
                                     <div class="row p-t-20">
                                         <div class="col-md-6">
@@ -155,12 +142,6 @@ if (isset($_POST['submit'])) {
 
                                     <div class="row">
 
-
-
-
-
-
-
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label class="control-label">Select Stall</label>
@@ -182,10 +163,9 @@ if (isset($_POST['submit'])) {
                                     </div>
 
                                 </div>
-                        </div>
-                        <div class="form-actions">
-                            <input type="submit" name="submit" class="btn btn-success" value="Save">
-                            <a href="all_menu.php" class="btn btn-inverse">Cancel</a>
+                        <div class="form-actions my-2">
+                            <input type="submit" name="submit" class="mr-2 btn btn-primary" value="Save">
+                            <a href="all_menu.php" class="btn btn-danger">Cancel</a>
                         </div>
                         </form>
                     </div>

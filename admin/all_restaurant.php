@@ -6,31 +6,48 @@ error_reporting(0);
 session_start();
 
 ?>
+
 <?php include 'layouts/header.php' ?>
+    <?php include 'layouts/sidebar.php' ?>
+    <?php include 'layouts/navbar.php' ?>
+    <div id="main">
+    <div class="main-container">
 
-<body class="fix-header fix-sidebar">
+
+    <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb" class="rounded-3 mb-4">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Rider Details</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
 
 
-    <div id="main-wrapper">
+        <div class="d-flex justify-content-end my-2">
+            <a href="add_restaurant.php" class="btn btn-primary">Add Stall</a>
+        </div>
 
-        <?php include 'layouts/navbar.php' ?>
 
-        <?php include 'layouts/sidebar.php' ?>
 
-        <div class="page-wrapper">
-
-            <div class="container-fluid">
 
                 <div class="row">
                     <div class="col-12">
                         <div class="col-lg-12">
-                            <div class="card card-outline-primary">
-                                <h4>Registered Stalls</h4>
+                        <div class="card card-outline-primary">
+   
+   <div class="card-header bg-primary">
+<h5 class="mb-0 text-white">Rider Details</h5>
+</div>
 
+   <div class="card-body">
 
                                 <div class="table-responsive">
-                                    <table id="myTable" class="table table-bordered table-hover align-middle">
-                                        <thead>
+  <table class="table datatable table-striped table-hover" id="datatable">
+    <thead>
                                             <tr>
                                                 <th>Category</th>
                                                 <th>Name</th>

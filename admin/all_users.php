@@ -6,20 +6,10 @@ session_start();
 ?>
 
 <?php include 'layouts/header.php' ?>
-
-<body class="fix-header fix-sidebar">
-
- 
-    <div id="main-wrapper">
-        <?php include 'layouts/navbar.php' ?>
-
-
-        <?php include 'layouts/sidebar.php' ?>
-
-        <div class="page-wrapper">
-
-
-            <div class="container-fluid my-2">
+    <?php include 'layouts/sidebar.php' ?>
+    <?php include 'layouts/navbar.php' ?>
+    <div id="main">
+    <div class="main-container">
 
 
                 <div class="row justify-content-center">
