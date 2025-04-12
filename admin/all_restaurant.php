@@ -40,10 +40,11 @@ session_start();
                         <div class="card card-outline-primary">
    
    <div class="card-header bg-primary">
-<h5 class="mb-0 text-white">Rider Details</h5>
+<h5 class="mb-0 text-white">Stall Details</h5>
 </div>
 
    <div class="card-body">
+   <a href="delete_users.php?user_del=' . $rows['u_id'] . '" c
 
                                 <div class="table-responsive">
   <table class="table datatable table-striped table-hover" id="datatable">
@@ -80,8 +81,10 @@ session_start();
                     <td>' . $rows['phone'] . '</td>
                     <td>' . date("F j, Y", strtotime($rows['date'])) . '</td>
                     <td>
-                        <a href="delete_restaurant.php?res_del=' . $rows['rs_id'] . '" class="btn btn-danger btn-flat btn-addon btn-xs m-b-10"><i class="fa fa-trash-o" style="font-size:16px"></i></a> 
-                        <a href="update_restaurant.php?res_upd=' . $rows['rs_id'] . '" class="btn btn-info btn-flat btn-addon btn-sm m-b-10 m-l-5"><i class="fa fa-edit"></i></a>
+                        <a href="delete_restaurant.php?res_del=' . $rows['rs_id'] . '" class="btn btn-sm btn-danger">
+                          <i class="bx bx-trash"></i>
+                        <a href="update_restaurant.php?res_upd=' . $rows['rs_id'] . '" class="btn btn-sm btn-info ms-2">
+                        <i class="bx bx-edit"></i>
                     </td>
                 </tr>';
         }

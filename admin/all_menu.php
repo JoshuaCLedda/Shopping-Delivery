@@ -96,11 +96,11 @@ session_start();
                             </ul>
                         </div>
                
-                        <a href="delete_menu.php?menu_del=' . $rows['d_id'] . '" class="btn btn-danger btn-flat btn-xs">
-                   <i class="bx bx-trash" style="font-size:16px"></i>
+                        <a href="delete_menu.php?menu_del=' . $rows['d_id'] . '" class="btn btn-sm btn-danger">
+                   <i class="bx bx-trash"></i>
                         </a> 
-                        <a href="update_menu.php?menu_upd=' . $rows['d_id'] . '" class="btn btn-info btn-flat btn-xs">
-                             <i class="bx bx-edit" style="font-size:16px"></i
+                        <a href="update_menu.php?menu_upd=' . $rows['d_id'] . '" class="btn btn-sm btn-info">
+                             <i class="bx bx-edit"></i
                         </a>
                     </td>
 

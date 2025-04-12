@@ -44,11 +44,11 @@ if (isset($_POST['backup'])) {
     }
 
     if (!empty($sqlScript)) {
-        $backup_file_name = __DIR__ . '/file/backup_' . date('Y-m-d_H-i-s') . '.sql'; // Save to /file folder
+        $backup_file_name = __DIR__ . 'backup/file/backup_' . date('Y-m-d_H-i-s') . '.sql'; // Save to /file folder
 
         // Ensure the 'file' directory exists
-        if (!is_dir(__DIR__ . '/file')) {
-            mkdir(__DIR__ . '/file', 0755, true);
+        if (!is_dir(__DIR__ . 'backup/file')) {
+            mkdir(__DIR__ . 'backup/file', 0755, true);
         }
 
         file_put_contents($backup_file_name, $sqlScript);
@@ -60,7 +60,7 @@ if (isset($_POST['restore'])) {
     $sql = '';
     $error = '';
 
-    if (file_exists(__DIR__ . '/file/_backup_.sql')) {
+    if (file_exists(__DIR__ . 'backup/file/_backup_.sql')) {
         mysqli_query($con, 'SET foreign_key_checks = 0');
 
         // Drop all tables
@@ -72,7 +72,7 @@ if (isset($_POST['restore'])) {
         mysqli_query($con, 'SET foreign_key_checks = 1');
 
         // Restore the backup
-        $lines = file(__DIR__ . '/file/_backup_.sql');
+        $lines = file(__DIR__ . 'backup/file/_backup_.sql');
         foreach ($lines as $line) {
             if (substr($line, 0, 2) == '--' || trim($line) == '') {
                 continue;
@@ -105,7 +105,7 @@ if (isset($_POST['restore'])) {
     <div class="main-container">
 
                         <!-- will use it later to improve the ui -->
-                        <!-- <div class="row">
+                         <div class="row">
                             <div class="col">
                                 <nav aria-label="breadcrumb" class="rounded-3 mb-4">
                                     <ol class="breadcrumb mb-0">
@@ -115,7 +115,7 @@ if (isset($_POST['restore'])) {
                                     </ol>
                                 </nav>
                             </div>
-                        </div> -->
+                        </div> 
 
 
                         <section class="section">
@@ -194,18 +194,6 @@ if (isset($_POST['restore'])) {
 
                     </div>
                 </div>
-            </div>
-
-        </div>
-
-    </div>
-    </div>
-
-    </div>
-
-
-    </div>
-
-    </div>
+        
 
     <?php include '../layouts/footer.php' ?>

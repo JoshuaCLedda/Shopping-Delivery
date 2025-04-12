@@ -6,7 +6,6 @@ $index = new Index;
 
 ?>
 
-<?php include 'layouts/header.php' ?>
 
 
     <?php include 'layouts/header.php' ?>
@@ -31,16 +30,16 @@ $index = new Index;
 
 
 
-        <section class="section">
-            <div class="row">
-                <div class="col-lg-12">
-                <div class="card card-outline-primary">
+        <div class="row">
+      <div class="col-12">
+        <div class="col-lg-12">
+          <div class="card card-outline-primary">
    
-   <div class="card-header bg-primary">
-<h5 class="mb-0 text-white">Stalls Raiting</h5>
-</div>
+            <div class="card-header bg-primary">
+        <h5 class="mb-0 text-white">Stall Ratings</h5>
+    </div>
 
-<div class="card-body">
+            <div class="card-body">
               <div class="table-responsive">
                 <table class="table datatable table-striped table-hover" 
                 id="datatable">
@@ -76,8 +75,8 @@ $index = new Index;
                                             }
                                             ?>
 
-<td>
-                                      </td>
+
+                                  
 
                                     </tbody>
                                 </table>

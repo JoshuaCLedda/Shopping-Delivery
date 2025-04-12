@@ -1,7 +1,10 @@
 <?php
 session_start();
-error_reporting(0);
-include("connection/connect.php");
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+include("../connection/connect.php");
 
 if(isset($_POST['submit'])) 
 {
@@ -35,22 +38,34 @@ if(isset($_POST['submit']))
         $check_email = mysqli_query($db, "SELECT email FROM users WHERE email = '$email'");
 
         if($password !== $cpassword) {  
-            echo "<script>alert('Passwords do not match');</script>"; 
+            $_SESSION['message'] = ['type' => 'danger', 'message' => 'Passwords do not match!'];
+            header("Location: " . $_SERVER['PHP_SELF']); // Redirect back to the same page
+            exit();
         }
         elseif(strlen($password) < 6) {
-            echo "<script>alert('Password must be at least 6 characters');</script>"; 
+            $_SESSION['message'] = ['type' => 'danger', 'message' => 'Password must be at least 6 characters!'];
+            header("Location: " . $_SERVER['PHP_SELF']); // Redirect back to the same page
+            exit();
         }
         elseif(strlen($phone) < 10) {
-            echo "<script>alert('Invalid phone number!');</script>"; 
+            $_SESSION['message'] = ['type' => 'danger', 'message' => 'Invalid phone number!'];
+            header("Location: " . $_SERVER['PHP_SELF']); // Redirect back to the same page
+            exit();
         }
         elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            echo "<script>alert('Invalid email address!');</script>"; 
+            $_SESSION['message'] = ['type' => 'danger', 'message' => 'Invalid email address!'];
+            header("Location: " . $_SERVER['PHP_SELF']); // Redirect back to the same page
+            exit();
         }
         elseif(mysqli_num_rows($check_username) > 0) {
-            echo "<script>alert('Username already exists!');</script>"; 
+            $_SESSION['message'] = ['type' => 'danger', 'message' => 'Username already exists!'];
+            header("Location: " . $_SERVER['PHP_SELF']); // Redirect back to the same page
+            exit();
         }
         elseif(mysqli_num_rows($check_email) > 0) {
-            echo "<script>alert('Email already exists!');</script>"; 
+            $_SESSION['message'] = ['type' => 'danger', 'message' => 'Email already exists!'];
+            header("Location: " . $_SERVER['PHP_SELF']); // Redirect back to the same page
+            exit();
         }
         else
         {
@@ -61,66 +76,59 @@ if(isset($_POST['submit']))
             $mql = "INSERT INTO users(username, f_name, l_name, email, phone, password, address, security_questions, answer) 
                     VALUES('$username', '$firstname', '$lastname', '$email', '$phone', '$hashed_password', '$address', '$security_questions', '$answer')";
 
-            mysqli_query($db, $mql);
-
-            echo "<script>alert('Registration Successful!');</script>";
-            header("refresh:0.1;url=login.php");
+            if (mysqli_query($db, $mql)) {
+                $_SESSION['message'] = ['type' => 'success', 'message' => 'Registration successful!'];
+            } else {
+                $_SESSION['message'] = ['type' => 'danger', 'message' => 'Registration failed! Please try again.'];
+            }
+            
+            header("Location: " . $_SERVER['PHP_SELF']); // Redirect back to the same page
+            exit();
         }
     }
 }
+
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="#">
-    <title>Registration</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/font-awesome.min.css" rel="stylesheet">
-    <link href="css/animsition.min.css" rel="stylesheet">
-    <link href="css/animate.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
-</head>
-<body>
-    <div style="background-image: url('images/img/pimg.jpg');">
-        <header id="header" class="header-scroll top-header headrom">
-            <nav class="navbar navbar-dark">
-                <div class="container">
-                    <button class="navbar-toggler hidden-lg-up" type="button" data-toggle="collapse" data-target="#mainNavbarCollapse">&#9776;</button>
-                    <a class="navbar-brand" href="index.php"> <img class="img-rounded" src="images/icn.png" alt=""> </a>
-                    <div class="collapse navbar-toggleable-md  float-lg-right" id="mainNavbarCollapse">
-                        <ul class="nav navbar-nav">
-                            <li class="nav-item"> <a class="nav-link active" href="index.php">Home</a> </li>
-                            <li class="nav-item"> <a class="nav-link active" href="restaurants.php">Stall</a> </li>
-                            <?php
-                                if(empty($_SESSION["user_id"])) {
-                                    echo '<li class="nav-item"><a href="login.php" class="nav-link active">Login</a> </li>';
-                                    echo '<li class="nav-item"><a href="registration.php" class="nav-link active">Register</a> </li>';
-                                } else {
-                                    echo '<li class="nav-item"><a href="your_orders.php" class="nav-link active">My Orders</a> </li>';
-                                    echo '<li class="nav-item"><a href="logout.php" class="nav-link active">Logout</a> </li>';
-                                }
-                            ?>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-        </header>
+<?php include 'layouts/header.php' ?>
+<?php include 'layouts/sidebar.php' ?>
+<?php include 'layouts/navbar.php' ?>
+<div id="main">
+    <div class="main-container">
 
-        <div class="page-wrapper">
-            <section class="contact-page inner-page">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="widget">
-                                <div class="widget-body">
+        <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb" class="rounded-3 mb-4">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Register User</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+
+        <div class="d-flex justify-content-end my-2">
+            <a href="all_users.php" class="btn btn-primary">Back</a>
+        </div>
+        
+        <?php include 'layouts/alert.php'; ?>
+
+
+        <div class="row justify-content-center">
+                <div class="col-md-12">
+          <div class="card card-outline-primary">
+                    
+                    <div class="card-header bg-primary">
+                        <h5 class="mb-0 text-white">Register New User</h5>
+                    </div>
+
+                    <div class="widget card-body shadow-sm">
+
+                        <div class="widget-body">
                          
-                                    <form action="" method="post">
+                                    <form action="add_user" method="POST">
                                         <div class="row">
                                             <div class="form-group col-sm-12">
                                                 <label for="exampleInputEmail1">User-Name</label>
@@ -172,45 +180,19 @@ if(isset($_POST['submit']))
                                             </div>
                                         </div>
 
-                                        <div class="row">
-                                            <div class="col-sm-4">
-                                                <p> <input type="submit" value="Register" name="submit" class="btn theme-btn"> </p>
-                                            </div>
-                                        </div>
+                                        <div class="col-sm-12 my-2">
+                                        <button type="submit" name="submit" class="btn btn-primary">Register User</button>
+                                    </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
-        </div>
-
-        <footer class="footer">
-            <div class="container">
-                <div class="row bottom-footer">
-                    <div class="col-xs-12 col-sm-3 payment-options color-gray">
-                        <h5>Payment Options</h5>
-                        <ul>
-                            <li><a href="#"> <img src="images/paypal.png" alt="Paypal"> </a></li>
-                            <li><a href="#"> <img src="images/mastercard.png" alt="Mastercard"> </a></li>
-                            <li><a href="#"> <img src="images/maestro.png" alt="Maestro"> </a></li>
-                            <li><a href="#"> <img src="images/stripe.png" alt="Stripe"> </a></li>
-                            <li><a href="#"> <img src="images/bitcoin.png" alt="Bitcoin"> </a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </footer>
+    
     </div>
+        </div>
+            
 
-    <script src="js/jquery.min.js"></script>
-    <script src="js/tether.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/animsition.min.js"></script>
-    <script src="js/bootstrap-slider.min.js"></script>
-    <script src="js/jquery.isotope.min.js"></script>
-    <script src="js/headroom.js"></script>
-    <script src="js/foodpicky.min.js"></script>
-</body>
-</html>
+
+

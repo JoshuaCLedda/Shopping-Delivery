@@ -10,16 +10,20 @@ session_start();
     <div id="main">
     <div class="main-container">
 
-                <div class="row">
-                    <div class="col-12">
-                        <div class="col-lg-12">
-                            <div class="card card-outline-primary">
-                                <h4 class="mb-0">Activity Log</h4>
+    <div class="row">
+      <div class="col-12">
+        <div class="col-lg-12">
+          <div class="card card-outline-primary">
+   
+            <div class="card-header bg-primary">
+        <h5 class="mb-0 text-white">Activity Log</h5>
+    </div>
 
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table id="myTable" class="table table-bordered table-hover align-middle">
-                                            <thead class="">
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table datatable table-striped table-hover" 
+                id="datatable">
+                  <thead>
                                                 <tr>
                                                     <th>Last Name</th>
                                                     <th>First Name</th>

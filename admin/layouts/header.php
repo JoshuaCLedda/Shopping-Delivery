@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Restaurants</title>
-  
+
   <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
   <!-- Main Stylesheets -->
   <link rel="stylesheet" href="../assets/css/styles.css" />
@@ -46,13 +46,41 @@
 
   <script>
     $(document).ready(function() {
-      $('#datatable').DataTable();
+      $('#datatable').DataTable({
+        language: {
+          lengthMenu: 'Show _MENU_'
+        }
+      });
     });
   </script>
 
 
 
   <style>
+    /* This hides the text nodes except the dropdown */
+    .dataTables_length label::before,
+    .dataTables_length label::after {
+      content: none !important;
+    }
+
+
+    .dataTables_wrapper .dataTables_filter {
+      text-align: right !important;
+    }
+
+    .dataTables_wrapper .dataTables_length {
+      text-align: left !important;
+    }
+
+    .dataTables_wrapper {
+      overflow-x: hidden;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
     /* Custom scrollbar styles */
     .scroll-sidebar {
       position: relative;

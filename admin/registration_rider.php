@@ -71,7 +71,7 @@ if (isset($_POST['submit'])) {
           <div class="card card-outline-primary">
                     
                     <div class="card-header bg-primary">
-                        <h5 class="mb-0 text-white">Rider Details</h5>
+                        <h5 class="mb-0 text-white">Register Rider</h5>
                     </div>
 
                     <div class="widget card-body shadow-sm">

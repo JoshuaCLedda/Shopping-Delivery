@@ -17,12 +17,6 @@ session_start();
 
                 <div class="col-lg-12">
 
-                <div class="d-flex align-items-center gap-2">
-    <i class='bx bx-grid-alt text-success fs-5'></i>
-    <h4 class="mb-0 text-success">Dashboard</h4>
-</div>
-
-
 
                         <div class="row g-4">
 
