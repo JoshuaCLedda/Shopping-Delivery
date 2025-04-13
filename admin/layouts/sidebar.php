@@ -72,6 +72,16 @@
         </li>
 
 
+        <li class="sidebar-item">
+  <a class="sidebar-link" href="add_category.php" aria-expanded="false">
+    <span>
+      <i class="bx bx-bar-chart-alt-2"></i>
+    </span>
+    <span class="hide-menu">Category</span>
+  </a>
+</li>
+
+
         <li class="sidebar-item" id="sidebarItem">
           <a class="sidebar-link sidebar-dropdown">
             <span>

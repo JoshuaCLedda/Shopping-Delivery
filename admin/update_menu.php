@@ -55,88 +55,44 @@ if (isset($_POST['submit'])) { // if upload btn is pressed
 ob_clean();
 ?>
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
-    <title>Update Menu</title>
-    <link href="css/lib/bootstrap/bootstrap.min.css" rel="stylesheet">
-    <link href="css/helper.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
-</head>
+<?php include 'layouts/header.php' ?>
+<?php include 'layouts/sidebar.php' ?>
+<?php include 'layouts/navbar.php' ?>
 
-<body class="fix-header">
-    <div class="preloader">
-        <svg class="circular" viewBox="25 25 50 50">
-            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" />
-        </svg>
-    </div>
-    <div id="main-wrapper">
-        <div class="header">
-            <nav class="navbar top-navbar navbar-expand-md navbar-light">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="dashboard.php">
-                        <span><img src="images/icn.png" alt="homepage" class="dark-logo" /></span>
-                    </a>
-                </div>
-                <div class="navbar-collapse">
-                    <ul class="navbar-nav mr-auto mt-md-0"></ul>
-                    <ul class="navbar-nav my-lg-0">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-muted" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img src="images/bookingSystem/user-icn.png" alt="user" class="profile-pic" />
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right animated zoomIn">
-                                <ul class="dropdown-user">
-                                    <li><a href="logout.php"><i class="fa fa-power-off"></i> Logout</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
-        <div class="left-sidebar">
-            <div class="scroll-sidebar">
-                <nav class="sidebar-nav">
-                    <ul id="sidebarnav">
-                        <li class="nav-devider"></li>
-                        <li class="nav-label">Home</li>
-                        <li><a href="dashboard.php"><i class="fa fa-tachometer"></i><span>Dashboard</span></a></li>
-                        <li class="nav-label">Log</li>
-                        <li><a href="all_users.php"><span><i class="fa fa-user f-s-20"></i></span><span>Users</span></a></li>
-                        <li>
-                            <a class="has-arrow" href="#" aria-expanded="false"><i class="fa fa-archive f-s-20 color-warning"></i><span class="hide-menu">Restaurant</span></a>
-                            <ul aria-expanded="false" class="collapse">
-                                <li><a href="all_restaurant.php">All Stall</a></li>
-                                <li><a href="add_category.php">Add Category</a></li>
-                                <li><a href="add_restaurant.php">Add Stall</a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a class="has-arrow" href="#" aria-expanded="false"><i class="fa fa-cutlery" aria-hidden="true"></i><span class="hide-menu">Menu</span></a>
-                            <ul aria-expanded="false" class="collapse">
-                                <li><a href="all_menu.php">All Menus</a></li>
-                                <li><a href="add_menu.php">Add Menu</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="all_orders.php"><i class="fa fa-shopping-cart" aria-hidden="true"></i><span>Orders</span></a></li>
-                    </ul>
+<div id="main">
+    <div class="main-container">
+
+        <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb" class="rounded-3 mb-4">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Register User</li>
+                    </ol>
                 </nav>
             </div>
         </div>
-        <div class="page-wrapper">
-            <div class="container-fluid">
-                <?php echo $error; echo $success; ?>
-                <div class="col-lg-12">
-                    <div class="card card-outline-primary">
-                        <div class="card-header">
-                            <h4 class="m-b-0 text-white">Add Menu to Restaurant</h4>
-                        </div>
-                        <div class="card-body">
+
+
+        <div class="d-flex justify-content-end my-2">
+            <a href="all_users.php" class="btn btn-primary">Back</a>
+        </div>
+        
+        <?php include 'layouts/alert.php'; ?>
+
+
+        <div class="row justify-content-center">
+                <div class="col-md-12">
+          <div class="card card-outline-primary">
+                    
+                    <div class="card-header bg-primary">
+                        <h5 class="mb-0 text-white">Register New User</h5>
+                    </div>
+
+                   
+                        <div class="widget card-body shadow-sm">
+                        <div class="widget-body">
                             <form action='' method='post' enctype="multipart/form-data">
                                 <div class="form-body">
                                     <?php

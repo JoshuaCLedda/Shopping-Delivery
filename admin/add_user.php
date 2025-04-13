@@ -93,6 +93,7 @@ if(isset($_POST['submit']))
 <?php include 'layouts/header.php' ?>
 <?php include 'layouts/sidebar.php' ?>
 <?php include 'layouts/navbar.php' ?>
+
 <div id="main">
     <div class="main-container">
 

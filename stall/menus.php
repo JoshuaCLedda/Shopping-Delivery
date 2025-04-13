@@ -88,11 +88,21 @@ session_start();
                                                     <td>₱<?= htmlspecialchars($rows['price']) ?></td>
                                                     <td>
     <div class="ratio ratio-4x3" style="max-width: 100px;">
-        <img src="../admin/Res_img/dishes/<?= htmlspecialchars($rows['img']) ?>"
-             class="rounded shadow-sm object-fit-cover w-100 h-100"
-             alt="Dish Image">
+        <?php
+            $imagePath = "../admin/Res_img/dishes/" . htmlspecialchars($rows['img']);
+            if (!empty($rows['img']) && file_exists($imagePath)) {
+        ?>
+            <img src="<?= $imagePath ?>"
+                class="rounded shadow-sm object-fit-cover w-100 h-100"
+                alt="Dish Image">
+        <?php } else { ?>
+            <div class="d-flex align-items-center justify-content-center bg-light text-muted w-100 h-100 rounded shadow-sm" style="font-size: 12px;">
+                No Data
+            </div>
+        <?php } ?>
     </div>
 </td>
+
 
                                                     <td>
                                                         <span class="badge <?= $badgeClass ?>"><?= $statusText ?></span>
