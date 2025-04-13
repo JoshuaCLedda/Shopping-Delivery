@@ -252,14 +252,14 @@ if (isset($_POST['submit'])) {
                                     $row = mysqli_fetch_array($res); ?>
                                     <hr>
                                     <div class="row p-t-20">
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 mb-3">
                                             <div class="form-group">
                                                 <label class="control-label">Stall Name</label>
                                                 <input type="text" name="res_name" value="<?php echo $row['title'];  ?>" class="form-control" placeholder="John doe">
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 mb-3">
                                             <div class="form-group has-danger">
                                                 <label class="control-label">Bussiness E-mail</label>
                                                 <input type="text" name="email" value="<?php echo $row['email'];  ?>" class="form-control form-control-danger" placeholder="example@gmail.com">
@@ -269,14 +269,14 @@ if (isset($_POST['submit'])) {
                                     </div>
 
                                     <div class="row p-t-20">
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 mb-3">
                                             <div class="form-group">
                                                 <label class="control-label">Phone </label>
                                                 <input type="text" name="phone" class="form-control" value="<?php echo $row['phone'];  ?>" placeholder="1-(555)-555-5555">
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 mb-3">
                                             <div class="form-group has-danger">
                                                 <label class="control-label">website URL</label>
                                                 <input type="text" name="url" class="form-control form-control-danger" value="<?php echo $row['url'];  ?>" placeholder="http://example.com">
@@ -286,7 +286,7 @@ if (isset($_POST['submit'])) {
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 mb-3">
                                             <div class="form-group">
                                                 <label class="control-label">Open Hours</label>
                                                 <select name="o_hr" class="form-control custom-select" data-placeholder="Choose a Category">
@@ -298,7 +298,7 @@ if (isset($_POST['submit'])) {
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 mb-3">
                                             <div class="form-group">
                                                 <label class="control-label">Close Hours</label>
                                                 <select name="c_hr" class="form-control custom-select" data-placeholder="Choose a Category">
@@ -310,7 +310,7 @@ if (isset($_POST['submit'])) {
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 mb-3">
                                             <div class="form-group">
                                                 <label class="control-label">Open Days</label>
                                                 <select name="o_days" class="form-control custom-select" data-placeholder="Choose a Category" tabindex="1" required>
@@ -327,7 +327,7 @@ if (isset($_POST['submit'])) {
 
 
 
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 mb-3">
                                             <div class="form-group has-danger">
                                                 <label class="control-label">Image</label>
                                                 <input type="file" name="file" id="lastName" class="form-control form-control-danger" placeholder="12n">

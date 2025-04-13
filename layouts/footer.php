@@ -1,3 +1,4 @@
+<footer class="footer">© 2024-DMMMSU-NLUC-BSIS-STUDENT</footer>
 <div class="py-6 px-6 text-center">
           <p class="mb-0 fs-4"></p>
         </div>
@@ -20,8 +21,14 @@
   <script src="../assets/vendor/tinymce/tinymce.min.js"></script>
 
  
-
-
+<!-- jquery -->
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Toastr for notifications -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<!-- SweetAlert for confirmation dialogs -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </body>
 

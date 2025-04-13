@@ -81,33 +81,68 @@ if (isset($_POST['submit'])) {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php
-                                            $result = $index->getInProcessTransac();
-                                            while ($row = mysqli_fetch_array($result)) {
-                                                echo '<tr>';
-                                                echo '<td>' . $row['u_id'] . '</td>';
-                                                echo '<td>' . $row['total_price'] . '</td>';
-                                                echo '<td>' . $row['stall_id'] . '</td>';
-                                                echo '<td>' . $row['status'] . '</td>';
-                                                echo '<td>' . $row['order_date'] . '</td>';
+   
+                                        <?php
+$result = $index->getInProcessTransac();
 
-                                                // Use session user_id
-                                                $UserId = $_SESSION['user_id'];
+while ($row = mysqli_fetch_array($result)) {
+    // Format date
+    $formattedDate = !empty($row['order_date']) ? date("F j, Y, g:i A", strtotime($row['order_date'])) : 'No Date';
 
-                                                echo '<td>';
-                                                echo '<form action="" method="POST">';
-                                                echo '<input type="hidden" name="rider_id" value="' . $UserId . '">';
-                                                echo '<input type="hidden" name="transaction_id" value="' . $row['transacID'] . '">';
+    // Normalize status string
+    $status = strtolower(trim($row['status']));
+    switch ($status) {
+        case 'order_confirmation':
+            $statusText = 'Confirmed';
+            $badgeClass = 'bg-success';
+            break;
+        case 'order_canceled':
+            $statusText = 'Canceled';
+            $badgeClass = 'bg-danger';
+            break;
+        case 'order_received':
+            $statusText = 'Received';
+            $badgeClass = 'bg-primary';
+            break;
+        case 'in_process':
+            $statusText = 'In Process';
+            $badgeClass = 'bg-warning text-dark';
+            break;
+        case 'place_order':
+            $statusText = 'Placed';
+            $badgeClass = 'bg-info text-dark';
+            break;
+        default:
+            $statusText = $status ?: 'Unknown';
+            $badgeClass = 'bg-secondary';
+            break;
+    }
 
-                                                echo '<button type="submit" name="submit" class="btn btn-sm btn-success">Accept</button>';
+    // Display row
+    echo '<tr>';
+    echo '<td>' . htmlspecialchars($row['u_id']) . '</td>';
+    echo '<td>₱' . number_format($row['total_price'], 2) . '</td>';
+    echo '<td>' . htmlspecialchars($row['stall_id']) . '</td>';
+    echo '<td><span class="badge rounded-pill ' . $badgeClass . '">' . $statusText . '</span></td>';
+    echo '<td>' . $formattedDate . '</td>';
 
-                                                echo '</form>';
-                                                echo '</td>';
+    // Use session user_id
+    $UserId = $_SESSION['user_id'];
 
-                                                echo '</tr>';
-                                            }
-                                            ?>
-                                        </tbody>
+    echo '<td>';
+    echo '<form action="" method="POST">';
+    echo '<input type="hidden" name="rider_id" value="' . htmlspecialchars($UserId) . '">';
+    echo '<input type="hidden" name="transaction_id" value="' . htmlspecialchars($row['transacID']) . '">';
+    echo '<button type="submit" name="submit" class="btn btn-sm btn-success">Accept</button>';
+    echo '</form>';
+    echo '</td>';
+
+    echo '</tr>';
+}
+?>
+
+</tbody>
+
 
                                     </table>
                                 </div>

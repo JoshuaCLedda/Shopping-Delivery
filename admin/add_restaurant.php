@@ -86,14 +86,14 @@ if (isset($_POST['submit'])) {
                 <form action="add_restaurant.php" method="post" enctype="multipart/form-data">
                     <div class="form-body">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-6 mb-3">
                                 <div class="form-group">
                                     <label class="control-label">Stall Name</label>
                                     <input type="text" name="res_name" class="form-control" required>
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-6 mb-3">
                                 <div class="form-group has-danger">
                                     <label class="control-label">Business E-mail</label>
                                     <input type="email" name="email" class="form-control form-control-danger" required>
@@ -102,14 +102,14 @@ if (isset($_POST['submit'])) {
                     
 
                       
-                            <div class="col-md-6">
+                            <div class="col-md-6 mb-3">
                                 <div class="form-group">
                                     <label class="control-label">Phone</label>
                                     <input type="text" name="phone" class="form-control" required>
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-6 mb-3">
                                 <div class="form-group has-danger">
                                     <label class="control-label">Website URL</label>
                                     <input type="text" name="url" class="form-control form-control-danger" required>
@@ -117,7 +117,7 @@ if (isset($_POST['submit'])) {
                             </div>
                        
                        
-                            <div class="col-md-6">
+                            <div class="col-md-6 mb-3">
                                 <div class="form-group">
                                     <label class="control-label">Open Hours</label>
                                     <select name="o_hr" class="form-control custom-select" required>
@@ -133,7 +133,7 @@ if (isset($_POST['submit'])) {
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-6 mb-3">
                                 <div class="form-group">
                                     <label class="control-label">Close Hours</label>
                                     <select name="c_hr" class="form-control custom-select" required>
@@ -148,7 +148,7 @@ if (isset($_POST['submit'])) {
                   
 
                       
-                            <div class="col-md-6">
+                            <div class="col-md-6 mb-3">
                                 <div class="form-group">
                                     <label class="control-label">Open Days</label>
                                     <select name="o_days" class="form-control custom-select" required>
@@ -163,7 +163,7 @@ if (isset($_POST['submit'])) {
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-6 mb-3">
                                 <div class="form-group">
                                     <label class="control-label">Image</label>
                                     <input type="file" name="file" class="form-control">
@@ -172,7 +172,7 @@ if (isset($_POST['submit'])) {
                         
 
                        
-                            <div class="col-md-6">
+                            <div class="col-md-6 mb-3">
                                 <div class="form-group">
                                     <label class="control-label">Select Category</label>
                                     <select name="c_name" class="form-control custom-select" required>

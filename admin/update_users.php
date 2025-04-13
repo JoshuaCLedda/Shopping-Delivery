@@ -203,13 +203,13 @@ if (isset($_POST['submit'])) {
                                         <div class="form-body">
                                             <hr>
                                             <div class="row p-t-20">
-                                                <div class="col-md-6">
+                                                <div class="col-md-6 mb-3">
                                                     <div class="form-group">
                                                         <label class="control-label">Username</label>
                                                         <input type="text" name="uname" class="form-control" value="<?php echo $newrow['username']; ?>" required>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-6 mb-3">
                                                     <div class="form-group">
                                                         <label class="control-label">First Name</label>
                                                         <input type="text" name="fname" class="form-control" value="<?php echo $newrow['f_name']; ?>" required>
@@ -218,13 +218,13 @@ if (isset($_POST['submit'])) {
                                             </div>
 
                                             <div class="row p-t-20">
-                                                <div class="col-md-6">
+                                                <div class="col-md-6 mb-3">
                                                     <div class="form-group">
                                                         <label class="control-label">Last Name</label>
                                                         <input type="text" name="lname" class="form-control" value="<?php echo $newrow['l_name']; ?>" required>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-6 mb-3">
                                                     <div class="form-group">
                                                         <label class="control-label">Email</label>
                                                         <input type="email" name="email" class="form-control" value="<?php echo $newrow['email']; ?>" required>
@@ -233,13 +233,13 @@ if (isset($_POST['submit'])) {
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-md-6">
+                                                <div class="col-md-6 mb-3">
                                                     <div class="form-group">
                                                         <label class="control-label">Password</label>
                                                         <input type="password" name="password" class="form-control" required>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-6 mb-3">
                                                     <div class="form-group">
                                                         <label class="control-label">Phone</label>
                                                         <input type="text" name="phone" class="form-control" value="<?php echo $newrow['phone']; ?>" required>
@@ -248,7 +248,7 @@ if (isset($_POST['submit'])) {
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-md-6">
+                                                <div class="col-md-6 mb-3">
                                                     <div class="form-group">
                                                         <label class="control-label">Role</label>
                                                         <select name="role" class="form-control">

@@ -106,14 +106,14 @@ if (isset($_POST['submit'])) {
                      
 
                                     <div class="row p-t-20">
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 mb-3">
                                             <div class="form-group">
                                                 <label class="control-label">Dish Name</label>
                                                 <input type="text" name="d_name" class="form-control">
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 mb-3">
                                             <div class="form-group has-danger">
                                                 <label class="control-label">Description</label>
                                                 <input type="text" name="about" class="form-control form-control-danger">
@@ -123,14 +123,14 @@ if (isset($_POST['submit'])) {
                                     </div>
 
                                     <div class="row p-t-20">
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 mb-3">
                                             <div class="form-group">
                                                 <label class="control-label">Price </label>
                                                 <input type="text" name="price" class="form-control" placeholder="₱">
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 mb-3">
                                             <div class="form-group has-danger">
                                                 <label class="control-label">Image</label>
                                                 <input type="file" name="file" id="lastName" class="form-control form-control-danger" placeholder="12n">

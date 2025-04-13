@@ -2,10 +2,7 @@
 include("../connection/connect.php");
 error_reporting(0);
 session_start();
-// if(empty($_SESSION["adm_id"]))
-// {
-//     header('location:index.php');
-// }
+
 ?>
     <?php include 'layouts/header.php' ?>
     <?php include 'layouts/sidebar.php' ?>
@@ -213,7 +210,7 @@ session_start();
 </div>
 
 
-<div class="col-md-6">
+<div class="col-md-6 mb-3">
     <div class="card shadow-sm border-0 rounded-4">
         <div class="card-body">
         <h5 class="card-title fw-semibold mb-4">Charts</h5>

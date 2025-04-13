@@ -154,6 +154,41 @@ $index = new Index;
         </div>
 
     </div>
+    <script>
+    $(document).ready(function () {
+        // Initialize your DataTable first
+        const table = $('#datatable').DataTable();
+
+        // Append status filter to DataTables search container
+        $('#datatable_filter').append(`
+            <label class="ms-3 d-inline-flex align-items-center">
+                <select id="statusFilter" class="form-select form-select-sm" style="min-width: 160px;">
+                    <option value="">All</option>
+                    <option value="Placed">Placed</option>
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="In Process">In Process</option>
+                    <option value="Cancelled">Cancelled</option>
+                    <option value="Received">Received</option>
+                </select>
+            </label>
+        `);
+
+        // Filter logic based on visible status text (badge or plain text)
+        $('#statusFilter').on('change', function () {
+            const selected = $(this).val();
+            const column = 3; // Column 3 = Status, where we display the badge text
+
+            // If a status is selected, filter based on status text
+            if (selected) {
+                table.column(column).search(selected, true, false).draw();
+            } else {
+                // Clear filter and show all data
+                table.column(column).search('').draw();
+            }
+        });
+    });
+</script>
+
 
     <script>
         $(document).ready(function () {

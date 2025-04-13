@@ -122,7 +122,7 @@ if (isset($_POST['restore'])) {
                             <div class="row g-4">
 
                                 <!-- Backup Card -->
-                                <div class="col-md-6">
+                                <div class="col-md-6 mb-3">
                                     <div class="card shadow rounded-4 h-100">
                                         <div class="card-body">
                                             <?php include '../layouts/alert.php' ?>
@@ -145,7 +145,7 @@ if (isset($_POST['restore'])) {
                                 </div>
 
                                 <!-- Restore Card -->
-                                <div class="col-md-6">
+                                <div class="col-md-6 mb-3">
                                     <div class="card shadow rounded-4 h-100">
                                         <div class="card-body">
                                             <?php include '../layouts/alert.php' ?>
