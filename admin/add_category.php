@@ -39,24 +39,46 @@ if (isset($_POST['submit'])) {
 ?>
 
 
-
 <?php include 'layouts/header.php' ?>
-    <?php include 'layouts/sidebar.php' ?>
-    <?php include 'layouts/navbar.php' ?>
-    <div id="main">
+<?php include 'layouts/sidebar.php' ?>
+<?php include 'layouts/navbar.php' ?>
+<div id="main">
     <div class="main-container">
 
+        <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb" class="rounded-3 mb-4">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Rider Details</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
 
-        <div class="col-12">
+
+        <div class="d-flex justify-content-end my-2">
+            <a href="add_user.php" class="btn btn-primary">Add User</a>
+        </div>
 
 
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title">Listed Categories</h4>
 
-                    <div class="table-responsive">
-                        <table id="myTable" class="table table-bordered table-hover align-middle">
-                            <thead>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="col-lg-12">
+                    <div class="card card-outline-primary">
+
+                        <div class="card-header bg-primary">
+                            <h5 class="mb-0 text-white">Categories</h5>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table datatable table-striped table-hover"
+                                    id="datatable">
+                                    <thead>
                                 <tr>
                                     <th>ID</th>
                                     <th>Category Name</th>
@@ -82,11 +104,11 @@ if (isset($_POST['submit'])) {
             <td>' . $rows['c_name'] . '</td>
             <td>' . date('F j, Y', strtotime($rows['date'])) . '</td> <!-- Displaying full date in format: Month Day, Year -->
             <td>
-                <a href="delete_category.php?cat_del=' . $rows['c_id'] . '" class="btn btn-danger btn-flat btn-addon btn-xs m-b-10">
-                    <i class="fa fa-trash-o" style="font-size:16px"></i>
+                <a href="delete_category.php?cat_del=' . $rows['c_id'] . '" class="btn btn-danger btn-flat btn-addon btn-sm">
+                    <i class="bx bx-trash"></i>
                 </a>
                 <a href="update_category.php?cat_upd=' . $rows['c_id'] . '" class="btn btn-info btn-flat btn-addon btn-sm m-b-10 m-l-5">
-                    <i class="fa fa-edit"></i>
+  <i class="bx bx-edit"></i>
                 </a>
             </td>
         </tr>';
@@ -106,8 +128,15 @@ if (isset($_POST['submit'])) {
 
 
         <div class="col-12">
-            <div class="card card-outline-primary">
-                <h4>Add Stall Category</h4>
+        <div class="card card-outline-primary">
+                    
+                    <div class="card-header bg-primary">
+                        <h5 class="mb-0 text-white">Add Stall Category</h5>
+                    </div>
+
+                    <div class="widget card-body shadow-sm">
+
+                        <div class="widget-body">
                 <form action='' method='post'>
                     <div class="form-body">
 
@@ -121,9 +150,9 @@ if (isset($_POST['submit'])) {
 
 
                         </div>
-                        <div class="form-actions">
+                        <div class="form-actions my-2">
                             <input type="submit" name="submit" class="btn btn-primary" value="Save">
-                            <a href="add_category.php" class="btn btn-inverse">Cancel</a>
+                            <a href="add_category.php" class="btn btn-danger">Cancel</a>
                         </div>
                 </form>
             </div>

@@ -71,11 +71,10 @@
           <span class="hide-menu">Others</span>
         </li>
 
-
         <li class="sidebar-item">
   <a class="sidebar-link" href="add_category.php" aria-expanded="false">
     <span>
-      <i class="bx bx-bar-chart-alt-2"></i>
+      <i class="bx bx-category"></i>
     </span>
     <span class="hide-menu">Category</span>
   </a>
