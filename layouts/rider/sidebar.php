@@ -1,30 +1,59 @@
-<div class="left-sidebar">
-            <div class="scroll-sidebar">
-                <nav class="sidebar-nav">
-                    <ul id="sidebarnav">
-                        <li class="nav-devider"></li>
-                        <li class="nav-label">Home</li>
-                        <li>
-                            <a href="index.php" class="d-flex align-items-center gap-2">
-                                <i class="fas fa-tachometer-alt"></i>
-                                <span>Dashboard</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="index.php" class="d-flex align-items-center gap-2">
-                                <i class="fas fa-tachometer-alt"></i>
-                                <span>Dashboard</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="profile.php" class="d-flex align-items-center gap-2">
-                            <i class="fas fa-user"></i>
-                                <span>Profile</span>
-                            </a>
-                        </li>
+<aside class="left-sidebar">
+  <!-- Sidebar scroll-->
+  <div>
+    <div class="brand-logo d-flex align-items-center justify-content-between">
+
+    </div>
+    <!-- Sidebar navigation-->
+    <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
+      <ul id="sidebarnav">
+        <li class="nav-small-cap">
+          <i class="bx bx-dots-vertical-rounded nav-small-cap-icon fs-4"></i>
+          <span class="hide-menu">Home</span>
+        </li>
+
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="index.php" aria-expanded="false">
+            <span>
+              <i class="bx bx-home-alt"></i>
+            </span>
+            <span class="hide-menu">Dashboard</span>
+          </a>
+        </li>
 
 
-                    </ul>
-                </nav>
-            </div>
-        </div>
+
+
+
+
+
+        <li class="nav-small-cap">
+          <i class="bx bx-dots-vertical-rounded nav-small-cap-icon fs-4"></i>
+          <span class="hide-menu">AUTH</span>
+        </li>
+
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="profile.php" aria-expanded="false">
+            <span>
+              <i class="bx bx-user"></i>
+            </span>
+            <span class="hide-menu">Profile</span>
+          </a>
+        </li>
+
+       
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="logout.php" aria-expanded="false">
+            <span>
+              <i class="bx bx-log-out"></i>
+            </span>
+            <span class="hide-menu">Log Out</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- End Sidebar navigation -->
+  </div>
+  <!-- End Sidebar scroll-->
+</aside>

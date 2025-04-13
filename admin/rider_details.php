@@ -37,7 +37,7 @@ session_start();
    
             <div class="card-header bg-primary">
         <h5 class="mb-0 text-white">Rider Details</h5>
-    </div>
+       </div>
 
             <div class="card-body">
               <div class="table-responsive">

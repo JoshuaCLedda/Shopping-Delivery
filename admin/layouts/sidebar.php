@@ -26,6 +26,18 @@
           <span class="hide-menu">Main</span>
         </li>
 
+
+        <li class="sidebar-item">
+  <a class="sidebar-link" href="all_orders.php" aria-expanded="false">
+    <span>
+      <i class='bx bx-shopping-bag'></i>
+    </span>
+    <span class="hide-menu">Orders</span>
+  </a>
+</li>
+
+
+
         <li class="sidebar-item">
           <a class="sidebar-link" href="rider_details.php" aria-expanded="false">
             <span>

@@ -34,55 +34,42 @@ if (isset($_POST['submit'])) {
 
 ?>
 
-<!DOCTYPE html>
-
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <title>Admin Panel</title>
-    <link href="../admin/css/lib/bootstrap/bootstrap.min.css" rel="stylesheet">
-    <link href="../admin/css/helper.css" rel="stylesheet">
-    <link href="../admin/css/style.css" rel="stylesheet">
-    <link href="../css/helper.css" rel="stylesheet">
-    <link href="../css/style.css" rel="stylesheet">
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-
-</head>
-<?php include '../layouts/header.php' ?>
-
-<body class="fix-header fix-sidebar">
+<?php include '../admin/layouts/header.php' ?>
+<?php include '../layouts/rider/sidebar.php' ?>
+<?php include '../layouts/rider/navbar.php' ?>
 
 
-    <div id="main-wrapper">
-        <?php include '../layouts/navbar.php' ?>
-        <?php include '../layouts/rider/sidebar.php' ?>
+<div id="main">
+    <div class="main-container">
+
+        <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb" class="rounded-3 mb-4">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Riders Rating</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
 
 
 
-   
+        <div class="row">
+            <div class="col-12">
+                <div class="col-lg-12">
+                    <div class="card card-outline-primary">
 
+                        <div class="card-header bg-primary">
+                            <h5 class="mb-0 text-white">Recent Orders</h5>
+                        </div>
 
-        <div class="page-wrapper">
-
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="col-lg-12">
-                            <div class="card card-outline-primary">
-                                <h4>All Orders</h4>
-                                <?php
-                                include '../layouts/alert.php';
-                                ?>
-                                <div class="table-responsive">
-                                    <table id="myTable" class="table table-bordered table-hover align-middle">
-                                        <thead>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table datatable table-striped table-hover"
+                                    id="datatable">
+                                    <thead>
                                             <tr>
                                                 <th>User</th>
                                                 <th>Total Price</th>
@@ -135,7 +122,6 @@ if (isset($_POST['submit'])) {
             </div>
 
 
-            <?php include '../layouts/footer.php' ?>
 
             <!-- Modal for Order Details -->
             <script>
@@ -159,7 +145,5 @@ if (isset($_POST['submit'])) {
                     });
                 });
             </script>
-
-</body>
-
-</html>
+            
+<?php include '../admin/layouts/footer.php' ?>

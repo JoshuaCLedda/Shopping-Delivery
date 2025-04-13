@@ -59,7 +59,8 @@ $index = new Index;
                                                 echo '<tr>';
                                                 echo '<td>' . $row['restaurant'] . '</td>';
                                                 echo '<td>' . $row['f_name'] . ' ' . $row['l_name'] . '</td>';
-                                                echo '<td>' . $row['rating'] . '</td>';
+                                                echo '<td><i class="bx bxs-star text-warning"></i> ' . htmlspecialchars($row['rating']) . '</td>';
+
                                                 
                                                 echo 
                                                 '<td>
