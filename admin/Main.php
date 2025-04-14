@@ -1,6 +1,8 @@
 <?php
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 1); // Ensure errors are displayed
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
 
 class Index
 {
@@ -21,7 +23,8 @@ class Index
         $phone,
         $password_plain,
         $security_question,
-        $security_answer
+        $security_answer,
+        $orcr // this is $_FILES['orcr']
     ) {
         $username = mysqli_real_escape_string($this->con, $username);
         $firstname = mysqli_real_escape_string($this->con, $firstname);
@@ -31,28 +34,43 @@ class Index
         $phone = mysqli_real_escape_string($this->con, $phone);
         $security_question = mysqli_real_escape_string($this->con, $security_question);
         $security_answer = mysqli_real_escape_string($this->con, $security_answer);
-
-        // Hash password securely
+        $role = 2;
         $hashed_password = password_hash($password_plain, PASSWORD_DEFAULT);
 
         // Check if username or email already exists
-        $checkQuery = "SELECT * FROM riders WHERE username = '$username' OR email = '$email'";
+        $checkQuery = "SELECT * FROM users WHERE username = '$username' OR email = '$email'";
         $checkResult = mysqli_query($this->con, $checkQuery);
 
         if (mysqli_num_rows($checkResult) > 0) {
             return false; // Username or email already taken
         }
 
+        // Handle ORCR PDF upload
+        $orcr_name = $orcr['name'];
+        $orcr_tmp = $orcr['tmp_name'];
+        $orcr_ext = strtolower(pathinfo($orcr_name, PATHINFO_EXTENSION));
+
+        // Validate PDF extension
+        if ($orcr_ext !== 'pdf') {
+            return false; // Invalid file format
+        }
+
+        $orcr_new_name = uniqid('orcr_', true) . '.pdf';
+        $orcr_path = __DIR__ . '/uploads/' . $orcr_new_name;
+
+        if (!move_uploaded_file($orcr_tmp, $orcr_path)) {
+            return false; // File move failed
+        }
+
         // Insert new rider
-        $sql = "INSERT INTO riders (username, f_name, l_name, address,  email, phone, password, security_question, answer)
-        VALUES ('$username', '$firstname', '$lastname', '$address', '$email', '$phone', '$hashed_password', '$security_question', '$security_answer')";
+        $sql = "INSERT INTO users (username, f_name, l_name, email, phone,
+        password, address, role, security_questions, answer, orcr)
+        VALUES ('$username', '$firstname', '$lastname', '$email', '$phone', 
+        '$hashed_password', '$address', '$role', '$security_question', '$security_answer', '$orcr_new_name')";
 
-        $result = mysqli_query($this->con, $sql);
-
-
-        return $result;
-
+        return mysqli_query($this->con, $sql);
     }
+
 
     public function addRestaurant(
         $res_name,
@@ -298,8 +316,27 @@ class Index
         return $result;
     }
 
+    public function viewRiderDetails($id)
+    {
+        $sql = "SELECT * FROM users WHERE u_id = '$id'";
+
+        $result = mysqli_query($this->con, $sql);
+
+        if (!$result) {
+            die('Query failed: ' . mysqli_error($this->con));
+        }
 
 
+        return $result;
+    }
 
+    public function updateRiderApplication($id, $status)
+    {
+        $id = mysqli_real_escape_string($this->con, $id);
+        $status = mysqli_real_escape_string($this->con, $status);
 
+        $sql = "UPDATE users SET status = '$status' WHERE u_id = '$id'";
+
+        return mysqli_query($this->con, $sql);
+    }
 }

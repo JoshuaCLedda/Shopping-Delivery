@@ -118,6 +118,9 @@ while ($row = mysqli_fetch_array($result)) {
             break;
     }
 
+    // Use session user_id
+    $UserId = $_SESSION['user_id'];
+
     // Display row
     echo '<tr>';
     echo '<td>' . htmlspecialchars($row['u_id']) . '</td>';
@@ -125,21 +128,21 @@ while ($row = mysqli_fetch_array($result)) {
     echo '<td>' . htmlspecialchars($row['stall_id']) . '</td>';
     echo '<td><span class="badge rounded-pill ' . $badgeClass . '">' . $statusText . '</span></td>';
     echo '<td>' . $formattedDate . '</td>';
-
-    // Use session user_id
-    $UserId = $_SESSION['user_id'];
-
     echo '<td>';
-    echo '<form action="" method="POST">';
+    echo '<form action="" method="POST" class="d-inline">';
     echo '<input type="hidden" name="rider_id" value="' . htmlspecialchars($UserId) . '">';
     echo '<input type="hidden" name="transaction_id" value="' . htmlspecialchars($row['transacID']) . '">';
     echo '<button type="submit" name="submit" class="btn btn-sm btn-success">Accept</button>';
     echo '</form>';
+    
+    echo '<a href="confirm_order.php?order_upd=' . $row['transacID'] . '" class="btn btn-sm btn-info ms-2">';
+    echo '<i class="bx bx-edit"></i></a>';
+    
     echo '</td>';
-
     echo '</tr>';
 }
 ?>
+
 
 </tbody>
 

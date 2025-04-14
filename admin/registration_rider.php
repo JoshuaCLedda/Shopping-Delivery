@@ -1,6 +1,9 @@
 <?php
 session_start();
 error_reporting(E_ALL);
+ini_set('display_errors', 1); // Ensure errors are displayed
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
 include "Main.php";
 $index = new Index;
 // backend
@@ -14,6 +17,9 @@ if (isset($_POST['submit'])) {
     $password_plain    = $_POST['password'];
     $security_question = $_POST['security_question'];
     $security_answer   = $_POST['security_answer'];
+    $orcr = $_FILES['orcr'];
+
+
 
     $result = $index->addRider(
         $username,
@@ -24,11 +30,13 @@ if (isset($_POST['submit'])) {
         $phone,
         $password_plain,
         $security_question,
-        $security_answer
+        $security_answer,
+        $orcr
+
     );
 
     if ($result) {
-        $_SESSION['message'] = ['type' => 'success', 'message' => 'Registration successful!'];
+        $_SESSION['message'] = ['type' => 'success', 'message' => 'Rider Registered Succssfully!'];
     } else {
         $_SESSION['message'] = ['type' => 'danger', 'message' => 'Registration failed! Please try again.'];
     }
@@ -78,10 +86,10 @@ if (isset($_POST['submit'])) {
 
                         <div class="widget-body">
                             
-                            <form action="" method="post">
+                            <form action="" method="post" enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="form-group col-sm-6">
-                                        <label for="exampleInputEmail1">User-Name</label>
+                                        <label for="exampleInputEmail1">User Name</label>
                                         <input class="form-control" type="text" name="username" id="example-text-input" required>
                                     </div>
                                     <div class="form-group col-sm-6">
@@ -112,6 +120,12 @@ if (isset($_POST['submit'])) {
                                         <label for="exampleInputPassword1">Confirm Password</label>
                                         <input type="password" class="form-control" name="cpassword" id="exampleInputPassword2" required>
                                     </div>
+
+                                    <div class="form-group col-sm-6">
+  <label for="exampleInputPassword1">ORCR <span class="text-danger"> *pdf</span></label>
+  <input type="file" class="form-control" name="orcr" id="exampleInputPassword2" accept="application/pdf" required>
+</div>
+
 
                                     <div class="form-group col-sm-6">
                                         <label for="security_question">Security Question</label>

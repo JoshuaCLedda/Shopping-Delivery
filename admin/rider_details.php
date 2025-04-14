@@ -45,15 +45,17 @@ session_start();
                     <tr>
                       <th>Last Name</th>
                       <th>First Name</th>
-                      <th>Contact Email</th>
                       <th>Phone</th>
+                      <th>ORCR</th>
                       <th>Status</th>
                       <th>Manage</th>
                     </tr>
                   </thead>
                   <tbody>
                     <?php
-                    $sql = "SELECT * FROM riders ORDER BY id DESC";
+                    $sql = "SELECT * FROM users
+                    WHERE role = 2
+                    ORDER BY created_at DESC";
                     $query = mysqli_query($db, $sql);
 
                     if (!mysqli_num_rows($query) > 0) :
@@ -64,10 +66,22 @@ session_start();
                         $statusClass = $row['status'] === 'active' ? 'success' : 'danger';
                     ?>
                         <tr>
-                          <td><?= htmlspecialchars($row['l_name']) ?></td>
+                          <td><?= htmlspecialchars($row['u_id']) ?></td>
                           <td><?= htmlspecialchars($row['f_name']) ?></td>
-                          <td><?= htmlspecialchars($row['email']) ?></td>
                           <td><?= htmlspecialchars($row['phone']) ?></td>
+                          <td>
+    <?php if (!empty($row['orcr'])): ?>
+        <a href="uploads/<?= htmlspecialchars($row['orcr']) ?>" target="_blank"
+           class="btn btn-sm btn-primary rounded-pill px-3">
+            View ORCR
+        </a>
+    <?php else: ?>
+        <span class="badge bg-secondary rounded-pill px-3">No ORCR</span>
+    <?php endif; ?>
+</td>
+
+
+
                           <td>
                             <span class="badge bg-<?= $statusClass ?> rounded-pill"><?= $statusText ?></span>
                           </td>
@@ -81,6 +95,12 @@ session_start();
                                 <li><a class="dropdown-item" href="update_rider_status.php?id=<?= $row['id'] ?>&status=inactive">Disapprove</a></li>
                               </ul>
                             </div>
+                            <a href="update_rider.php?u_id=<?= $row['u_id'] ?>" class="btn btn-sm btn-info ms-2">
+
+                            <i class="bx bx-edit"></i>
+
+</a>
+
                           </td>
                         </tr>
                     <?php

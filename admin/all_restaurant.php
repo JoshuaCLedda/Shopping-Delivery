@@ -28,6 +28,7 @@ session_start();
         <div class="d-flex justify-content-end my-2">
             <a href="add_restaurant.php" class="btn btn-primary">Add Stall</a>
         </div>
+        <?php include 'layouts/alert.php'; ?>
 
 
 
