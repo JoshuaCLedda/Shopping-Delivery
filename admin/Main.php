@@ -1,6 +1,6 @@
 <?php
 error_reporting(E_ALL);
-ini_set('display_errors', 1); // Ensure errors are displayed
+ini_set('display_errors', value: 1); // Ensure errors are displayed
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 
@@ -24,7 +24,8 @@ class Index
         $password_plain,
         $security_question,
         $security_answer,
-        $orcr // this is $_FILES['orcr']
+        $orcr
+        
     ) {
         $username = mysqli_real_escape_string($this->con, $username);
         $firstname = mysqli_real_escape_string($this->con, $firstname);
@@ -339,4 +340,75 @@ class Index
 
         return mysqli_query($this->con, $sql);
     }
+
+    public function getRiderRatings($u_id)
+    {
+        $sql = "SELECT users.f_name, users.l_name,
+        rating_rider.rider_name, rating_rider.rating, rating_rider.complaint,
+        rating_rider.created_at
+        FROM rating_rider
+        LEFT JOIN users ON
+        users.u_id = rating_rider.rider_id 
+        WHERE rating_rider.rider_id = '$u_id'
+        ORDER BY rating_rider.created_at DESC";
+
+        $result = mysqli_query($this->con, $sql);
+
+        if (!$result) {
+            die('Query failed: ' . mysqli_error($this->con));
+        }
+
+
+        return $result;
+    }
+    public function getRiderOverallRating($u_id)
+    {
+        $u_id = intval($u_id);
+
+        $sql = "SELECT 
+                    ROUND(AVG(rating), 1) AS avg_rating, 
+                    COUNT(*) AS total 
+                FROM rating_rider 
+                WHERE rider_id = $u_id";
+
+        $result = mysqli_query($this->con, $sql);
+
+        if (!$result) {
+            die('Query failed: ' . mysqli_error($this->con));
+        }
+
+        $data = mysqli_fetch_assoc($result);
+        return $data ?: ['avg_rating' => 0, 'total' => 0];
+    }
+
+    public function terminateRider($u_id)
+    {
+        // Set the rider's status to 'banned' (terminate status)
+        $sql = "UPDATE users SET status = 'banned' WHERE u_id = $u_id";
+    
+        $result = mysqli_query($this->con, $sql);
+    
+        if (!$result) {
+            error_log("Terminate Error: " . mysqli_error($this->con));
+            return false;  // Return false if the query fails
+        }
+    
+        return true;  // Return true if the update was successful
+    }
+
+    public function getRiderStatus($u_id)
+    {
+        $sql = "SELECT status FROM users WHERE u_id = '$u_id'";  // Removed extra comma after 'status'
+    
+        $result = mysqli_query($this->con, $sql);
+    
+        if (!$result) {
+            die('Query failed: ' . mysqli_error($this->con));
+        }
+    
+        $row = mysqli_fetch_assoc($result);
+        return $row['status'];  // Return only the status value
+    }
+    
+
 }
