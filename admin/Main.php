@@ -24,8 +24,8 @@ class Index
         $password_plain,
         $security_question,
         $security_answer,
-        $orcr
-        
+        $orcr,
+        $physic_exam
     ) {
         $username = mysqli_real_escape_string($this->con, $username);
         $firstname = mysqli_real_escape_string($this->con, $firstname);
@@ -37,41 +37,60 @@ class Index
         $security_answer = mysqli_real_escape_string($this->con, $security_answer);
         $role = 2;
         $hashed_password = password_hash($password_plain, PASSWORD_DEFAULT);
-
+    
         // Check if username or email already exists
         $checkQuery = "SELECT * FROM users WHERE username = '$username' OR email = '$email'";
         $checkResult = mysqli_query($this->con, $checkQuery);
-
+    
         if (mysqli_num_rows($checkResult) > 0) {
             return false; // Username or email already taken
         }
-
-        // Handle ORCR PDF upload
+    
+        // --- ORCR Upload ---
         $orcr_name = $orcr['name'];
         $orcr_tmp = $orcr['tmp_name'];
         $orcr_ext = strtolower(pathinfo($orcr_name, PATHINFO_EXTENSION));
-
-        // Validate PDF extension
+    
         if ($orcr_ext !== 'pdf') {
-            return false; // Invalid file format
+            return false; // Invalid ORCR file format
         }
-
+    
         $orcr_new_name = uniqid('orcr_', true) . '.pdf';
         $orcr_path = __DIR__ . '/uploads/' . $orcr_new_name;
-
+    
         if (!move_uploaded_file($orcr_tmp, $orcr_path)) {
-            return false; // File move failed
+            return false; // ORCR file move failed
         }
-
+    
+        // --- Physical Exam Upload ---
+        $physic_exam_name = $physic_exam['name'];
+        $physic_exam_tmp = $physic_exam['tmp_name'];
+        $physic_exam_ext = strtolower(pathinfo($physic_exam_name, PATHINFO_EXTENSION));
+    
+        if ($physic_exam_ext !== 'pdf') {
+            return false; // Invalid physical exam file format
+        }
+    
+        $physic_exam_new_name = uniqid('physic_', true) . '.pdf';
+        $physic_exam_path = __DIR__ . '/uploads/' . $physic_exam_new_name;
+    
+        if (!move_uploaded_file($physic_exam_tmp, $physic_exam_path)) {
+            return false; // Physical exam file move failed
+        }
+    
         // Insert new rider
-        $sql = "INSERT INTO users (username, f_name, l_name, email, phone,
-        password, address, role, security_questions, answer, orcr)
-        VALUES ('$username', '$firstname', '$lastname', '$email', '$phone', 
-        '$hashed_password', '$address', '$role', '$security_question', '$security_answer', '$orcr_new_name')";
-
+        $sql = "INSERT INTO users (
+            username, f_name, l_name, email, phone, password, address,
+            role, security_questions, answer, orcr, physic_exam
+        ) VALUES (
+            '$username', '$firstname', '$lastname', '$email', '$phone',
+            '$hashed_password', '$address', '$role', '$security_question',
+            '$security_answer', '$orcr_new_name', '$physic_exam_new_name'
+        )";
+    
         return mysqli_query($this->con, $sql);
     }
-
+    
 
     public function addRestaurant(
         $res_name,
@@ -81,7 +100,9 @@ class Index
         $o_hr,
         $c_hr,
         $o_days,
-        $c_name
+        $c_name,
+        $image,
+        $address
     ) {
         // Escape variables
         $res_name = mysqli_real_escape_string($this->con, $res_name);
@@ -92,24 +113,42 @@ class Index
         $c_hr = mysqli_real_escape_string($this->con, $c_hr);
         $o_days = mysqli_real_escape_string($this->con, $o_days);
         $c_name = mysqli_real_escape_string($this->con, $c_name);
-
-
+        $address = mysqli_real_escape_string($this->con, $address);
+    
         // Email uniqueness check
         $checkQuery = "SELECT * FROM restaurant WHERE email = '$email'";
         $checkResult = mysqli_query($this->con, $checkQuery);
         if (mysqli_num_rows($checkResult) > 0) {
             return false; // Email already exists
         }
-
-        // Insert restaurant data
+    
+        // Handle image upload
+        $imageName = basename($image['name']);
+        $imageTmp = $image['tmp_name'];
+        $imageFolder = "Res_img/";
+    
+        // Create folder if it doesn't exist
+        if (!is_dir($imageFolder)) {
+            mkdir($imageFolder, 0777, true);
+        }
+    
+        $targetPath = $imageFolder . time() . "_" . $imageName;
+    
+        if (move_uploaded_file($imageTmp, $targetPath)) {
+            $imagePathForDB = mysqli_real_escape_string($this->con, $targetPath);
+        } else {
+            return false; // Image upload failed
+        }
+    
+        // Insert restaurant data with image
         $sql = "INSERT INTO restaurant 
-            (title, email, phone, url, o_hr, c_hr, o_days, c_id)
+            (title, email, phone, url, o_hr, c_hr, o_days, address, c_id, image)
             VALUES 
-            ('$res_name', '$email', '$phone', '$url', '$o_hr', '$c_hr', '$o_days', '$c_name')";
-
+            ('$res_name', '$email', '$phone', '$url', '$o_hr', '$c_hr', '$o_days', '$address', '$c_name', '$imagePathForDB')";
+    
         return mysqli_query($this->con, $sql);
     }
-
+    
 
     public function getRestCategory()
     {
@@ -410,5 +449,35 @@ class Index
         return $row['status'];  // Return only the status value
     }
     
-
+    public function getRecentTransactions()
+    {
+        // Get current week's Monday and Sunday
+        $monday = date('Y-m-d 00:00:00', strtotime('monday this week'));
+        $sunday = date('Y-m-d 23:59:59', strtotime('sunday this week'));
+    
+        $sql = "SELECT 
+                    transaction.id AS transacId,
+                    users.f_name, 
+                    users.l_name, 
+                    transaction.total_price,
+                    transaction.status,
+                    transaction.order_date,
+                    transaction.titles AS dishesOrder,
+                    restaurant.title
+                FROM transaction
+                LEFT JOIN users ON users.u_id = transaction.u_id
+                LEFT JOIN restaurant ON restaurant.rs_id = transaction.rs_id
+                WHERE transaction.order_date BETWEEN '$monday' AND '$sunday'
+                ORDER BY transaction.order_date DESC
+                LIMIT 5";
+    
+        $result = mysqli_query($this->con, $sql);
+    
+        if (!$result) {
+            die('Query failed: ' . mysqli_error($this->con));
+        }
+    
+        return $result;
+    }
+    
 }

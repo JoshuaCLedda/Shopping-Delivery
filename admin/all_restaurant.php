@@ -6,13 +6,13 @@ session_start();
 ?>
 
 <?php include 'layouts/header.php' ?>
-    <?php include 'layouts/sidebar.php' ?>
-    <?php include 'layouts/navbar.php' ?>
-    <div id="main">
+<?php include 'layouts/sidebar.php' ?>
+<?php include 'layouts/navbar.php' ?>
+<div id="main">
     <div class="main-container">
 
 
-    <div class="row">
+        <div class="row">
             <div class="col">
                 <nav aria-label="breadcrumb" class="rounded-3 mb-4">
                     <ol class="breadcrumb mb-0">
@@ -33,83 +33,108 @@ session_start();
 
 
 
-                <div class="row">
-                    <div class="col-12">
-                        <div class="col-lg-12">
-                        <div class="card card-outline-primary">
-   
-   <div class="card-header bg-primary">
-<h5 class="mb-0 text-white">Stall Details</h5>
-</div>
+        <div class="row">
+            <div class="col-12">
+                <div class="col-lg-12">
+                    <div class="card card-outline-primary">
 
-   <div class="card-body">
-   <a href="delete_users.php?user_del=' . $rows['u_id'] . '" c
+                        <div class="card-header bg-primary">
+                            <h5 class="mb-0 text-white">Stall Details</h5>
+                        </div>
 
-                                <div class="table-responsive">
-  <table class="table datatable table-striped table-hover" id="datatable">
-    <thead>
-                                            <tr>
-                                                <th>Category</th>
-                                                <th>Name</th>
-                                                <th>Email</th>
-                                                <th>Phone</th>
-                                                <th>Date</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
+                        <div class="card-body">
+                            <a href="delete_users.php?user_del=' . $rows['u_id'] . '" c <div class="table-responsive">
+                                <table class="table datatable table-striped table-hover" id="datatable">
+                                    <thead>
+                                        <tr>
+                                            <th>Category</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Phone</th>
+                                            <th>Status</th>
+                                            <th>Date Created</th>
 
-                                        <tbody>
-    <?php
-    $sql = "SELECT * FROM restaurant ORDER BY rs_id DESC";
-    $query = mysqli_query($db, $sql);
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
 
-    if (!mysqli_num_rows($query) > 0) {
-        echo '<tr><td colspan="6"><center>No Restaurants</center></td></tr>';
-    } else {
-        while ($rows = mysqli_fetch_array($query)) {
+                                    <tbody>
+                                    <?php
+$sql = "SELECT * FROM restaurant ORDER BY rs_id DESC";
+$query = mysqli_query($db, $sql);
+?>
+
+<?php if (!mysqli_num_rows($query) > 0): ?>
+    <tr>
+        <td colspan="7"><center>No Restaurants</center></td>
+    </tr>
+<?php else: ?>
+    <?php while ($rows = mysqli_fetch_array($query)): ?>
+        <?php
             // Get category name
             $mql = "SELECT * FROM res_category WHERE c_id='" . $rows['c_id'] . "'";
             $res = mysqli_query($db, $mql);
             $row = mysqli_fetch_array($res);
 
-            // Display the important details
-            echo '<tr>
-                    <td>' . $row['c_name'] . '</td>
-                    <td>' . $rows['title'] . '</td>
-                    <td>' . $rows['email'] . '</td>
-                    <td>' . $rows['phone'] . '</td>
-                    <td>' . date("F j, Y", strtotime($rows['date'])) . '</td>
-                    <td>
-                        <a href="delete_restaurant.php?res_del=' . $rows['rs_id'] . '" class="btn btn-sm btn-danger">
-                          <i class="bx bx-trash"></i>
-                        <a href="update_restaurant.php?res_upd=' . $rows['rs_id'] . '" class="btn btn-sm btn-info ms-2">
-                        <i class="bx bx-edit"></i>
-                    </td>
-                </tr>';
-        }
-    }
-    ?>
-</tbody>
+            // Determine status
+            switch ($rows['status']) {
+                case 0:
+                    $statusText = 'Active';
+                    $badgeClass = 'bg-success';
+                    break;
+                case 2:
+                    $statusText = 'Inactive';
+                    $badgeClass = 'bg-danger';
+                    break;
+                default:
+                    $statusText = 'Unknown';
+                    $badgeClass = 'bg-secondary';
+                    break;
+            }
+        ?>
+        <tr>
+            <td><?= $row['c_name'] ?></td>
+            <td><?= $rows['title'] ?></td>
+            <td><?= $rows['email'] ?></td>
+            <td><?= $rows['phone'] ?></td>
+            <td>
+                <span class="badge <?= $badgeClass ?>"><?= $statusText ?></span>
+            </td>
+            <td><?= date("F j, Y", strtotime($rows['date'])) ?></td>
+            <td>
+         <a href="delete_restaurant.php?res_del=<?= $rows['rs_id'] ?>" 
+   class="btn btn-sm btn-danger" 
+   onclick="return confirm('Are you sure you want to delete this restaurant?');">
+    <i class="bx bx-trash"></i>
+</a>
+
+                <a href="update_restaurant.php?res_upd=<?= $rows['rs_id'] ?>" class="btn btn-sm btn-info ms-2">
+                    <i class="bx bx-edit"></i>
+                </a>
+            </td>
+        </tr>
+    <?php endwhile; ?>
+<?php endif; ?>
 
 
 
-                                    </table>
-                                </div>
-                            </div>
+                                </table>
                         </div>
-
-
-
                     </div>
-
                 </div>
+
+
+
             </div>
+
         </div>
     </div>
+</div>
+</div>
 
-    </div>
+</div>
 
-    </div>
+</div>
 
-    </div>
-    <?php include 'layouts/footer.php' ?>
+</div>
+<?php include 'layouts/footer.php' ?>

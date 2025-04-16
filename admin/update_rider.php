@@ -19,6 +19,7 @@ while ($row = mysqli_fetch_object($result)) {
     $security_question = $row->security_question ?? '';
     $security_answer = $row->security_answer ?? '';
     $orcr = $row->orcr ?? '';
+    $phyic_exam = $row->phyic_exam ?? '';
     $status = $row->status ?? '';
 }
 
@@ -124,6 +125,16 @@ if (isset($_POST['submit'])) {
                                             <a href="uploads/<?= htmlspecialchars($orcr) ?>" target="_blank" class="btn btn-outline-info col-md-12">View ORCR (PDF)</a>
                                         <?php else : ?>
                                             <p class="form-control-plaintext">No ORCR uploaded</p>
+                                        <?php endif; ?>
+                                    </div>
+
+
+                                    <div class="form-group col-sm-6 mb-3">
+                                        <label class="form-label">Physical Examination <span class="text-danger"> *pdf</span></label><br>
+                                        <?php if (!empty($phyic_exam)) : ?>
+                                            <a href="uploads/<?= htmlspecialchars($phyic_exam) ?>" target="_blank" class="btn btn-outline-info col-md-12">View Physical Exam (PDF)</a>
+                                        <?php else : ?>
+                                            <p class="form-control-plaintext text-danger">No Physical Exam Uploaded</p>
                                         <?php endif; ?>
                                     </div>
 

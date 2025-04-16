@@ -1,22 +1,24 @@
 <?php
 session_start();
 error_reporting(E_ALL);
-ini_set('display_errors', 1); // Ensure errors are displayed
-
+ini_set('display_errors', value: 1); // Ensure errors are displayed
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 include "Main.php";
 $index = new Index;
 // backend
 if (isset($_POST['submit'])) {
-    $username          = $_POST['username'];
-    $f_name            = $_POST['f_name'];
-    $l_name            = $_POST['l_name'];
-    $address           = $_POST['address'];
-    $email             = $_POST['email'];
-    $phone             = $_POST['phone'];
-    $password_plain    = $_POST['password'];
+    $username = $_POST['username'];
+    $f_name = $_POST['f_name'];
+    $l_name = $_POST['l_name'];
+    $address = $_POST['address'];
+    $email = $_POST['email'];
+    $phone = $_POST['phone'];
+    $password_plain = $_POST['password'];
     $security_question = $_POST['security_question'];
-    $security_answer   = $_POST['security_answer'];
+    $security_answer = $_POST['security_answer'];
     $orcr = $_FILES['orcr'];
+    $physic_exam = $_FILES['physic_exam'];
+
 
 
 
@@ -30,7 +32,8 @@ if (isset($_POST['submit'])) {
         $password_plain,
         $security_question,
         $security_answer,
-        $orcr
+        $orcr,
+        $physic_exam
 
     );
 
@@ -48,11 +51,11 @@ if (isset($_POST['submit'])) {
 <?php include 'layouts/navbar.php' ?>
 
 <div id="main">
-  <div class="main-container">
+    <div class="main-container">
 
 
 
-  <div class="row">
+        <div class="row">
             <div class="col">
                 <nav aria-label="breadcrumb" class="rounded-3 mb-4">
                     <ol class="breadcrumb mb-0">
@@ -71,12 +74,12 @@ if (isset($_POST['submit'])) {
 
 
 
-            <?php include 'layouts/alert.php'; ?>
+        <?php include 'layouts/alert.php'; ?>
 
-            <div class="row justify-content-center">
-                <div class="col-md-12">
-          <div class="card card-outline-primary">
-                    
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="card card-outline-primary">
+
                     <div class="card-header bg-primary">
                         <h5 class="mb-0 text-white">Register Rider</h5>
                     </div>
@@ -84,65 +87,85 @@ if (isset($_POST['submit'])) {
                     <div class="widget card-body shadow-sm">
 
                         <div class="widget-body">
-                            
+
                             <form action="" method="post" enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="form-group col-sm-6">
                                         <label for="exampleInputEmail1">User Name</label>
-                                        <input class="form-control" type="text" name="username" id="example-text-input" required>
+                                        <input class="form-control" type="text" name="username" id="example-text-input"
+                                            required>
                                     </div>
                                     <div class="form-group col-sm-6">
                                         <label for="exampleInputEmail1">First Name</label>
-                                        <input class="form-control" type="text" name="f_name" id="example-text-input" required>
+                                        <input class="form-control" type="text" name="f_name" id="example-text-input"
+                                            required>
                                     </div>
                                     <div class="form-group col-sm-6">
                                         <label for="exampleInputEmail1">Last Name</label>
-                                        <input class="form-control" type="text" name="l_name" id="example-text-input-2" required>
+                                        <input class="form-control" type="text" name="l_name" id="example-text-input-2"
+                                            required>
                                     </div>
                                     <div class="form-group col-sm-6">
                                         <label for="exampleInputEmail1">Address</label>
-                                        <input class="form-control" type="text" name="address" id="example-text-input-2" required>
+                                        <input class="form-control" type="text" name="address" id="example-text-input-2"
+                                            required>
                                     </div>
                                     <div class="form-group col-sm-6">
                                         <label for="exampleInputEmail1">Email Address</label>
-                                        <input type="text" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp" required>
+                                        <input type="text" class="form-control" name="email" id="exampleInputEmail1"
+                                            aria-describedby="emailHelp" required>
                                     </div>
                                     <div class="form-group col-sm-6">
                                         <label for="exampleInputEmail1">Phone</label>
-                                        <input class="form-control" type="number" name="phone" id="example-tel-input-3" required>
+                                        <input class="form-control" type="number" name="phone" id="example-tel-input-3"
+                                            required>
                                     </div>
                                     <div class="form-group col-sm-6">
                                         <label for="exampleInputPassword1">Password</label>
-                                        <input type="password" class="form-control" name="password" id="exampleInputPassword1" required>
+                                        <input type="password" class="form-control" name="password"
+                                            id="exampleInputPassword1" required>
                                     </div>
                                     <div class="form-group col-sm-6">
                                         <label for="exampleInputPassword1">Confirm Password</label>
-                                        <input type="password" class="form-control" name="cpassword" id="exampleInputPassword2" required>
+                                        <input type="password" class="form-control" name="cpassword"
+                                            id="exampleInputPassword2" required>
                                     </div>
 
                                     <div class="form-group col-sm-6">
-  <label for="exampleInputPassword1">ORCR <span class="text-danger"> *pdf</span></label>
-  <input type="file" class="form-control" name="orcr" id="exampleInputPassword2" accept="application/pdf" required>
-</div>
+                                        <label for="exampleInputPassword1">ORCR <span class="text-danger">
+                                                *pdf</span></label>
+                                        <input type="file" class="form-control" name="orcr" id="exampleInputPassword2"
+                                            accept="application/pdf" required>
+                                    </div>
+
+                                    <div class="form-group col-sm-6">
+                                        <label for="exampleInputPassword1">Physical Examination <span class="text-danger">
+                                                *pdf</span></label>
+                                        <input type="file" class="form-control" name="physic_exam" id="exampleInputPassword2"
+                                            accept="application/pdf" required>
+                                    </div>
 
 
                                     <div class="form-group col-sm-6">
                                         <label for="security_question">Security Question</label>
                                         <select name="security_question" class="form-control" required>
                                             <option value="Your first pet's name?">Your first pet's name?</option>
-                                            <option value="Your mother's maiden name?">Your mother's maiden name?</option>
+                                            <option value="Your mother's maiden name?">Your mother's maiden name?
+                                            </option>
                                             <option value="City you were born in?">City you were born in?</option>
                                         </select>
                                     </div>
 
                                     <div class="form-group col-sm-6">
                                         <label for="security_answer">Answer</label>
-                                        <input type="text" class="form-control" name="security_answer" placeholder="Answer" required>
+                                        <input type="text" class="form-control" name="security_answer"
+                                            placeholder="Answer" required>
                                     </div>
                                 </div>
                                 <div class="row my-2">
                                     <div class="col-sm-12">
-                                        <button type="submit" value="Register" name="submit" class="btn btn-primary">Register Rider</button>
+                                        <button type="submit" value="Register" name="submit"
+                                            class="btn btn-primary">Register Rider</button>
                                     </div>
                                 </div>
                             </form>
@@ -151,8 +174,8 @@ if (isset($_POST['submit'])) {
                 </div>
             </div>
         </div>
-    </section>
+        </section>
 
 
 
-    <?php include 'layouts/footer.php' ?>
+        <?php include 'layouts/footer.php' ?>
