@@ -11,15 +11,24 @@
           <i class="bx bx-dots-vertical-rounded nav-small-cap-icon fs-4"></i>
           <span class="hide-menu">Home</span>
         </li>
-
         <li class="sidebar-item">
-          <a class="sidebar-link" href="index.php" aria-expanded="false">
-            <span>
-              <i class="bx bx-home-alt"></i>
-            </span>
-            <span class="hide-menu">Dashboard</span>
-          </a>
-        </li>
+    <a class="sidebar-link" href="index.php" aria-expanded="false">
+        <span>
+            <i class="bx bxs-cart-alt"></i>
+        </span>
+        <span class="hide-menu">In-Process Orders</span>
+    </a>
+</li>
+
+<li class="sidebar-item">
+    <a class="sidebar-link" href="accepted_orders.php" aria-expanded="false">
+        <span>
+            <i class="bx bxs-check-circle"></i> 
+        </span>
+        <span class="hide-menu">Accepted Orders</span>
+    </a>
+</li>
+
 
 
 
@@ -43,13 +52,15 @@
 
        
         <li class="sidebar-item">
-          <a class="sidebar-link" href="logout.php" aria-expanded="false">
-            <span>
-              <i class="bx bx-log-out"></i>
-            </span>
-            <span class="hide-menu">Log Out</span>
-          </a>
-        </li>
+    <a class="sidebar-link" href="logout.php" aria-expanded="false"
+       onclick="return confirm('Are you sure you want to log out?');">
+        <span>
+            <i class="bx bx-log-out"></i>
+        </span>
+        <span class="hide-menu">Log Out</span>
+    </a>
+</li>
+
       </ul>
     </nav>
 

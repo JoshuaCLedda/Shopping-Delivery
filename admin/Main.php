@@ -320,7 +320,7 @@ class Index
         $result = mysqli_query($this->con, $sql);
 
         if (!$result) {
-            die('Query failed: ' . mysqli_error($this->con));
+            die('Query failed:   ' . mysqli_error($this->con));
         }
 
         return $result;

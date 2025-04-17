@@ -136,6 +136,7 @@ while ($row = mysqli_fetch_array($result)) {
     echo '</form>';
     
     echo '<a href="confirm_order.php?order_upd=' . $row['transacID'] . '" class="btn btn-sm btn-info ms-2">';
+
     echo '<i class="bx bx-edit"></i></a>';
     
     echo '</td>';
