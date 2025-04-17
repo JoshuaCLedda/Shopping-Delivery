@@ -1,7 +1,7 @@
 <?php
+session_start();
 include("../connection/connect.php");
 error_reporting(0);
-session_start();
 
 ?>
 <?php include 'layouts/header.php' ?>
@@ -27,7 +27,7 @@ session_start();
             <a href="add_user.php" class="btn btn-primary">Add User</a>
         </div>
 
-
+        <?php include 'layouts/alert.php' ?>
 
 
         <div class="row">
@@ -41,8 +41,7 @@ session_start();
 
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table datatable table-striped table-hover"
-                                    id="datatable">
+                                <table class="table datatable table-striped table-hover" id="datatable">
                                     <thead>
                                         <tr>
                                             <th>Username</th>
@@ -59,12 +58,16 @@ session_start();
                                         <?php
                                         $sql = "SELECT * FROM users ORDER BY u_id DESC";
                                         $query = mysqli_query($db, $sql);
+                                        ?>
 
-                                        if (!mysqli_num_rows($query) > 0) {
-                                            echo '<tr><td colspan="9" class="text-center">No Users Found</td></tr>';
-                                        } else {
-                                            while ($rows = mysqli_fetch_array($query)) {
+                                        <?php if (!mysqli_num_rows($query)): ?>
+                                            <tr>
+                                                <td colspan="9" class="text-center">No Users Found</td>
+                                            </tr>
+                                        <?php else: ?>
+                                            <?php while ($rows = mysqli_fetch_array($query)): ?>
 
+                                                <?php
                                                 // Role badge logic
                                                 switch ($rows['role']) {
                                                     case 1:
@@ -84,27 +87,32 @@ session_start();
                                                         $badgeClass = 'badge bg-secondary rounded-pill';
                                                         break;
                                                 }
-                                                
-                                                echo '<tr>
-                                                <td>' . $rows['username'] . '</td>
-                                                <td>' . $rows['f_name'] . ' ' . $rows['l_name'] . '</td>
-                                                <td>' . $rows['email'] . '</td>
-                                                <td><span class="badge ' . $badgeClass . '">' . $roleText . '</span></td>
-                                                <td>' . $rows['phone'] . '</td>
-                                                <td>' . date("F j, Y", strtotime($rows['date'])) . '</td>
-                                                <td>
-                                                    <a href="delete_users.php?user_del=' . $rows['u_id'] . '" class="btn btn-sm btn-danger">
-                                                        <i class="bx bx-trash"></i>
+                                                ?>
 
-                                                    </a>
-                                                    <a href="update_users.php?user_upd=' . $rows['u_id'] . '" class="btn btn-sm btn-info ms-2">
-                                                    <i class="bx bx-edit"></i>
-                                                    </a>
-                    </td>
-                </tr>';
-                                            }
-                                        }
-                                        ?>
+                                                <tr>
+                                                    <td><?= htmlspecialchars($rows['username']) ?></td>
+                                                    <td><?= htmlspecialchars($rows['f_name'] . ' ' . $rows['l_name']) ?></td>
+                                                    <td><?= htmlspecialchars($rows['email']) ?></td>
+                                                    <td><span class="<?= $badgeClass ?>"><?= $roleText ?></span></td>
+                                                    <td><?= htmlspecialchars($rows['phone']) ?></td>
+                                                    <td><?= date("F j, Y", strtotime($rows['date'])) ?></td>
+                                                    <td>
+                                                        <a href="delete_users.php?user_del=<?= $rows['u_id'] ?>"
+                                                            class="btn btn-sm btn-danger"
+                                                            onclick="return confirm('Are you sure you want to delete this account?');">
+                                                            <i class="bx bx-trash"></i>
+                                                        </a>
+
+                                                        <a href="update_users.php?user_upd=<?= $rows['u_id'] ?>"
+                                                            class="btn btn-sm btn-info ms-2">
+                                                            <i class="bx bx-edit"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+
+                                            <?php endwhile; ?>
+                                        <?php endif; ?>
+
                                     </tbody>
 
 

@@ -6,7 +6,6 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 include "Main.php";
 $index = new Index;
-
 $result = $index->viewRiderDetails($_GET['u_id']);
 while ($row = mysqli_fetch_object($result)) {
     $u_id     = $row->u_id;

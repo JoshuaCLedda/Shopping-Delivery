@@ -1,289 +1,172 @@
-<!DOCTYPE html>
-<html lang="en">
 <?php
 session_start();
-error_reporting(0);
-include("../connection/connect.php");
+error_reporting(E_ALL);
+ini_set('display_errors', 1); // Ensure errors are displayed
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+include "Main.php";
+$index = new Index;
 
-if (isset($_POST['submit'])) {
-    if (
-        empty($_POST['uname']) ||
-        empty($_POST['fname']) ||
-        empty($_POST['lname']) ||
-        empty($_POST['email']) ||
-        empty($_POST['password']) ||
-        empty($_POST['phone'])
-    ) {
-        $error = '<div class="alert alert-danger alert-dismissible fade show">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <strong>All fields are required!</strong>
-                </div>';
+$u_id = $_GET['user_upd'];
+
+if (isset($_POST['submit']) && $u_id) {
+    $u_id = trim($_POST['u_id']);
+    $f_name = trim($_POST['f_name']);
+    $l_name = trim($_POST['l_name']);
+    $username = trim($_POST['username']);
+    $phone = trim($_POST['phone']);
+    $email = trim($_POST['email']);
+    $address = trim($_POST['address']);
+    $role = trim($_POST['role']);
+    $password = trim($_POST['password']); // may be empty
+
+    // If password is entered, hash it
+    $hashed_password = !empty($password) ? password_hash($password, PASSWORD_DEFAULT) : null;
+
+    // Now call your model function to update profile
+    $result = $index->updateUser(
+        $u_id,
+        $f_name,
+        $l_name,
+        $username,
+        $phone,
+        $email,
+        $address,
+        $role,
+        $hashed_password
+    );
+
+    if ($result) {
+        $_SESSION['message'] = ['type' => 'success', 'message' => 'Profile Updated Successfully!'];
     } else {
-        if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-            $error = '<div class="alert alert-danger alert-dismissible fade show">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <strong>Invalid email format!</strong>
-                    </div>';
-        } elseif (strlen($_POST['password']) < 6) {
-            $error = '<div class="alert alert-danger alert-dismissible fade show">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <strong>Password must be at least 6 characters!</strong>
-                    </div>';
-        } elseif (strlen($_POST['phone']) < 10) {
-            $error = '<div class="alert alert-danger alert-dismissible fade show">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <strong>Invalid phone number!</strong>
-                    </div>';
-        } else {
-            // Fetch existing user details
-            $query = "SELECT password FROM users WHERE u_id='" . $_GET['user_upd'] . "'";
-            $result = mysqli_query($db, $query);
-            $user = mysqli_fetch_assoc($result);
-            $hashed_password = $user['password'];
-
-            // If the password has been changed, hash the new one
-            if (password_verify($_POST['password'], $hashed_password)) {
-                $new_password = $hashed_password; // Keep old password if unchanged
-            } else {
-                $new_password = password_hash($_POST['password'], PASSWORD_BCRYPT);
-            }
-
-            // Update user details
-            $mql = "UPDATE users SET 
-                        username='" . $_POST['uname'] . "', 
-                        f_name='" . $_POST['fname'] . "', 
-                        l_name='" . $_POST['lname'] . "',
-                        email='" . $_POST['email'] . "', 
-                        phone='" . $_POST['phone'] . "', 
-                        password='" . $new_password . "',
-                        role='" . $_POST['role'] . "' 
-                    WHERE u_id='" . $_GET['user_upd'] . "'";
-
-            mysqli_query($db, $mql);
-            $success = '<div class="alert alert-success alert-dismissible fade show">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <strong>User updated successfully!</strong>
-                        </div>';
-        }
+        $_SESSION['message'] = ['type' => 'danger', 'message' => 'Update failed! Please try again.'];
     }
+
+    // Use the HTTP referer to redirect the user back to the previous page
+    header("Location: " . $_SERVER['HTTP_REFERER']);
+    exit();
 }
 ?>
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
-    <title>Update Users</title>
-    <link href="css/lib/bootstrap/bootstrap.min.css" rel="stylesheet">
-    <link href="css/helper.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
-</head>
+<?php include 'layouts/header.php' ?>
+<?php include 'layouts/sidebar.php' ?>
+<?php include 'layouts/navbar.php' ?>
 
-<body class="fix-header">
-    <div class="preloader">
-        <svg class="circular" viewBox="25 25 50 50">
-            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" />
-        </svg>
-    </div>
-    <div id="main-wrapper">
+<div id="main">
+    <div class="main-container">
 
-        <div class="header">
-            <nav class="navbar top-navbar navbar-expand-md navbar-light">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="dashboard.php">
-
-                        <span><img src="images/icn.png" alt="homepage" class="dark-logo" /></span>
-                    </a>
-                </div>
-                <div class="navbar-collapse">
-
-                    <ul class="navbar-nav mr-auto mt-md-0">
-
-                    </ul>
-
-                    <ul class="navbar-nav my-lg-0">
-
-
-
-                        <li class="nav-item dropdown">
-
-                            <div class="dropdown-menu dropdown-menu-right mailbox animated zoomIn">
-                                <ul>
-                                    <li>
-                                        <div class="drop-title">Notifications</div>
-                                    </li>
-
-                                    <li>
-                                        <a class="nav-link text-center" href="javascript:void(0);"> <strong>Check all notifications</strong> <i class="fa fa-angle-right"></i> </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-muted  " href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="images/bookingSystem/user-icn.png" alt="user" class="profile-pic" /></a>
-                            <div class="dropdown-menu dropdown-menu-right animated zoomIn">
-                                <ul class="dropdown-user">
-                                    <li><a href="logout.php"><i class="fa fa-power-off"></i> Logout</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
-
-        <div class="left-sidebar">
-
-            <div class="scroll-sidebar">
-
-                <nav class="sidebar-nav">
-                    <ul id="sidebarnav">
-                        <li class="nav-devider"></li>
-                        <li class="nav-label">Home</li>
-                        <li> <a href="dashboard.php"><i class="fa fa-tachometer"></i><span>Dashboard</span></a></li>
-                        <li class="nav-label">Log</li>
-                        <li> <a href="all_users.php"> <span><i class="fa fa-user f-s-20 "></i></span><span>Users</span></a></li>
-                        <li> <a class="has-arrow  " href="#" aria-expanded="false"><i class="fa fa-archive f-s-20 color-warning"></i><span class="hide-menu">Stall</span></a>
-                            <ul aria-expanded="false" class="collapse">
-                                <li><a href="all_restaurant.php">All Stalls</a></li>
-                                <li><a href="add_category.php">Add Category</a></li>
-                                <li><a href="add_restaurant.php">Add Stall</a></li>
-
-                            </ul>
-                        </li>
-                        <li> <a class="has-arrow  " href="#" aria-expanded="false"><i class="fa fa-cutlery" aria-hidden="true"></i><span class="hide-menu">Menu</span></a>
-                            <ul aria-expanded="false" class="collapse">
-                                <li><a href="all_menu.php">All Menues</a></li>
-                                <li><a href="add_menu.php">Add Menu</a></li>
-
-
-                            </ul>
-                        </li>
-                        <li> <a href="all_orders.php"><i class="fa fa-shopping-cart" aria-hidden="true"></i><span>Orders</span></a></li>
-
-
-                    </ul>
+        <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb" class="rounded-3 mb-4">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Register Rider</li>
+                    </ol>
                 </nav>
-
             </div>
-
         </div>
 
-        <div class="page-wrapper" style="height:1200px;">
+        <div class="d-flex justify-content-end my-2">
+            <a href="rider_details.php" class="btn btn-primary">Back</a>
+        </div>
 
-            <div class="row page-titles">
-                <div class="col-md-5 align-self-center">
-                    <h3 class="text-primary">Dashboard</h3>
-                </div>
+        <?php include 'layouts/alert.php'; ?>
 
-            </div>
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="card card-outline-primary">
+                    <div class="card-header bg-primary">
+                        <h5 class="mb-0 text-white">Register Rider</h5>
+                    </div>
 
-            <div class="container-fluid">
-                        <?php
-                        echo $error;
-                        echo $success;
-                        ?>
+                    <div class="widget card-body shadow-sm">
+                        <div class="widget-body">
+                            <?php
+                            $ssql = "SELECT * FROM users WHERE u_id='" . $_GET['user_upd'] . "'";
+                            $res = mysqli_query($index->con, $ssql);
+                            $newrow = mysqli_fetch_array($res);
+                            ?>
 
-                        <div class="col-lg-12">
-                            <div class="card card-outline-primary">
-                                <div class="card-header">
-                                    <h4 class="m-b-0 text-white">Update User</h4>
-                                </div>
-                                <div class="card-body">
-                                    <?php 
-                                    $ssql = "SELECT * FROM users WHERE u_id='" . $_GET['user_upd'] . "'";
-                                    $res = mysqli_query($db, $ssql);
-                                    $newrow = mysqli_fetch_array($res);
-                                    ?>
-                                    <form action='' method='post'>
-                                        <div class="form-body">
-                                            <hr>
-                                            <div class="row p-t-20">
-                                                <div class="col-md-6 mb-3">
-                                                    <div class="form-group">
-                                                        <label class="control-label">Username</label>
-                                                        <input type="text" name="uname" class="form-control" value="<?php echo $newrow['username']; ?>" required>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 mb-3">
-                                                    <div class="form-group">
-                                                        <label class="control-label">First Name</label>
-                                                        <input type="text" name="fname" class="form-control" value="<?php echo $newrow['f_name']; ?>" required>
-                                                    </div>
-                                                </div>
-                                            </div>
+                            <form action='' method='post'>
+                                <div class="form-body">
+                                    <input type="hidden" name="u_id" value="<?php echo $newrow['u_id']; ?>">
 
-                                            <div class="row p-t-20">
-                                                <div class="col-md-6 mb-3">
-                                                    <div class="form-group">
-                                                        <label class="control-label">Last Name</label>
-                                                        <input type="text" name="lname" class="form-control" value="<?php echo $newrow['l_name']; ?>" required>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 mb-3">
-                                                    <div class="form-group">
-                                                        <label class="control-label">Email</label>
-                                                        <input type="email" name="email" class="form-control" value="<?php echo $newrow['email']; ?>" required>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-md-6 mb-3">
-                                                    <div class="form-group">
-                                                        <label class="control-label">Password</label>
-                                                        <input type="password" name="password" class="form-control" required>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 mb-3">
-                                                    <div class="form-group">
-                                                        <label class="control-label">Phone</label>
-                                                        <input type="text" name="phone" class="form-control" value="<?php echo $newrow['phone']; ?>" required>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="row">
-                                                <div class="col-md-6 mb-3">
-                                                    <div class="form-group">
-                                                        <label class="control-label">Role</label>
-                                                        <select name="role" class="form-control">
-                                                            <option value="0" <?php echo ($newrow['role'] == 0) ? 'selected' : ''; ?>>User</option>
-                                                            <option value="1" <?php echo ($newrow['role'] == 1) ? 'selected' : ''; ?>>Admin</option>
-                                                            <option value="2" <?php echo ($newrow['role'] == 2) ? 'selected' : ''; ?>>Rider</option>
-                                                            <option value="2" <?php echo ($newrow['role'] == 3) ? 'selected' : ''; ?>>Stall Owner</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                    <div class="row p-t-20">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-group">
+                                                <label class="control-label">Username</label>
+                                                <input type="text" name="username" class="form-control"
+                                                    value="<?php echo $newrow['username']; ?>" required>
                                             </div>
                                         </div>
-
-                                        <div class="form-actions">
-                                            <input type="submit" name="submit" class="btn btn-primary" value="Save">
-                                            <a href="all_users.php" class="btn btn-inverse">Cancel</a>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-group">
+                                                <label class="control-label">First Name</label>
+                                                <input type="text" name="f_name" class="form-control"
+                                                    value="<?php echo $newrow['f_name']; ?>" required>
+                                            </div>
                                         </div>
-                                    </form>
+                                    </div>
+
+                                    <div class="row p-t-20">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-group">
+                                                <label class="control-label">Last Name</label>
+                                                <input type="text" name="l_name" class="form-control"
+                                                    value="<?php echo $newrow['l_name']; ?>" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-group">
+                                                <label class="control-label">Email</label>
+                                                <input type="email" name="email" class="form-control"
+                                                    value="<?php echo $newrow['email']; ?>" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-group">
+                                                <label class="control-label">Password</label>
+                                                <input type="password" name="password" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-group">
+                                                <label class="control-label">Phone</label>
+                                                <input type="text" name="phone" class="form-control"
+                                                    value="<?php echo $newrow['phone']; ?>" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-group">
+                                                <label class="control-label">Role</label>
+                                                <select name="role" class="form-control">
+                                                    <option value="0" <?php echo ($newrow['role'] == 0) ? 'selected' : ''; ?>>User</option>
+                                                    <option value="1" <?php echo ($newrow['role'] == 1) ? 'selected' : ''; ?>>Admin</option>
+                                                    <option value="2" <?php echo ($newrow['role'] == 2) ? 'selected' : ''; ?>>Rider</option>
+                                                    <option value="3" <?php echo ($newrow['role'] == 3) ? 'selected' : ''; ?>>Stall Owner</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+
+                                <div class="form-actions">
+                                    <input type="submit" name="submit" class="btn btn-primary" value="Save">
+                                    <a href="all_users.php" class="btn btn-danger">Cancel</a>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
-
-    <script src="js/lib/jquery/jquery.min.js"></script>
-    <script src="js/lib/bootstrap/js/popper.min.js"></script>
-    <script src="js/lib/bootstrap/js/bootstrap.min.js"></script>
-    <script src="js/jquery.slimscroll.js"></script>
-    <script src="js/sidebarmenu.js"></script>
-    <script src="js/lib/sticky-kit-master/dist/sticky-kit.min.js"></script>
-    <script src="js/custom.min.js"></script>
-
-</body>
-
-</html>
+<?php include 'layouts/footer.php' ?>

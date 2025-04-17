@@ -58,12 +58,7 @@ if (isset($_POST['submit'])) {
         </div>
 
 
-        <div class="d-flex justify-content-end my-2">
-            <a href="add_user.php" class="btn btn-primary">Add User</a>
-        </div>
-
-
-
+        <?php include 'layouts/alerts.php' ?>
 
         <div class="row">
             <div class="col-12">
@@ -76,97 +71,120 @@ if (isset($_POST['submit'])) {
 
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table datatable table-striped table-hover"
-                                    id="datatable">
+                                <table class="table datatable table-striped table-hover" id="datatable">
                                     <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Category Name</th>
-                                    <th>Date</th>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Category Name</th>
+                                            <th>Status</th>
+                                            <th>Date</th>
+                                            <th>Action</th>
 
-                                    <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
 
-                                </tr>
-                            </thead>
-                            <tbody>
+                                        <?php
+                                        $sql = "SELECT * FROM res_category ORDER BY c_id DESC";
+                                        $query = mysqli_query($db, $sql);
 
-                                <?php
-                                $sql = "SELECT * FROM res_category ORDER BY c_id DESC";
-                                $query = mysqli_query($db, $sql);
+                                        if (mysqli_num_rows($query) <= 0) {
+                                            echo '<tr><td colspan="7"><center>No Categories-Data!</center></td></tr>';
+                                        } else {
+                                            while ($rows = mysqli_fetch_array($query)) {
 
-                                if (!mysqli_num_rows($query) > 0) {
-                                    echo '<td colspan="7"><center>No Categories-Data!</center></td>';
-                                } else {
-                                    while ($rows = mysqli_fetch_array($query)) {
-                                        echo ' 
-        <tr>
-            <td>' . $rows['c_id'] . '</td>
-            <td>' . $rows['c_name'] . '</td>
-            <td>' . date('F j, Y', strtotime($rows['date'])) . '</td> <!-- Displaying full date in format: Month Day, Year -->
-            <td>
-                <a href="delete_category.php?cat_del=' . $rows['c_id'] . '" class="btn btn-danger btn-flat btn-addon btn-sm">
-                    <i class="bx bx-trash"></i>
-                </a>
-                <a href="update_category.php?cat_upd=' . $rows['c_id'] . '" class="btn btn-info btn-flat btn-addon btn-sm m-b-10 m-l-5">
-  <i class="bx bx-edit"></i>
-                </a>
-            </td>
-        </tr>';
-                                    }
-                                }
-                                ?>
+                                                switch ($rows['status']) {
+                                                    case 0:
+                                                        $statusText = 'Active';
+                                                        $badgeClass = 'bg-success';
+                                                        break;
+                                                    case 1:
+                                                        $statusText = 'Inactive';
+                                                        $badgeClass = 'bg-danger';
+                                                        break;
+                                                    default:
+                                                        $statusText = 'Unknown';
+                                                        $badgeClass = 'bg-secondary';
+                                                        break;
+                                                }
+                                                ?>
+                                                <tr>
+                                                    <td><?= htmlspecialchars($rows['c_id']) ?></td>
+                                                    <td><?= htmlspecialchars($rows['c_name']) ?></td>
+                                                    <td>
+                                                        <span class="badge <?= $badgeClass ?>">
+                                                            <?= $statusText ?>
+                                                        </span>
+                                                    </td>
+                                                    <td><?= date('F j, Y', strtotime($rows['date'])) ?></td>
+                                                    <td>
+                                                        <a href="delete_category.php?cat_del=<?= urlencode($rows['c_id']) ?>"
+                                                            class="btn btn-danger btn-flat btn-addon btn-sm"
+                                                            onclick="return confirm('Are you sure you want to delete this category?');">
+                                                            <i class="bx bx-trash"></i>
+                                                        </a>
+
+                                                        <a href="update_category.php?c_id=<?= urlencode($rows['c_id']) ?>"
+                                                            class="btn btn-info btn-flat btn-addon btn-sm m-b-10 m-l-5">
+                                                            <i class="bx bx-edit"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                <?php
+                                            }
+                                        }
+                                        ?>
 
 
-
-                            </tbody>
-                        </table>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
 
 
-        <div class="col-12">
-        <div class="card card-outline-primary">
-                    
-                    <div class="card-header bg-primary">
-                        <h5 class="mb-0 text-white">Add Stall Category</h5>
+                <div class="col-12">
+                    <div class="card card-outline-primary">
+
+                        <div class="card-header bg-primary">
+                            <h5 class="mb-0 text-white">Add Stall Category</h5>
+                        </div>
+
+                        <div class="widget card-body shadow-sm">
+
+                            <div class="widget-body">
+                                <form action='' method='post'>
+                                    <div class="form-body">
+
+                                        <div class="row p-t-20">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="control-label">Category</label>
+                                                    <input type="text" name="c_name" class="form-control">
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                        <div class="form-actions my-2">
+                                            <input type="submit" name="submit" class="btn btn-primary" value="Save">
+                                            <a href="add_category.php" class="btn btn-danger">Cancel</a>
+                                        </div>
+                                </form>
+                            </div>
+                        </div>
+
+
+
+
                     </div>
 
-                    <div class="widget card-body shadow-sm">
+                    </>
 
-                        <div class="widget-body">
-                <form action='' method='post'>
-                    <div class="form-body">
+                </div>
 
-                        <div class="row p-t-20">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="control-label">Category</label>
-                                    <input type="text" name="c_name" class="form-control">
-                                </div>
-                            </div>
-
-
-                        </div>
-                        <div class="form-actions my-2">
-                            <input type="submit" name="submit" class="btn btn-primary" value="Save">
-                            <a href="add_category.php" class="btn btn-danger">Cancel</a>
-                        </div>
-                </form>
             </div>
-        </div>
 
-
-
-
-    </div>
-
-</>
-
-</div>
-
-</div>
-
-<?php include 'layouts/footer.php' ?>
+            <?php include 'layouts/footer.php' ?>

@@ -59,62 +59,65 @@ session_start();
                                     </thead>
 
                                     <tbody>
-                                    <?php
-$sql = "SELECT * FROM restaurant ORDER BY rs_id DESC";
-$query = mysqli_query($db, $sql);
-?>
+                                        <?php
+                                        $sql = "SELECT * FROM restaurant ORDER BY rs_id DESC";
+                                        $query = mysqli_query($db, $sql);
+                                        ?>
 
-<?php if (!mysqli_num_rows($query) > 0): ?>
-    <tr>
-        <td colspan="7"><center>No Restaurants</center></td>
-    </tr>
-<?php else: ?>
-    <?php while ($rows = mysqli_fetch_array($query)): ?>
-        <?php
-            // Get category name
-            $mql = "SELECT * FROM res_category WHERE c_id='" . $rows['c_id'] . "'";
-            $res = mysqli_query($db, $mql);
-            $row = mysqli_fetch_array($res);
+                                        <?php if (!mysqli_num_rows($query) > 0): ?>
+                                            <tr>
+                                                <td colspan="7">
+                                                    <center>No Restaurants</center>
+                                                </td>
+                                            </tr>
+                                        <?php else: ?>
+                                            <?php while ($rows = mysqli_fetch_array($query)): ?>
+                                                <?php
+                                                // Get category name
+                                                $mql = "SELECT * FROM res_category WHERE c_id='" . $rows['c_id'] . "'";
+                                                $res = mysqli_query($db, $mql);
+                                                $row = mysqli_fetch_array($res);
 
-            // Determine status
-            switch ($rows['status']) {
-                case 0:
-                    $statusText = 'Active';
-                    $badgeClass = 'bg-success';
-                    break;
-                case 2:
-                    $statusText = 'Inactive';
-                    $badgeClass = 'bg-danger';
-                    break;
-                default:
-                    $statusText = 'Unknown';
-                    $badgeClass = 'bg-secondary';
-                    break;
-            }
-        ?>
-        <tr>
-            <td><?= $row['c_name'] ?></td>
-            <td><?= $rows['title'] ?></td>
-            <td><?= $rows['email'] ?></td>
-            <td><?= $rows['phone'] ?></td>
-            <td>
-                <span class="badge <?= $badgeClass ?>"><?= $statusText ?></span>
-            </td>
-            <td><?= date("F j, Y", strtotime($rows['date'])) ?></td>
-            <td>
-         <a href="delete_restaurant.php?res_del=<?= $rows['rs_id'] ?>" 
-   class="btn btn-sm btn-danger" 
-   onclick="return confirm('Are you sure you want to delete this restaurant?');">
-    <i class="bx bx-trash"></i>
-</a>
+                                                // Determine status
+                                                switch ($rows['status']) {
+                                                    case 0:
+                                                        $statusText = 'Active';
+                                                        $badgeClass = 'bg-success';
+                                                        break;
+                                                    case 2:
+                                                        $statusText = 'Inactive';
+                                                        $badgeClass = 'bg-danger';
+                                                        break;
+                                                    default:
+                                                        $statusText = 'Unknown';
+                                                        $badgeClass = 'bg-secondary';
+                                                        break;
+                                                }
+                                                ?>
+                                                <tr>
+                                                    <td><?= $row['c_name'] ?></td>
+                                                    <td><?= $rows['title'] ?></td>
+                                                    <td><?= $rows['email'] ?></td>
+                                                    <td><?= $rows['phone'] ?></td>
+                                                    <td>
+                                                        <span class="badge <?= $badgeClass ?>"><?= $statusText ?></span>
+                                                    </td>
+                                                    <td><?= date("F j, Y", strtotime($rows['date'])) ?></td>
+                                                    <td>
+                                                        <a href="delete_restaurant.php?res_del=<?= $rows['rs_id'] ?>"
+                                                            class="btn btn-sm btn-danger"
+                                                            onclick="return confirm('Are you sure you want to delete this restaurant?');">
+                                                            <i class="bx bx-trash"></i>
+                                                        </a>
 
-                <a href="update_restaurant.php?res_upd=<?= $rows['rs_id'] ?>" class="btn btn-sm btn-info ms-2">
-                    <i class="bx bx-edit"></i>
-                </a>
-            </td>
-        </tr>
-    <?php endwhile; ?>
-<?php endif; ?>
+                                                        <a href="update_restaurant.php?res_upd=<?= $rows['rs_id'] ?>"
+                                                            class="btn btn-sm btn-info ms-2">
+                                                            <i class="bx bx-edit"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            <?php endwhile; ?>
+                                        <?php endif; ?>
 
 
 

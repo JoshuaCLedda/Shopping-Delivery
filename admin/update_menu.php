@@ -12,21 +12,22 @@ if (isset($_GET['menu_upd'])) {
     $_SESSION['dishedId'] = $_GET['menu_upd'];
 }
 
-$dishes_id = $_SESSION['dishedId'] ?? null;
+$dishesiD = $_SESSION['dishedId'] ?? null;
 
 // backend
-if (isset($_POST['submit'])) {
-    $dishes_id = $_SESSION['dishedId'];
-    $title = $_SESSION['title'];
+if (isset($_POST['dishedId'])) {
+    $dishes_Id= $_FILES['dishesId'];
+    $title = $_POST['title'];
     $slogan = $_POST['slogan'];
     $price = $_POST['price'];
     $available_quantity = $_POST['available_quantity'];
     $dish_category_id = $_POST['dish_category_id'];
     $rs_id = $_POST['rs_id'];
-    $image = $_FILES['image'];
+    $image = $_FILES['image'] ?? '';
 
     // Call the model function with image path
     $result = $index->updateMenu(
+        $dishes_Id,
         $title,
         $slogan,
         $price,
@@ -96,11 +97,16 @@ if (isset($_POST['submit'])) {
                         <div class="widget-body">
                             <form action='' method='post' enctype="multipart/form-data">
                                 <div class="form-body">
-                                    <?php
+                           
+
+                           <?php
                                     $qml = "SELECT * FROM dishes WHERE d_id='$_GET[menu_upd]'";
                                     $rest = mysqli_query($index->con, $qml);
                                     $row = mysqli_fetch_array($rest);
                                     ?>
+
+                                <input type="hidden" name="dishes_id" value="<?= htmlspecialchars($row['d_id']) ?>">
+
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <div class="form-group">

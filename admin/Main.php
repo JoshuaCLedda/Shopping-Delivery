@@ -264,8 +264,8 @@ class Index
     public function getStallRatings()
     {
         // Corrected SQL query
-        $sql = "SELECT restaurant_ratings.id AS restoId,
-        users.f_name, users.l_name, 
+        $sql = "SELECT restaurant_ratings.id AS restoId, restaurant_ratings.complaint,
+        users.f_name, users.l_name, restaurant_ratings.created_at,
         restaurant.title AS restaurant, restaurant_ratings.rating
                 FROM restaurant_ratings
                 LEFT JOIN restaurant ON
@@ -286,11 +286,11 @@ class Index
     public function getRidersRatings()
     {
         // Corrected SQL query
-        $sql = "SELECT rating_rider.id AS riderId,
-        users.f_name, users.l_name, rating_rider.rating, rider_name 
+        $sql = "SELECT rating_rider.id AS riderId, rating_rider.complaint,rating_rider.created_at,
+                users.f_name, users.l_name, rating_rider.rating, rider_name 
                 FROM rating_rider
                 LEFT JOIN users ON
-                users.u_id = rating_rider.user_id";
+                users.u_id = rating_rider.rider_id";
 
         $result = mysqli_query($this->con, $sql);
 
@@ -561,9 +561,8 @@ class Index
 
         return $result;
     }
-
     public function updateMenu(
-        $dishes_id,
+        $dishes_Id,
         $title,
         $slogan,
         $price,
@@ -579,9 +578,8 @@ class Index
         $available_quantity = mysqli_real_escape_string($this->con, $available_quantity);
         $dish_category_id = mysqli_real_escape_string($this->con, $dish_category_id);
         $rs_id = mysqli_real_escape_string($this->con, $rs_id);
-        $dishedId = mysqli_real_escape_string($this->con, $dishes_id);
-
-        // Start building query
+    
+        // Start building the SQL
         $sql = "UPDATE dishes SET 
                     title = '$title',
                     slogan = '$slogan',
@@ -589,34 +587,118 @@ class Index
                     available_quantity = '$available_quantity',
                     dish_category_id = '$dish_category_id',
                     rs_id = '$rs_id'";
-
-        // Handle image upload if new image is uploaded
-        if (!empty($image['name'])) {
+    
+        // Handle image upload if a new image is uploaded
+        if (!empty($image) && !empty($image['name'])) {
             $imageName = basename($image['name']);
             $imageTmp = $image['tmp_name'];
             $imageFolder = "Res_img/";
-
+    
             if (!is_dir($imageFolder)) {
                 mkdir($imageFolder, 0777, true);
             }
-
-            $newImageName = time() . "_" . $imageName; // unique name
+    
+            $newImageName = time() . "_" . $imageName; // Unique file name
             $targetPath = $imageFolder . $newImageName;
-
+    
             if (move_uploaded_file($imageTmp, $targetPath)) {
                 $imagePathForDB = mysqli_real_escape_string($this->con, $newImageName);
-                $sql .= ", img = '$imagePathForDB'"; // notice here: field is "img" in your dishes table
+                $sql .= ", img = '$imagePathForDB'"; // Append img only if upload succeeded
             } else {
                 return false; // Image upload failed
             }
         }
-
-        // Final WHERE condition
-        $sql .= " WHERE d_id = '$dishedId'";
-
-        // Execute query
+    
+        // Add the WHERE clause at the end
+        $sql .= " WHERE disheiSId = '$dishes_Id'";
+    
+        // Execute and return
         return mysqli_query($this->con, $sql);
     }
 
+
+    // category
+
+    public function viewCategoryDetails($c_id)
+    {
+        $sql = "SELECT * FROM res_category WHERE c_id = '$c_id'";
+
+        $result = mysqli_query($this->con, $sql);
+
+        if (!$result) {
+            die('Query failed: ' . mysqli_error($this->con));
+        }
+
+        return $result;
+    }
+    
+    public function updateCategory($c_id, $c_name, $status) {
+        $c_id = mysqli_real_escape_string($this->con, $c_id);
+        $c_name = mysqli_real_escape_string($this->con, $c_name);
+        $status = mysqli_real_escape_string($this->con, $status);
+    
+        $sql = "UPDATE res_category SET c_name = '$c_name', status = '$status' WHERE c_id = '$c_id'";
+    
+        return mysqli_query($this->con, $sql);
+    }
+    
+    // Updated Profile
+    public function updateProfile($user_id, $f_name, $l_name, $username, $email, $address, $password = null)
+    {
+        $user_id = intval($user_id); // to be safe
+    
+        $f_name = mysqli_real_escape_string($this->con, $f_name);
+        $l_name = mysqli_real_escape_string($this->con, $l_name);
+        $username = mysqli_real_escape_string($this->con, $username);
+        $email = mysqli_real_escape_string($this->con, $email);
+        $address = mysqli_real_escape_string($this->con, $address);
+    
+        if ($password) {
+            $password = mysqli_real_escape_string($this->con, $password);
+            $query = "UPDATE users 
+                      SET f_name='$f_name', l_name='$l_name', username='$username', email='$email', address='$address', password='$password' 
+                      WHERE u_id='$user_id'";
+        } else {
+            $query = "UPDATE users 
+                      SET f_name='$f_name', l_name='$l_name', username='$username', email='$email', address='$address' 
+                      WHERE u_id='$user_id'";
+        }
+    
+        return mysqli_query($this->con, $query);
+    }
+    
+
+    public function updateUser($u_id, $f_name, $l_name, $username, $phone, $email, $address, $role, $password = null)
+    {
+        $user_id = intval($u_id); // to be safe
+    
+        $f_name = mysqli_real_escape_string($this->con, $f_name);
+        $l_name = mysqli_real_escape_string($this->con, $l_name);
+        $username = mysqli_real_escape_string($this->con, $username);
+        $email = mysqli_real_escape_string($this->con, $email);
+        $address = mysqli_real_escape_string($this->con, $address);
+        $phone = mysqli_real_escape_string($this->con, $phone);
+        $role = mysqli_real_escape_string($this->con, $role);
+    
+        if ($password) {
+            $password = mysqli_real_escape_string($this->con, $password);
+            $query = "UPDATE users 
+                      SET f_name='$f_name', l_name='$l_name', username='$username', email='$email', 
+                      phone='$phone', role='$role',
+                      address='$address', password='$password' 
+                      WHERE u_id='$user_id'";
+        } else {
+            $query = "UPDATE users 
+                      SET f_name='$f_name', l_name='$l_name', username='$username', email='$email',
+                      phone='$phone', role='$role',
+                      address='$address' 
+                      WHERE u_id='$user_id'";
+        }
+    
+        return mysqli_query($this->con, $query);
+    }
+
+    
+    
 
 }
