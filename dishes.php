@@ -197,9 +197,13 @@ $item_total += ($item["price"]*$item["quantity"]);
                             </div>
                             <div class="collapse in" id="popular2">
 						<?php  
-									$stmt = $db->prepare("select * from dishes where rs_id='$_GET[res_id]'");
-									$stmt->execute();
-									$products = $stmt->get_result();
+					$stmt = $db->prepare("SELECT * FROM dishes 
+                    WHERE dishes.status = 1 
+                    AND rs_id = ?");
+                    $stmt->bind_param("i", $_GET['res_id']);  // Assuming res_id is an integer
+                    $stmt->execute();
+                    $products = $stmt->get_result();
+
 									if (!empty($products)) 
 									{
 									foreach($products as $product)

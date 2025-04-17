@@ -41,8 +41,7 @@ $index = new Index;
 
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table datatable table-striped table-hover"
-                                    id="datatable">
+                                <table class="table datatable table-striped table-hover" id="datatable">
                                     <thead>
                                         <tr>
                                             <th>Rider's Name</th>

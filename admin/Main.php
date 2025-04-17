@@ -37,47 +37,47 @@ class Index
         $security_answer = mysqli_real_escape_string($this->con, $security_answer);
         $role = 2;
         $hashed_password = password_hash($password_plain, PASSWORD_DEFAULT);
-    
+
         // Check if username or email already exists
         $checkQuery = "SELECT * FROM users WHERE username = '$username' OR email = '$email'";
         $checkResult = mysqli_query($this->con, $checkQuery);
-    
+
         if (mysqli_num_rows($checkResult) > 0) {
             return false; // Username or email already taken
         }
-    
+
         // --- ORCR Upload ---
         $orcr_name = $orcr['name'];
         $orcr_tmp = $orcr['tmp_name'];
         $orcr_ext = strtolower(pathinfo($orcr_name, PATHINFO_EXTENSION));
-    
+
         if ($orcr_ext !== 'pdf') {
             return false; // Invalid ORCR file format
         }
-    
+
         $orcr_new_name = uniqid('orcr_', true) . '.pdf';
         $orcr_path = __DIR__ . '/uploads/' . $orcr_new_name;
-    
+
         if (!move_uploaded_file($orcr_tmp, $orcr_path)) {
             return false; // ORCR file move failed
         }
-    
+
         // --- Physical Exam Upload ---
         $physic_exam_name = $physic_exam['name'];
         $physic_exam_tmp = $physic_exam['tmp_name'];
         $physic_exam_ext = strtolower(pathinfo($physic_exam_name, PATHINFO_EXTENSION));
-    
+
         if ($physic_exam_ext !== 'pdf') {
             return false; // Invalid physical exam file format
         }
-    
+
         $physic_exam_new_name = uniqid('physic_', true) . '.pdf';
         $physic_exam_path = __DIR__ . '/uploads/' . $physic_exam_new_name;
-    
+
         if (!move_uploaded_file($physic_exam_tmp, $physic_exam_path)) {
             return false; // Physical exam file move failed
         }
-    
+
         // Insert new rider
         $sql = "INSERT INTO users (
             username, f_name, l_name, email, phone, password, address,
@@ -87,10 +87,10 @@ class Index
             '$hashed_password', '$address', '$role', '$security_question',
             '$security_answer', '$orcr_new_name', '$physic_exam_new_name'
         )";
-    
+
         return mysqli_query($this->con, $sql);
     }
-    
+
 
     public function addRestaurant(
         $res_name,
@@ -114,41 +114,41 @@ class Index
         $o_days = mysqli_real_escape_string($this->con, $o_days);
         $c_name = mysqli_real_escape_string($this->con, $c_name);
         $address = mysqli_real_escape_string($this->con, $address);
-    
+
         // Email uniqueness check
         $checkQuery = "SELECT * FROM restaurant WHERE email = '$email'";
         $checkResult = mysqli_query($this->con, $checkQuery);
         if (mysqli_num_rows($checkResult) > 0) {
             return false; // Email already exists
         }
-    
+
         // Handle image upload
         $imageName = basename($image['name']);
         $imageTmp = $image['tmp_name'];
         $imageFolder = "Res_img/";
-    
+
         // Create folder if it doesn't exist
         if (!is_dir($imageFolder)) {
             mkdir($imageFolder, 0777, true);
         }
-    
+
         $targetPath = $imageFolder . time() . "_" . $imageName;
-    
+
         if (move_uploaded_file($imageTmp, $targetPath)) {
             $imagePathForDB = mysqli_real_escape_string($this->con, $targetPath);
         } else {
             return false; // Image upload failed
         }
-    
+
         // Insert restaurant data with image
         $sql = "INSERT INTO restaurant 
             (title, email, phone, url, o_hr, c_hr, o_days, address, c_id, image)
             VALUES 
             ('$res_name', '$email', '$phone', '$url', '$o_hr', '$c_hr', '$o_days', '$address', '$c_name', '$imagePathForDB')";
-    
+
         return mysqli_query($this->con, $sql);
     }
-    
+
 
     public function getRestCategory()
     {
@@ -424,37 +424,37 @@ class Index
     {
         // Set the rider's status to 'banned' (terminate status)
         $sql = "UPDATE users SET status = 'banned' WHERE u_id = $u_id";
-    
+
         $result = mysqli_query($this->con, $sql);
-    
+
         if (!$result) {
             error_log("Terminate Error: " . mysqli_error($this->con));
             return false;  // Return false if the query fails
         }
-    
+
         return true;  // Return true if the update was successful
     }
 
     public function getRiderStatus($u_id)
     {
         $sql = "SELECT status FROM users WHERE u_id = '$u_id'";  // Removed extra comma after 'status'
-    
+
         $result = mysqli_query($this->con, $sql);
-    
+
         if (!$result) {
             die('Query failed: ' . mysqli_error($this->con));
         }
-    
+
         $row = mysqli_fetch_assoc($result);
         return $row['status'];  // Return only the status value
     }
-    
+
     public function getRecentTransactions()
     {
         // Get current week's Monday and Sunday
         $monday = date('Y-m-d 00:00:00', strtotime('monday this week'));
         $sunday = date('Y-m-d 23:59:59', strtotime('sunday this week'));
-    
+
         $sql = "SELECT 
                     transaction.id AS transacId,
                     users.f_name, 
@@ -470,14 +470,153 @@ class Index
                 WHERE transaction.order_date BETWEEN '$monday' AND '$sunday'
                 ORDER BY transaction.order_date DESC
                 LIMIT 5";
-    
+
         $result = mysqli_query($this->con, $sql);
-    
+
         if (!$result) {
             die('Query failed: ' . mysqli_error($this->con));
         }
-    
+
         return $result;
     }
-    
+
+    public function updateRestaurant(
+        $rs_id,
+        $res_name,
+        $email,
+        $phone,
+        $url,
+        $o_hr,
+        $c_hr,
+        $o_days,
+        $c_name,
+        $image,
+        $address
+    ) {
+        // Escape variables
+        $rs_id = mysqli_real_escape_string($this->con, $rs_id);
+        $res_name = mysqli_real_escape_string($this->con, $res_name);
+        $email = mysqli_real_escape_string($this->con, $email);
+        $phone = mysqli_real_escape_string($this->con, $phone);
+        $url = mysqli_real_escape_string($this->con, $url);
+        $o_hr = mysqli_real_escape_string($this->con, $o_hr);
+        $c_hr = mysqli_real_escape_string($this->con, $c_hr);
+        $o_days = mysqli_real_escape_string($this->con, $o_days);
+        $c_name = mysqli_real_escape_string($this->con, $c_name);
+        $address = mysqli_real_escape_string($this->con, $address);
+
+        // Prepare base query
+        $sql = "UPDATE restaurant SET 
+                    title = '$res_name',
+                    email = '$email',
+                    phone = '$phone',
+                    url = '$url',
+                    o_hr = '$o_hr',
+                    c_hr = '$c_hr',
+                    o_days = '$o_days',
+                    address = '$address',
+                    c_id = '$c_name'";
+
+        // If image is uploaded, handle it
+        if (!empty($image['name'])) {
+            $imageName = basename($image['name']);
+            $imageTmp = $image['tmp_name'];
+            $imageFolder = "Res_img/";
+
+            if (!is_dir($imageFolder)) {
+                mkdir($imageFolder, 0777, true);
+            }
+
+            $targetPath = $imageFolder . time() . "_" . $imageName;
+
+            if (move_uploaded_file($imageTmp, $targetPath)) {
+                $imagePathForDB = mysqli_real_escape_string($this->con, $targetPath);
+                $sql .= ", image = '$imagePathForDB'";
+            } else {
+                return false; // Image upload failed
+            }
+        }
+
+        // Finish query
+        $sql .= " WHERE rs_id = '$rs_id'";
+
+        return mysqli_query($this->con, $sql);
+    }
+
+    public function getAllMenu()
+    {
+        // Corrected SQL query
+        $sql = "SELECT dishes.d_id as dishedId, dishes.title AS dish_name, 
+                dishes.price, dishes.available_quantity, dishes.img AS image, 
+                restaurant.title AS stall_name, dishes.status
+                FROM dishes
+                LEFT JOIN restaurant ON
+                restaurant.rs_id = dishes.rs_id";
+
+        $result = mysqli_query($this->con, $sql);
+
+        if (!$result) {
+            die('Query failed: ' . mysqli_error($this->con));
+        }
+
+        return $result;
+    }
+
+    public function updateMenu(
+        $dishes_id,
+        $title,
+        $slogan,
+        $price,
+        $available_quantity,
+        $dish_category_id,
+        $rs_id,
+        $image = null
+    ) {
+        // Escape variables properly
+        $title = mysqli_real_escape_string($this->con, $title);
+        $slogan = mysqli_real_escape_string($this->con, $slogan);
+        $price = mysqli_real_escape_string($this->con, $price);
+        $available_quantity = mysqli_real_escape_string($this->con, $available_quantity);
+        $dish_category_id = mysqli_real_escape_string($this->con, $dish_category_id);
+        $rs_id = mysqli_real_escape_string($this->con, $rs_id);
+        $dishedId = mysqli_real_escape_string($this->con, $dishes_id);
+
+        // Start building query
+        $sql = "UPDATE dishes SET 
+                    title = '$title',
+                    slogan = '$slogan',
+                    price = '$price',
+                    available_quantity = '$available_quantity',
+                    dish_category_id = '$dish_category_id',
+                    rs_id = '$rs_id'";
+
+        // Handle image upload if new image is uploaded
+        if (!empty($image['name'])) {
+            $imageName = basename($image['name']);
+            $imageTmp = $image['tmp_name'];
+            $imageFolder = "Res_img/";
+
+            if (!is_dir($imageFolder)) {
+                mkdir($imageFolder, 0777, true);
+            }
+
+            $newImageName = time() . "_" . $imageName; // unique name
+            $targetPath = $imageFolder . $newImageName;
+
+            if (move_uploaded_file($imageTmp, $targetPath)) {
+                $imagePathForDB = mysqli_real_escape_string($this->con, $newImageName);
+                $sql .= ", img = '$imagePathForDB'"; // notice here: field is "img" in your dishes table
+            } else {
+                return false; // Image upload failed
+            }
+        }
+
+        // Final WHERE condition
+        $sql .= " WHERE d_id = '$dishedId'";
+
+        // Execute query
+        return mysqli_query($this->con, $sql);
+    }
+
+
 }

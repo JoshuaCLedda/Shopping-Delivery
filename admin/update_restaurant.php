@@ -1,77 +1,62 @@
 <?php
-include("../connection/connect.php");
-error_reporting(0);
 session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', value: 1); // Ensure errors are displayed
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-
-
-
-if (isset($_POST['submit'])) {
-
-
-
-
-
-
-
-    if (empty($_POST['c_name']) || empty($_POST['res_name']) || $_POST['email'] == '' || $_POST['phone'] == '' || $_POST['url'] == '' || $_POST['o_hr'] == '' || $_POST['c_hr'] == '' || $_POST['o_days'] == '' || $_POST['address'] == '') {
-        $error = '<div class="alert alert-danger alert-dismissible fade show">
-																<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-																<strong>All fields Must be Fillup!</strong>
-															</div>';
-    } else {
-
-        $fname = $_FILES['file']['name'];
-        $temp = $_FILES['file']['tmp_name'];
-        $fsize = $_FILES['file']['size'];
-        $extension = explode('.', $fname);
-        $extension = strtolower(end($extension));
-        $fnew = uniqid() . '.' . $extension;
-
-        $store = "Res_img/" . basename($fnew);
-
-        if ($extension == 'jpg' || $extension == 'png' || $extension == 'gif') {
-            if ($fsize >= 5000000) {
-
-
-                $error = '<div class="alert alert-danger alert-dismissible fade show">
-																<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-																<strong>Max Image Size is 1024kb!</strong> Try different Image.
-															</div>';
-            } else {
-
-
-                $res_name = $_POST['res_name'];
-
-                $sql = "update restaurant set c_id='$_POST[c_name]', title='$res_name',email='$_POST[email]',phone='$_POST[phone]',url='$_POST[url]',o_hr='$_POST[o_hr]',c_hr='$_POST[c_hr]',o_days='$_POST[o_days]',address='$_POST[address]',image='$fnew' where rs_id='$_GET[res_upd]' ";  // store the submited data ino the database :images												mysqli_query($db, $sql); 
-                mysqli_query($db, $sql);
-                move_uploaded_file($temp, $store);
-
-                $success = '<div class="alert alert-success alert-dismissible fade show">
-																<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-																<strong>Record Updated!</strong>.
-															</div>';
-            }
-        } elseif ($extension == '') {
-            $error = '<div class="alert alert-danger alert-dismissible fade show">
-																<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-																<strong>select image</strong>
-															</div>';
-        } else {
-
-            $error = '<div class="alert alert-danger alert-dismissible fade show">
-																<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-																<strong>invalid extension!</strong>png, jpg, Gif are accepted.
-															</div>';
-        }
-    }
+include "Main.php";
+$index = new Index;
+if (isset($_GET['res_upd'])) {
+    $_SESSION['rs_id'] = $_GET['res_upd'];
 }
 
+$rs_id = $_SESSION['rs_id'] ?? null;
+// backend
+if (isset($_POST['submit'])) {
+    $rs_id = $_SESSION['rs_id'];
+    $res_name = $_POST['res_name'];
+    $email = $_POST['email'];
+    $phone = $_POST['phone'];
+    $url = $_POST['url'];
+    $o_hr = $_POST['o_hr'];
+    $c_hr = $_POST['c_hr'];
+    $o_days = $_POST['o_days'];
+    $c_name = $_POST['c_name'];
+    $image = $_FILES['image'];
+    $address = $_POST['address'];
 
 
 
+    // Call the model function with image path
+    $result = $index->updateRestaurant(
+        $rs_id,
+        $res_name,
+        $email,
+        $phone,
+        $url,
+        $o_hr,
+        $c_hr,
+        $o_days,
+        $c_name,
+        $image,
+        $address
+
+    );
 
 
+    if ($result) {
+        $_SESSION['message'] = ['type' => 'success', 'message' => 'Restaurant Registered Successfully!'];
+    } else {
+        $_SESSION['message'] = ['type' => 'danger', 'message' => 'Failed to Register. Email Might Already Exist.'];
+    }
+    if (isset($_SERVER['HTTP_REFERER'])) {
+        header("Location: " . $_SERVER['HTTP_REFERER']);
+        exit();
+    } else {
+        header("Location: add_restaurant.php"); // fallback if no referrer
+        exit();
+    }
+}
 
 
 ?>
@@ -97,7 +82,8 @@ if (isset($_POST['submit'])) {
 
 
         <div class="d-flex justify-content-end my-2">
-            <a href="all_restaurant.php" class="btn btn-primary">Back</a>
+            <a href="all_restaurant.php" class="btn btn-primary">Back
+            </a>
         </div>
 
         <?php include 'layouts/alert.php'; ?>
@@ -118,7 +104,7 @@ if (isset($_POST['submit'])) {
                             <form action='' method='post' enctype="multipart/form-data">
                                 <div class="form-body">
                                     <?php $ssql = "select * from restaurant where rs_id='$_GET[res_upd]'";
-                                    $res = mysqli_query($db, $ssql);
+                                    $res = mysqli_query($index->con, $ssql);
                                     $row = mysqli_fetch_array($res); ?>
                                     <div class="row p-t-20">
                                         <div class="col-md-6 mb-3">
@@ -143,7 +129,7 @@ if (isset($_POST['submit'])) {
                                     <div class="row p-t-20">
                                         <div class="col-md-6 mb-3">
                                             <div class="form-group">
-                                                <label class="control-label">Phone </label>
+                                                <label class="control-label">Contact Number </label>
                                                 <input type="text" name="phone" class="form-control"
                                                     value="<?php echo $row['phone']; ?>">
                                             </div>
@@ -151,7 +137,8 @@ if (isset($_POST['submit'])) {
 
                                         <div class="col-md-6 mb-3">
                                             <div class="form-group has-danger">
-                                                <label class="control-label">website URL</label>
+                                            <label class="control-label">Website <span class="text-success" style="font-style: italic">(if there are)</span></label>
+
                                                 <input type="text" name="url" class="form-control form-control-danger"
                                                     value="<?php echo $row['url']; ?>" placeholder="http://example.com">
                                             </div>
@@ -215,13 +202,15 @@ if (isset($_POST['submit'])) {
 
                                         <div class="col-md-6 mb-3">
                                             <div class="form-group">
-                                                <label class="control-label">Select Category  </label>
+                                                <label class="control-label">Select Category </label>
                                                 <select name="c_name" class="form-control custom-select"
                                                     data-placeholder="Choose a Category" tabindex="1" required>
                                                     <option value="">--Select Category--</option>
                                                     <?php
                                                     $ssql = "SELECT * FROM res_category";
-                                                    $res = mysqli_query($db, $ssql);
+                                                    $res = mysqli_query($index->con, $ssql);
+
+
                                                     while ($cat = mysqli_fetch_array($res)) {
                                                         $selected = (isset($row['c_id']) && $row['c_id'] == $cat['c_id']) ? 'selected' : '';
                                                         echo '<option value="' . $cat['c_id'] . '" ' . $selected . '>' . $cat['c_name'] . '</option>';
@@ -232,29 +221,32 @@ if (isset($_POST['submit'])) {
                                         </div>
 
 
-                                        <div class="col-md-6 mb-3">
-                                            <div class="form-group has-danger">
-                                                <label class="control-label">Image</label>
-                                                <input type="file" name="file" id="lastName"
-                                                    class="form-control form-control-danger">
+                                        <?php
+                                        $imagePath = $row['image'];
+                                        ?>
 
-                                                <?php
-                                                $imagePath = '' . $row['image'];
-                                                if (!empty($row['image']) && file_exists($imagePath)): ?>
-                                                    <div class="mt-2">
-                                                        <img src="<?= $imagePath ?>" alt="Restaurant Image"
-                                                            class="img-thumbnail" style="max-height: 150px;">
-                                                    </div>
-                                                <?php else: ?>
-                                                    <div class="mt-2 text-muted">
-                                                        <p class="text-danger">No Image Data</p>
-                                                    </div>
-                                                <?php endif; ?>
-                                            </div>
-                                        </div>
+<?php if (!empty($imagePath) && file_exists($imagePath)): ?>
+    
+    <div>
+        <label class="control-label">Restaurant Profile</label>
+        <input type="file" name="image" class="form-control">    
+    </div>
+    <div class="mt-2" id="image-preview">
+    <img src="<?= $imagePath ?>" alt="Restaurant Image" class="img-thumbnail" style="max-height: 120px;">
+    <button type="button" class="btn btn-sm btn-danger"
+            id="deleteImageBtn" data-rs-id="<?= $rs_id ?>">
+            <i class="bx bx-trash"></i>
+    </button>
+</div>
 
+<?php else: ?>
+    <div class="mt-2 text-muted">
+    <label class="control">Resturant Profile</label>
+    <input type="file" name="image" class="form-control">    
+        <p class="text-danger my-3">No Image Data</p>
+    </div>
+<?php endif; ?>
 
-                                   
 
 
 
@@ -292,14 +284,26 @@ if (isset($_POST['submit'])) {
 
 </div>
 
-<script src="js/lib/jquery/jquery.min.js"></script>
-<script src="js/lib/bootstrap/js/popper.min.js"></script>
-<script src="js/lib/bootstrap/js/bootstrap.min.js"></script>
-<script src="js/jquery.slimscroll.js"></script>
-<script src="js/sidebarmenu.js"></script>
-<script src="js/lib/sticky-kit-master/dist/sticky-kit.min.js"></script>
-<script src="js/custom.min.js"></script>
 
-</body>
+<script>
+$(document).on('click', '#deleteImageBtn', function () {
+    const rs_id = $(this).data('rs-id');
 
-</html>
+    if (confirm('Are you sure you want to delete this image?')) {
+        $.ajax({
+            url: 'delete_image.php',
+            type: 'POST',
+            data: { rs_id: rs_id },
+            success: function (response) {
+                if (response === 'success') {
+                    $('#image-preview').fadeOut();
+                } else {
+                    alert('Failed to delete image.');
+                }
+            }
+        });
+    }
+});
+</script>
+
+<?php include 'layouts/footer.php' ?>

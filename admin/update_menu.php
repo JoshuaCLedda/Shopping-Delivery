@@ -1,58 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
 <?php
-ob_start();
-include("../connection/connect.php");
-error_reporting(0);
 session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', value: 1); // Ensure errors are displayed
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-if (isset($_POST['submit'])) { // if upload btn is pressed
-    // Debugging: Print POST data
-    echo '<pre>';
-    print_r($_POST);
-    echo '</pre>';
+include "Main.php";
+$index = new Index;
 
-    if (empty($_POST['d_name']) || empty($_POST['about']) || $_POST['price'] == '' || empty($_POST['stall_name'])) {
-        $error = '<div class="alert alert-danger alert-dismissible fade show">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <strong>All fields must be filled!</strong>
-                  </div>';
+if (isset($_GET['menu_upd'])) {
+    $_SESSION['dishedId'] = $_GET['menu_upd'];
+}
+
+$dishes_id = $_SESSION['dishedId'] ?? null;
+
+// backend
+if (isset($_POST['submit'])) {
+    $dishes_id = $_SESSION['dishedId'];
+    $title = $_SESSION['title'];
+    $slogan = $_POST['slogan'];
+    $price = $_POST['price'];
+    $available_quantity = $_POST['available_quantity'];
+    $dish_category_id = $_POST['dish_category_id'];
+    $rs_id = $_POST['rs_id'];
+    $image = $_FILES['image'];
+
+    // Call the model function with image path
+    $result = $index->updateMenu(
+        $title,
+        $slogan,
+        $price,
+        $available_quantity,
+        $dish_category_id,
+        $rs_id,
+        $image
+
+    );
+
+
+    if ($result) {
+        $_SESSION['message'] = ['type' => 'success', 'message' => 'Restaurant Registered Successfully!'];
     } else {
-        $fname = $_FILES['file']['name'];
-        $temp = $_FILES['file']['tmp_name'];
-        $fsize = $_FILES['file']['size'];
-        $extension = strtolower(end(explode('.', $fname)));
-        $fnew = uniqid() . '.' . $extension;
-        $store = "Res_img/dishes/" . basename($fnew);
-
-        if ($extension == 'jpg' || $extension == 'png' || $extension == 'gif') {
-            if ($fsize >= 1000000) {
-                $error = '<div class="alert alert-danger alert-dismissible fade show">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <strong>Max Image Size is 1024kb!</strong> Try a different image.
-                          </div>';
-            } else {
-                // Update the dish with the new data
-                $sql = "UPDATE dishes SET
-                            stall = '$_POST[stall_name]', 
-                            rs_id = '$_POST[stall_name]', 
-                            title = '$_POST[d_name]', 
-                            slogan = '$_POST[about]', 
-                            price = '$_POST[price]',
-                            img = '$fnew' 
-                        WHERE d_id = '$_GET[menu_upd]'";
-                mysqli_query($db, $sql);
-                move_uploaded_file($temp, $store);
-
-                $success = '<div class="alert alert-success alert-dismissible fade show">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <strong>Record Updated!</strong>
-                          </div>';
-            }
-        }
+        $_SESSION['message'] = ['type' => 'danger', 'message' => 'Failed to Register. Email Might Already Exist.'];
+    }
+    if (isset($_SERVER['HTTP_REFERER'])) {
+        header("Location: " . $_SERVER['HTTP_REFERER']);
+        exit();
+    } else {
+        header("Location: add_restaurant.php"); // fallback if no referrer
+        exit();
     }
 }
-ob_clean();
+
 ?>
 
 <?php include 'layouts/header.php' ?>
@@ -76,99 +75,163 @@ ob_clean();
 
 
         <div class="d-flex justify-content-end my-2">
-            <a href="all_users.php" class="btn btn-primary">Back</a>
+            <a href="all_menu.php" class="btn btn-primary">Back
+
+            </a>
         </div>
-        
+
         <?php include 'layouts/alert.php'; ?>
 
 
         <div class="row justify-content-center">
-                <div class="col-md-12">
-          <div class="card card-outline-primary">
-                    
+            <div class="col-md-12">
+                <div class="card card-outline-primary">
+
                     <div class="card-header bg-primary">
-                        <h5 class="mb-0 text-white">Register New User</h5>
+                        <h5 class="mb-0 text-white">Update Menu</h5>
                     </div>
 
-                   
-                        <div class="widget card-body shadow-sm">
+
+                    <div class="widget card-body shadow-sm">
                         <div class="widget-body">
                             <form action='' method='post' enctype="multipart/form-data">
                                 <div class="form-body">
                                     <?php
                                     $qml = "SELECT * FROM dishes WHERE d_id='$_GET[menu_upd]'";
-                                    $rest = mysqli_query($db, $qml);
-                                    $roww = mysqli_fetch_array($rest);
+                                    $rest = mysqli_query($index->con, $qml);
+                                    $row = mysqli_fetch_array($rest);
                                     ?>
-                                    <hr>
-                                    <div class="row p-t-20">
+                                    <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <div class="form-group">
                                                 <label class="control-label">Dish Name</label>
-                                                <input type="text" name="d_name" value="<?php echo $roww['title']; ?>" class="form-control" placeholder="Morzirella">
+                                                <input type="text" name="title"
+                                                    value="<?php echo htmlspecialchars($row['title']); ?>"
+                                                    class="form-control" placeholder="Morzirella">
                                             </div>
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <div class="form-group has-danger">
-                                                <label class="control-label">About</label>
-                                                <input type="text" name="about" value="<?php echo $roww['slogan']; ?>" class="form-control form-control-danger" placeholder="slogan">
+                                                <label class="control-label">Slogan</label>
+                                                <input type="text" name="slogan"
+                                                    value="<?php echo htmlspecialchars($row['slogan']); ?>"
+                                                    class="form-control form-control-danger" placeholder="Slogan">
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row p-t-20">
+
+
                                         <div class="col-md-6 mb-3">
                                             <div class="form-group">
                                                 <label class="control-label">Price</label>
-                                                <input type="text" name="price" value="<?php echo $roww['price']; ?>" class="form-control" placeholder="₱">
+                                                <input type="text" name="price"
+                                                    value="<?php echo htmlspecialchars($row['price']); ?>"
+                                                    class="form-control" placeholder="₱">
                                             </div>
                                         </div>
+
                                         <div class="col-md-6 mb-3">
-                                            <div class="form-group has-danger">
-                                                <label class="control-label">Image</label>
-                                                <input type="file" name="file" id="lastName" class="form-control form-control-danger" placeholder="12n">
+                                            <div class="form-group">
+                                                <label class="control-label">Availble Quantity</label>
+                                                <input type="text" name="available_quantity"
+                                                    value="<?php echo htmlspecialchars($row['available_quantity']); ?>"
+                                                    class="form-control" >
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
+
+
+
+
+
+
+                                        <div class="col-md-6 mb-3">
                                             <div class="form-group">
-                                                <label class="control-label">Select Category</label>
-                                                <select name="stall_name" class="form-control custom-select" data-placeholder="Choose a Category" tabindex="1">
-                                                    <option>--Select Stalls--</option>
+                                                <label class="control-label">Menu Category</label>
+                                                <select name="dish_category_id" class="form-control custom-select"
+                                                    data-placeholder="Choose a Category" tabindex="1">
+                                                    <option value="">--Select Category--</option>
                                                     <?php
-                                                    $ssql = "SELECT * FROM restaurant";
-                                                    $res = mysqli_query($db, $ssql);
-                                                    while ($row = mysqli_fetch_array($res)) {
-                                                        // Check if the current restaurant is the one associated with the dish
-                                                        $selected = ($row['title'] == $roww['title']) ? 'selected' : '';
-                                                        echo '<option value="' . $row['title'] . '" ' . $selected . '>' . $row['title'] . '</option>';
+                                                    $currentDishCategory = $row['dish_category_id']; // This is from your current dish
+                                                    $ssql = "SELECT * FROM dish_category";
+                                                    $res = mysqli_query($index->con, $ssql);
+
+                                                    // Loop through the categories and set the selected attribute
+                                                    while ($catRow = mysqli_fetch_array($res)) {
+                                                        // Check if the current category is the one for this dish
+                                                        $selected = ($catRow['id'] == $currentDishCategory) ? 'selected' : '';
+                                                        echo '<option value="' . htmlspecialchars($catRow['id']) . '" ' . $selected . '>' . htmlspecialchars($catRow['category']) . '</option>';
                                                     }
                                                     ?>
                                                 </select>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Select Stall</label>
+                                                <select name="rs_id" class="form-control custom-select"
+                                                    data-placeholder="Choose a Category" tabindex="1">
+                                                    <option value="">--Select Category--</option>
+                                                    <?php
+                                                    $currentRestau = $row['rs_id']; // This is from your current dish
+                                                    $ssql = "SELECT * FROM restaurant";
+                                                    $res = mysqli_query($index->con, $ssql);
+
+                                                    // Loop through the categories and set the selected attribute
+                                                    while ($catRow = mysqli_fetch_array($res)) {
+                                                        // Check if the current category is the one for this dish
+                                                        $selected = ($catRow['rs_id'] == $currentRestau) ? 'selected' : '';
+                                                        echo '<option value="' . htmlspecialchars($catRow['rs_id']) . '" ' . $selected . '>' . htmlspecialchars($catRow['title']) . '</option>';
+                                                    }
+                                                    ?>
+                                                </select>
+
                                             </div>
                                         </div>
+
+
+
+                                        <div class="col-md-6">
+
+                                            <?php if (!empty($row['img']) && file_exists('Res_img/' . $row['img'])): ?>
+                                                <div>
+                                                    <label class="control-label">Menu Image</label>
+                                                    <input type="file" name="image" class="form-control" disabled>
+                                                </div>
+                                                <div class="mt-2" id="image-preview">
+                                                    <img src="Res_img/<?= htmlspecialchars($row['img']) ?>"
+                                                        alt="Restaurant Image" class="img-fluid"
+                                                        style="max-width: 100px; max-height: 100px;">
+                                                    <button type="button" class="btn btn-sm btn-danger" id="deleteImageBtn"
+                                                        data-rs-id="<?= $rs_id ?>">
+                                                        <i class="bx bx-trash"></i>
+                                                    </button>
+                                                </div>
+                                            <?php else: ?>
+                                                <div class="mt-2 text-muted">
+                                                    <label class="control-label">Menu Image</label>
+                                                    <input type="file" name="image" class="form-control">
+                                                    <p class="text-danger my-3">No Image Data</p>
+                                                </div>
+                                            <?php endif; ?>
+
+
+                                        </div>
                                     </div>
-                                </div>
+                                    <div class="form-actions my-3">
+                                        <input type="submit" name="submit" class="btn btn-primary" value="Save">
+                                        <a href="all_menu.php" class="btn btn-danger">Cancel</a>
+                                    </div>
+                            </form>
                         </div>
-                        <div class="form-actions">
-                            <input type="submit" name="submit" class="btn btn-primary" value="Save">
-                            <a href="all_menu.php" class="btn btn-inverse">Cancel</a>
-                        </div>
-                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    </div>
-    </div>
-    <script src="js/lib/jquery/jquery.min.js"></script>
-    <script src="js/lib/bootstrap/js/popper.min.js"></script>
-    <script src="js/lib/bootstrap/js/bootstrap.min.js"></script>
-    <script src="js/jquery.slimscroll.js"></script>
-    <script src="js/sidebarmenu.js"></script>
-    <script src="js/lib/sticky-kit-master/dist/sticky-kit.min.js"></script>
-    <script src="js/custom.min.js"></script>
-</body>
+</div>
 
-</html>
+
+<?php include 'layouts/footer.php' ?>
