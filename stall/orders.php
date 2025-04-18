@@ -1,23 +1,33 @@
 <?php
-error_reporting(0);
 session_start();
-include("../connection/connect.php");
+error_reporting(E_ALL);
+ini_set('display_errors', value: 1); // Ensure errors are displayed
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-// Query to fetch all orders (DataTables will handle pagination client-side)
-$sql = "SELECT t.id, t.total_price, t.status, t.order_date, t.rs_id, 
-               r.title AS restaurant_name, 
-               u.f_name AS user_name 
-        FROM transaction t
-        LEFT JOIN restaurant r ON t.rs_id = r.rs_id
-        LEFT JOIN users u ON t.u_id = u.u_id
-        ORDER BY t.order_date DESC";
-$query = mysqli_query($db, $sql);
+
+include "../admin/Main.php";
+$index = new Index;
+
+$sql = "SELECT 
+            transaction.id, 
+            transaction.total_price, 
+            transaction.status, 
+            transaction.order_date, 
+            transaction.rs_id, 
+            restaurant.title AS restaurant_name, 
+            CONCAT(users.f_name, ' ', users.l_name) AS fullname
+        FROM transaction
+        LEFT JOIN restaurant ON transaction.rs_id = restaurant.rs_id
+        LEFT JOIN users ON transaction.u_id = users.u_id
+        ORDER BY transaction.order_date DESC";
+
+
+$query = mysqli_query($index->con, $sql);
 
 if (!$query) {
-    die("Error fetching data: " . mysqli_error($db));
+    die("Error fetching data: " . mysqli_error($index->con));
 }
 ?>
-
 <?php include '../admin/layouts/header.php' ?>
 <?php include '../layouts/stall/sidebar.php' ?>
 <?php include '../layouts/stall/navbar.php' ?>
@@ -38,7 +48,6 @@ if (!$query) {
         </div>
 
 
-
         <div class="row">
             <div class="col-12">
                 <div class="col-lg-12">
@@ -49,18 +58,11 @@ if (!$query) {
                         </div>
 
                         <div class="card-body">
-                    
-
                             <div class="table-responsive">
-                           
-                           
-
-
 
                                 <table class="table datatable table-striped table-hover" id="datatable">
-                                  
-                                
-                                <thead>
+
+                                    <thead>
                                         <tr>
                                             <th>Customer Name</th>
                                             <th>Total Price</th>
@@ -107,7 +109,9 @@ if (!$query) {
                                                 }
                                                 ?>
                                                 <tr>
-                                                    <td><?= htmlspecialchars($rows['user_name']) ?></td>
+                                                    <td><?= isset($rows['fullname']) ? htmlspecialchars($rows['fullname']) : 'No Data' ?>
+                                                    </td>
+                                                    <?php $rowStatus = strtolower($rows['status']); ?>
                                                     <td>₱ <?= number_format($rows['total_price'], 2) ?></td>
                                                     <td class="status-cell">
                                                         <span class="badge <?= $badgeClass ?>"><?= $statusText ?></span>
@@ -120,23 +124,27 @@ if (!$query) {
                                                                 value="<?= htmlspecialchars($rows['id']) ?>">
                                                             <select name="status"
                                                                 class="form-select form-select-sm d-inline w-auto">
-                                                                <option value="place_order" <?= $rows['status'] == 'place_order' ? 'selected' : '' ?>>Placed</option>
+                                                                <option value="place_order" <?= $rowStatus == 'place_order' ? 'selected' : '' ?>>Placed</option>
                                                                 <option value="order_confirmation"
-                                                                    <?= $rows['status'] == 'order_confirmation' ? 'selected' : '' ?>>Confirmed</option>
-                                                                <option value="in_process" <?= $rows['status'] == 'in_process' ? 'selected' : '' ?>>In Process</option>
-                                                                <option value="cancelled" <?= $rows['status'] == 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
+                                                                    <?= $rowStatus == 'order_confirmation' ? 'selected' : '' ?>>
+                                                                    Confirmed</option>
+                                                                <option value="in_process" <?= $rowStatus == 'in_process' ? 'selected' : '' ?>>In Process</option>
+                                                                <option value="cancelled" <?= in_array($rowStatus, ['order_canceled', 'order_cancelled', 'cancelled']) ? 'selected' : '' ?>>Cancelled</option>
+                                                                <option value="order_received" <?= $rowStatus == 'order_received' ? 'selected' : '' ?>>Received</option>
+                                                                <option value="order_delivered" <?= $rowStatus == 'order_delivered' ? 'selected' : '' ?>>Delivered</option>
                                                             </select>
+
                                                             <noscript>
                                                                 <button type="submit"
                                                                     class="btn btn-sm btn-primary ms-2">Update</button>
                                                             </noscript>
                                                         </form>
-                                                        <a href="view_order.php?id=<?= urlencode($rows['id']) ?>" 
+                                                        <a href="view_order.php?id=<?= urlencode($rows['id']) ?>"
                                                             class="btn btn-info btn-sm view-details-btn">
                                                             <i class="bx bx-show"></i>
                                                         </a>
-
                                                     </td>
+
                                                 </tr>
                                             <?php endwhile; ?>
                                         <?php endif; ?>
@@ -145,9 +153,6 @@ if (!$query) {
                                 </table>
 
                             </div>
-
-
-
 
                         </div>
                     </div>
@@ -249,5 +254,5 @@ if (!$query) {
         });
     </script>
 
-<script src="../assets/js/selectFilter.js"></script>
-<?php include '../admin/layouts/footer.php' ?>
+    <script src="../assets/js/selectFilter.js"></script>
+    <?php include '../admin/layouts/footer.php' ?>

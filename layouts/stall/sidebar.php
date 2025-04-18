@@ -26,19 +26,31 @@
           <span class="hide-menu">Utilities</span>
         </li>
 
+      
+
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="placed_orders.php" aria-expanded="false">
+            <span>
+              <i class="bx bx-receipt"></i>
+            </span>
+            <span class="hide-menu">Place Orders</span>
+          </a>
+        </li>
+
         <li class="sidebar-item">
           <a class="sidebar-link" href="orders.php" aria-expanded="false">
             <span>
               <i class="bx bx-receipt"></i>
             </span>
-            <span class="hide-menu">Orders</span>
+            <span class="hide-menu">All Orders</span>
           </a>
         </li>
+
 
         <li class="sidebar-item">
           <a class="sidebar-link" href="menus.php" aria-expanded="false">
             <span>
-              <i class="bx bx-bowl-hot"></i> 
+              <i class="bx bx-bowl-hot"></i>
             </span>
             <span class="hide-menu">Menus</span>
           </a>
