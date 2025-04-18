@@ -78,7 +78,7 @@ while ($row = mysqli_fetch_object($result)) {
                 <div class="card card-outline-primary">
 
                     <div class="card-header bg-primary">
-                        <h5 class="mb-0 text-white">Order Details
+                        <h5 class="mb-0 text-white">Delivered Order Details
                         </h5>
                     </div>
 
@@ -130,7 +130,6 @@ while ($row = mysqli_fetch_object($result)) {
                                             value="<?= htmlspecialchars($total_quantity) ?>" disabled>
                                     </div>
 
-
                                     <div class="form-group col-sm-6 mb-3">
                                         <label for="orderStatus">Order Status</label>
                                         <select disabled class="form-control" name="status" id="orderStatus">
@@ -142,6 +141,7 @@ while ($row = mysqli_fetch_object($result)) {
                                             <option value="order_delivered" <?= $order_status == 'order_delivered' ? 'selected' : '' ?>>Delivered</option>
                                         </select>
                                     </div>
+
 
 
                                     <div class="form-group col-sm-6 mb-3">
@@ -181,9 +181,183 @@ while ($row = mysqli_fetch_object($result)) {
 
 
 
+
+
+
                 </div>
             </div>
-        </div>
 
-    </div>
-</div>
+
+
+            <?php
+            $overall = $index->getDeliveredRating($transacId);
+            ?>
+
+            <div class="col-12 mb-4">
+                <div class="card card-outline-primary">
+
+                    <div class="card-header bg-primary">
+                        <h5 class="mb-0 text-white">Delivery Rating
+                        </h5>
+                    </div>
+
+
+                    <div class="card shadow-sm border-0 rounded-4 bg-light">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3"><i class='bx bx-bar-chart-alt-2'></i> Overall Rating</h5>
+
+                            <div class="mb-2">
+                                <?php if (!empty($overall) && isset($overall['avg_rating']) && $overall['total'] > 0): ?>
+                                    <?php
+                                    $avg = round($overall['avg_rating'], 1);
+                                    $whole = floor($avg);
+                                    $has_half = ($avg - $whole) >= 0.5;
+
+                                    // Star color logic
+                                    $starClass = ($avg <= 1) ? 'text-danger' : 'text-warning';
+
+                                    // Stars display
+                                    for ($i = 1; $i <= 5; $i++):
+                                        if ($i <= $whole):
+                                            echo "<i class='bx bxs-star $starClass'></i>";
+                                        elseif ($has_half && $i == $whole + 1):
+                                            echo "<i class='bx bxs-star-half $starClass'></i>";
+                                        else:
+                                            echo "<i class='bx bx-star text-muted'></i>";
+                                        endif;
+                                    endfor;
+
+                                    // Feedback message
+                                    if ($avg >= 4.5) {
+                                        $feedback = "Outstanding performance! Keep exceeding expectations.";
+                                    } elseif ($avg >= 4) {
+                                        $feedback = "Great job! You're on the right track, keep it up!";
+                                    } elseif ($avg >= 3) {
+                                        $feedback = "Satisfactory work, but there's room for improvement.";
+                                    } elseif ($avg >= 2) {
+                                        $feedback = "Effort is needed to meet expectations. Focus on improving key areas.";
+                                    } else {
+                                        $feedback = "Significant improvement needed. A more focused approach is required.";
+                                    }
+                                    ?>
+
+                                    <p class="mt-2 text-muted"><?= $feedback ?></p>
+                                    <p class="mb-1"><strong>Average:</strong> <?= $avg ?>/5</p>
+                                    <p class="mb-0"><strong>Total Reviews:</strong> <?= $overall['total'] ?></p>
+                                <?php else: ?>
+                                    <div class="card border-0 bg-danger shadow-sm rounded-4 p-3 mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <i class='text-white bx bx-info-circle fs-4 text-primary me-2'></i>
+                                            <div>
+                                                <p class="mb-0 text-white">This rider hasn't received any ratings yet.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+
+
+
+
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+                    <div class="row">
+                        <!-- starts here -->
+
+                        <?php
+                        $result = $index->getDeliveredOrderRating($transacId);
+
+                        if (mysqli_num_rows($result) > 0):
+                            while ($row = mysqli_fetch_array($result)) {
+                                ?>
+                                <div class="col-md-6 col-lg-4 mb-4">
+                                    <div class="card shadow-sm rounded-4">
+                                        <div class="card-body">
+                                            <!-- Star Rating -->
+                                            <div class="mb-2">
+                                                <?php
+                                                $rating = intval($row['rating']);
+                                                for ($i = 1; $i <= 5; $i++):
+                                                    if ($i <= $rating): ?>
+                                                        <i class='bx bxs-star text-warning'></i>
+                                                    <?php else: ?>
+                                                        <i class='bx bx-star text-muted'></i>
+                                                    <?php endif;
+                                                endfor;
+                                                ?>
+                                            </div>
+
+                                            <!-- Comment -->
+                                            <p class="mb-2 text-muted fst-italic">"<?= htmlspecialchars($row['complaint']) ?>"
+                                            </p>
+
+                                            <!-- Rater and Rider Info -->
+                                            <p class="mb-1"><strong>Rider:</strong>
+                                                <?= htmlspecialchars($row['rider_name']) ?></p>
+
+                                            <p class="mb-1"><strong>Customer:</strong>
+                                                <?= htmlspecialchars($row['rider_name']) ?>
+                                            </p>
+
+                                            <!-- Date -->
+                                            <p class="text-end text-muted small mb-0">
+                                                <i class='bx bx-calendar'></i>
+                                                <?= date('F j, Y', strtotime($row['created_at'])) ?>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php
+                            }
+                        else:
+                            ?>
+
+                            <?php
+                        endif;
+                        ?>
+
+
+
+
+
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                </div>
+
+            </div>
+        </div>

@@ -78,7 +78,7 @@ while ($row = mysqli_fetch_object($result)) {
                 <div class="card card-outline-primary">
 
                     <div class="card-header bg-primary">
-                        <h5 class="mb-0 text-white">Order Details
+                        <h5 class="mb-0 text-white">Recieved Order Details
                         </h5>
                     </div>
 
@@ -130,7 +130,6 @@ while ($row = mysqli_fetch_object($result)) {
                                             value="<?= htmlspecialchars($total_quantity) ?>" disabled>
                                     </div>
 
-
                                     <div class="form-group col-sm-6 mb-3">
                                         <label for="orderStatus">Order Status</label>
                                         <select disabled class="form-control" name="status" id="orderStatus">
@@ -142,6 +141,7 @@ while ($row = mysqli_fetch_object($result)) {
                                             <option value="order_delivered" <?= $order_status == 'order_delivered' ? 'selected' : '' ?>>Delivered</option>
                                         </select>
                                     </div>
+
 
 
                                     <div class="form-group col-sm-6 mb-3">

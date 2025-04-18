@@ -171,10 +171,19 @@ class Index
     public function getInProcessTransac()
     {
         // Corrected SQL query
-        $sql = "SELECT id AS transacID, u_id, total_price, stall_id, status, order_date 
-                FROM transaction 
-                WHERE status = 'place_order'
-                AND rider_id = 0";
+        $sql = "SELECT 
+                transaction.id AS transacID, 
+                transaction.u_id, 
+                transaction.total_price, 
+                transaction.stall_id, 
+                transaction.status, 
+                transaction.order_date,
+                CONCAT(users.f_name, ' ', users.l_name) AS customerName,
+                users.phone AS customerPhone
+            FROM transaction 
+            LEFT JOIN users ON users.u_id = transaction.u_id
+            WHERE transaction.status = 'in_process'
+            ORDER BY transaction.updated_at DESC";
 
         $result = mysqli_query($this->con, $sql);
 
@@ -186,7 +195,6 @@ class Index
     }
 
 
-
     public function acceptOrderRider($rider_id, $transaction_id)
     {
         // Escape variables
@@ -196,7 +204,8 @@ class Index
         // Update transaction with rider_id and status
         $sql = "UPDATE transaction 
                 SET rider_id = '$rider_id',
-                status = '$status'
+                status = 'order_received'
+                updated_at = NOW()
                 WHERE id = '$transaction_id'";
 
         return mysqli_query($this->con, $sql);
@@ -578,7 +587,7 @@ class Index
         $available_quantity = mysqli_real_escape_string($this->con, $available_quantity);
         $dish_category_id = mysqli_real_escape_string($this->con, $dish_category_id);
         $rs_id = mysqli_real_escape_string($this->con, $rs_id);
-    
+
         // Start building the SQL
         $sql = "UPDATE dishes SET 
                     title = '$title',
@@ -587,20 +596,20 @@ class Index
                     available_quantity = '$available_quantity',
                     dish_category_id = '$dish_category_id',
                     rs_id = '$rs_id'";
-    
+
         // Handle image upload if a new image is uploaded
         if (!empty($image) && !empty($image['name'])) {
             $imageName = basename($image['name']);
             $imageTmp = $image['tmp_name'];
             $imageFolder = "Res_img/";
-    
+
             if (!is_dir($imageFolder)) {
                 mkdir($imageFolder, 0777, true);
             }
-    
+
             $newImageName = time() . "_" . $imageName; // Unique file name
             $targetPath = $imageFolder . $newImageName;
-    
+
             if (move_uploaded_file($imageTmp, $targetPath)) {
                 $imagePathForDB = mysqli_real_escape_string($this->con, $newImageName);
                 $sql .= ", img = '$imagePathForDB'"; // Append img only if upload succeeded
@@ -608,10 +617,10 @@ class Index
                 return false; // Image upload failed
             }
         }
-    
+
         // Add the WHERE clause at the end
         $sql .= " WHERE disheiSId = '$dishes_Id'";
-    
+
         // Execute and return
         return mysqli_query($this->con, $sql);
     }
@@ -631,28 +640,29 @@ class Index
 
         return $result;
     }
-    
-    public function updateCategory($c_id, $c_name, $status) {
+
+    public function updateCategory($c_id, $c_name, $status)
+    {
         $c_id = mysqli_real_escape_string($this->con, $c_id);
         $c_name = mysqli_real_escape_string($this->con, $c_name);
         $status = mysqli_real_escape_string($this->con, $status);
-    
+
         $sql = "UPDATE res_category SET c_name = '$c_name', status = '$status' WHERE c_id = '$c_id'";
-    
+
         return mysqli_query($this->con, $sql);
     }
-    
+
     // Updated Profile
     public function updateProfile($user_id, $f_name, $l_name, $username, $email, $address, $password = null)
     {
         $user_id = intval($user_id); // to be safe
-    
+
         $f_name = mysqli_real_escape_string($this->con, $f_name);
         $l_name = mysqli_real_escape_string($this->con, $l_name);
         $username = mysqli_real_escape_string($this->con, $username);
         $email = mysqli_real_escape_string($this->con, $email);
         $address = mysqli_real_escape_string($this->con, $address);
-    
+
         if ($password) {
             $password = mysqli_real_escape_string($this->con, $password);
             $query = "UPDATE users 
@@ -663,15 +673,15 @@ class Index
                       SET f_name='$f_name', l_name='$l_name', username='$username', email='$email', address='$address' 
                       WHERE u_id='$user_id'";
         }
-    
+
         return mysqli_query($this->con, $query);
     }
-    
+
 
     public function updateUser($u_id, $f_name, $l_name, $username, $phone, $email, $address, $role, $password = null)
     {
         $user_id = intval($u_id); // to be safe
-    
+
         $f_name = mysqli_real_escape_string($this->con, $f_name);
         $l_name = mysqli_real_escape_string($this->con, $l_name);
         $username = mysqli_real_escape_string($this->con, $username);
@@ -679,7 +689,7 @@ class Index
         $address = mysqli_real_escape_string($this->con, $address);
         $phone = mysqli_real_escape_string($this->con, $phone);
         $role = mysqli_real_escape_string($this->con, $role);
-    
+
         if ($password) {
             $password = mysqli_real_escape_string($this->con, $password);
             $query = "UPDATE users 
@@ -694,11 +704,105 @@ class Index
                       address='$address' 
                       WHERE u_id='$user_id'";
         }
-    
+
         return mysqli_query($this->con, $query);
     }
 
-    
-    
 
+    public function ridersReceivedOrder($user_id)
+    {
+        // Corrected SQL query
+        $sql = "SELECT 
+                transaction.id AS transacID, 
+                transaction.u_id, 
+                transaction.total_price, 
+                transaction.stall_id, 
+                transaction.status, 
+                transaction.order_date,
+                CONCAT(users.f_name, ' ', users.l_name) AS customerName,
+                users.phone AS customerPhone
+            FROM transaction 
+            LEFT JOIN users ON users.u_id = transaction.u_id
+            WHERE transaction.status = 'order_received'
+            AND transaction.rider_id = '$user_id'
+            ORDER BY transaction.updated_at DESC";
+
+        $result = mysqli_query($this->con, $sql);
+
+        if (!$result) {
+            die('Query failed: ' . mysqli_error($this->con));
+        }
+
+        return $result;
+    }
+
+
+    public function ridersDeliveredOrder($user_id)
+    {
+        // Corrected SQL query
+        $sql = "SELECT 
+                transaction.id AS transacID, 
+                transaction.u_id, 
+                transaction.total_price, 
+                transaction.stall_id, 
+                transaction.status, 
+                transaction.order_date,
+                CONCAT(users.f_name, ' ', users.l_name) AS customerName,
+                users.phone AS customerPhone
+            FROM transaction 
+            LEFT JOIN users ON users.u_id = transaction.u_id
+            WHERE transaction.status = 'order_delivered'
+            AND transaction.rider_id = '$user_id'
+            ORDER BY transaction.updated_at DESC";
+
+        $result = mysqli_query($this->con, $sql);
+
+        if (!$result) {
+            die('Query failed: ' . mysqli_error($this->con));
+        }
+
+        return $result;
+    }
+
+    public function getDeliveredOrderRating($transacId)
+    {
+        $sql = "SELECT users.f_name, users.l_name,
+        rating_rider.rider_name, rating_rider.rating, rating_rider.complaint,
+        rating_rider.created_at
+        FROM rating_rider
+        LEFT JOIN users ON
+        users.u_id = rating_rider.user_id 
+        WHERE rating_rider.orders_id = '$transacId'
+        ORDER BY rating_rider.created_at DESC";
+
+        $result = mysqli_query($this->con, $sql);
+
+        if (!$result) {
+            die('Query failed: ' . mysqli_error($this->con));
+        }
+
+
+        return $result;
+    }
+
+    
+    public function getDeliveredRating($transacId)
+    {
+        $transacId = intval($transacId);
+
+        $sql = "SELECT 
+                    ROUND(AVG(rating), 1) AS avg_rating, 
+                    COUNT(*) AS total 
+                FROM rating_rider 
+                WHERE orders_id = $transacId";
+
+        $result = mysqli_query($this->con, $sql);
+
+        if (!$result) {
+            die('Query failed: ' . mysqli_error($this->con));
+        }
+
+        $data = mysqli_fetch_assoc($result);
+        return $data ?: ['avg_rating' => 0, 'total' => 0];
+    }
 }

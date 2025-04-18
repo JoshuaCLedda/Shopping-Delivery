@@ -28,7 +28,7 @@ if (isset($_POST['submit'])) {
         $_SESSION['message'] = ['type' => 'danger', 'message' => 'Please Try Again.'];
     }
 
-    header("Location: index.php");
+    header("Location: received_orders.php");
     exit();
 }
 
@@ -62,97 +62,115 @@ if (isset($_POST['submit'])) {
                     <div class="card card-outline-primary">
 
                         <div class="card-header bg-primary">
-                            <h5 class="mb-0 text-white">Recent Orders</h5>
+                            <h5 class="mb-0 text-white">Recent In-Process Orders</h5>
                         </div>
 
+                       
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table datatable table-striped table-hover"
-                                    id="datatable">
+                                <table class="table datatable table-striped table-hover" id="datatable">
                                     <thead>
-                                            <tr>
-                                                <th>User</th>
-                                                <th>Total Price</th>
-                                                <th>Stall</th>
-                                                <th>Status</th>
-                                                <th>Order Date</th>
-                                                <th>Action</th>
+                                        <tr>
+                                            <th>Customer Name</th>
+                                            <th>Total Price</th>
+                                            <th>Stall</th>
+                                            <th>Contact</th>
+                                            <th>Status</th>
+                                            <th>Order Date</th>
+                                            <th>Action</th>
 
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-   
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
                                         <?php
-$result = $index->getInProcessTransac();
+                                        $result = $index->getInProcessTransac();
+                                        ?>
 
-while ($row = mysqli_fetch_array($result)) {
-    // Format date
-    $formattedDate = !empty($row['order_date']) ? date("F j, Y, g:i A", strtotime($row['order_date'])) : 'No Date';
+                                        <?php while ($row = mysqli_fetch_array($result)):
+                                            // Format date
+                                            $formattedDate = !empty($row['order_date']) ? date("F j, Y, g:i A", strtotime($row['order_date'])) : 'No Date';
 
-    // Normalize status string
-    $status = strtolower(trim($row['status']));
-    switch ($status) {
-        case 'order_confirmation':
-            $statusText = 'Confirmed';
-            $badgeClass = 'bg-success';
-            break;
-        case 'order_canceled':
-            $statusText = 'Canceled';
-            $badgeClass = 'bg-danger';
-            break;
-        case 'order_received':
-            $statusText = 'Received';
-            $badgeClass = 'bg-primary';
-            break;
-        case 'in_process':
-            $statusText = 'In Process';
-            $badgeClass = 'bg-warning text-dark';
-            break;
-        case 'place_order':
-            $statusText = 'Placed';
-            $badgeClass = 'bg-info text-dark';
-            break;
-        default:
-            $statusText = $status ?: 'Unknown';
-            $badgeClass = 'bg-secondary';
-            break;
-    }
+                                            // Normalize status string
+                                            $status = strtolower(trim($row['status']));
+                                            switch ($status) {
+                                                case 'order_confirmation':
+                                                    $statusText = 'Confirmed';
+                                                    $badgeClass = 'bg-success';
+                                                    break;
+                                                case 'order_canceled':
+                                                    $statusText = 'Canceled';
+                                                    $badgeClass = 'bg-danger';
+                                                    break;
+                                                case 'order_received':
+                                                    $statusText = 'Received';
+                                                    $badgeClass = 'bg-primary';
+                                                    break;
+                                                case 'in_process':
+                                                    $statusText = 'In Process';
+                                                    $badgeClass = 'bg-warning text-dark';
+                                                    break;
+                                                case 'place_order':
+                                                    $statusText = 'Placed';
+                                                    $badgeClass = 'bg-info text-dark';
+                                                    break;
+                                                case 'order_delivered':
+                                                    $statusText = 'Delivered';
+                                                    $badgeClass = 'bg-success text-white';
+                                                    break;
+                                                default:
+                                                    $statusText = $status ?: 'Unknown';
+                                                    $badgeClass = 'bg-secondary';
+                                                    break;
+                                            }
 
-    // Use session user_id
-    $UserId = $_SESSION['user_id'];
-
-    // Display row
-    echo '<tr>';
-    echo '<td>' . htmlspecialchars($row['u_id']) . '</td>';
-    echo '<td>₱' . number_format($row['total_price'], 2) . '</td>';
-    echo '<td>' . htmlspecialchars($row['stall_id']) . '</td>';
-    echo '<td><span class="badge rounded-pill ' . $badgeClass . '">' . $statusText . '</span></td>';
-    echo '<td>' . $formattedDate . '</td>';
-    echo '<td>';
-    echo '<form action="" method="POST" class="d-inline">';
-    echo '<input type="hidden" name="rider_id" value="' . htmlspecialchars($UserId) . '">';
-    echo '<input type="hidden" name="transaction_id" value="' . htmlspecialchars($row['transacID']) . '">';
-    echo '<button type="submit" name="submit" class="btn btn-sm btn-success">Accept</button>';
-    echo '</form>';
-    
-    echo '<a href="confirm_order.php?order_upd=' . $row['transacID'] . '" class="btn btn-sm btn-info ms-2">';
-
-    echo '<i class="bx bx-edit"></i></a>';
-    
-    echo '</td>';
-    echo '</tr>';
-}
-?>
-
-
-</tbody>
-
-
-                                    </table>
-                                </div>
+                                            $UserId = $_SESSION['user_id'];
+                                            ?>
+                                            <tr>
+                                                <td><?= htmlspecialchars($row['customerName'] ?? 'No Data') ?></td>
+                                                <td>₱<?= number_format($row['total_price'] ?? 0, 2) ?></td>
+                                                <td><?= htmlspecialchars($row['stall_id'] ?? 'No Data') ?></td>
+                                                <td><?= htmlspecialchars($row['customerPhone'] ?? 'No Data') ?></td>
+                                               
+                                                <td>
+                                                    <span class="badge rounded-pill <?= $badgeClass ?>">
+                                                        <?= $statusText ?>
+                                                    </span>
+                                                </td>
+                                                <td><?= $formattedDate ?? 'No Date' ?></td>
+                                                <td>
+                                                <form action="" method="POST" class="d-inline">
+                                                        <input type="hidden" name="rider_id"
+                                                            value="<?= htmlspecialchars($UserId ?? '') ?>">
+                                                        <input type="hidden" name="transaction_id"
+                                                            value="<?= htmlspecialchars($row['transacID'] ?? '') ?>">
+                                                        <button type="submit" name="submit" class="btn btn-sm btn-success"
+                                                         onclick="return confirm('Are you sure you have accept this order?');"
+                                                        >Accept</button>
+                                                </form>
 
 
+                                                    <a href="confirm_order.php?order_upd=<?= htmlspecialchars($row['transacID'] ?? '') ?>"
+                                                        class="btn btn-sm btn-info ms-2">
+                                                        <i class="bx bx-edit"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+
+
+                                        <?php endwhile; ?>
+
+
+                                    </tbody>
+
+
+                                </table>
                             </div>
+
+
+                        </div>
+
+
                         </div>
                     </div>
                 </div>
