@@ -1,62 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
 <?php
-include("connection/connect.php"); 
-error_reporting(0);
 session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', value: 1); // Ensure errors are displayed
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-include_once 'product-action.php'; 
+
+// include_once 'product-action.php'; 
+
+if (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
+
+    include "admin/Main.php";
+    $index = new Index;
+
+    $query = "SELECT f_name, l_name, username, email, phone, address FROM users WHERE u_id = '$user_id'";
+    $result = mysqli_query($index->con, $query);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        $user = mysqli_fetch_assoc($result);
+    } else {
+        $_SESSION['message'] = ['type' => 'danger', 'message' => 'User data not found.'];
+        header("Location: login.php"); 
+        exit();
+    }
+} else {
+    header("Location: login.php");
+    exit();
+}
+
+
+if (isset($_POST['submit'])) {
+    // Collect form data
+    $user_id = $_POST['user_id'];
+    $d_id = $_POST['dishes_id'];
+    $quantity = $_POST['quantity'];
+
+    // Call the model function
+    $result = $index->addToCart(
+        $user_id,
+        $quantity,
+        $d_id
+    );
+
+    if ($result) {
+        $_SESSION['message'] = ['type' => 'success', 'message' => 'Item added to cart successfully!'];
+    } else {
+        $_SESSION['message'] = ['type' => 'danger', 'message' => 'Failed to add item to cart.'];
+    }
+
+    header("Location: dishes.php?res_id=" . $_GET['res_id']);
+    exit();
+}
+
 
 ?>
 
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="#">
-    <title>Dishes</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/font-awesome.min.css" rel="stylesheet">
-    <link href="css/animsition.min.css" rel="stylesheet">
-    <link href="css/animate.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet"> </head>
-
-<body>
+<?php include 'layouts/header.php';?>
+<?php include 'layouts/navbar.php';?>
     
-        <header id="header" class="header-scroll top-header headrom">
-            <nav class="navbar navbar-dark">
-                <div class="container">
-                    <button class="navbar-toggler hidden-lg-up" type="button" data-toggle="collapse" data-target="#mainNavbarCollapse">&#9776;</button>
-                    <a class="navbar-brand" href="index.php"> <img class="img-rounded" src="" alt=""> </a>
-                    <div class="collapse navbar-toggleable-md  float-lg-right" id="mainNavbarCollapse">
-                       <ul class="nav navbar-nav">
-                            <li class="nav-item"> <a class="nav-link active" href="index.php">Home <span class="sr-only">(current)</span></a> </li>
-                            <li class="nav-item"> <a class="nav-link active" href="restaurants.php">Stalls <span class="sr-only"></span></a> </li>
-                            
-							<?php
-						if(empty($_SESSION["user_id"]))
-							{
-								echo '<li class="nav-item"><a href="login.php" class="nav-link active">Login</a> </li>
-							  <li class="nav-item"><a href="registration.php" class="nav-link active">Register</a> </li>';
-							}
-						else
-							{
-									
-									
-										echo  '<li class="nav-item"><a href="your_orders.php" class="nav-link active">My Orders</a> </li>';
-									echo  '<li class="nav-item"><a href="logout.php" class="nav-link active">Logout</a> </li>';
-							}
-
-						?>
-							 
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-        </header>
+    
         <div class="page-wrapper">
             <div class="top-links">
                 <div class="container">
@@ -69,45 +72,71 @@ include_once 'product-action.php';
                     </ul>
                 </div>
             </div>
-			<?php $ress= mysqli_query($db,"select * from restaurant where rs_id='$_GET[res_id]'");
+
+
+<section class="inner-page-hero bg-image" data-image-src="images/img/rest.png">
+
+            
+			<?php $ress= mysqli_query($index->con,"select * from restaurant where rs_id='$_GET[res_id]'");
 									     $rows=mysqli_fetch_array($ress);
 										  
 										  ?>
-            <section class="inner-page-hero bg-image" data-image-src="images/img/restrrr.png">
-                <div class="profile">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-12  col-md-4 col-lg-4 profile-img">
-                                <div class="image-wrap">
-                                    <figure><?php echo '<img src="admin/Res_img/'.$rows['image'].'" alt="Restaurant logo">'; ?></figure>
-                                </div>
-                            </div>
-							
-                            <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 profile-desc">
-                                <div class="pull-left right-text white-txt">
-                                    <h6><a href="#"><?php echo $rows['title']; ?></a></h6>
-                                    <p><?php echo $rows['address']; ?></p>   
-                                </div>
-                            </div>
-							
-							
+
+    <div class="profile">
+        <div class="container">
+            <div class="row align-items-center" style="min-height: 250px;">
+                <!-- Restaurant Logo Section -->
+                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 text-center">
+                    <a class="restaurant-logo" href="dishes.php?res_id=<?= $restaurantId ?>">
+                        <div style="
+                            background-image: url('admin/Res_img/<?= htmlspecialchars($rows['image']) ?>');
+                            background-size: cover;
+                            background-position: center;
+                            width: 100%;
+                            height: 120px;
+                            border-radius: 8px;">
                         </div>
+                    </a>
+                </div>
+
+                <!-- Restaurant Info Section -->
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 profile-desc d-flex flex-column justify-content-center p-4" style="border-radius: 0 10px 10px 0;">
+                    <div class="right-text">
+                        <h6 class="mb-2">
+                            <a href="#" style="color: black;"><?= htmlspecialchars($rows['title']) ?></a>
+                        </h6>
+                        <p style="color: black;"><?= htmlspecialchars($rows['address']) ?></p>
+                        <span class="product-name" style="text-transform: uppercase; color: #333">
+                            <?= htmlspecialchars($rows['o_hr']) ?> - <?= htmlspecialchars($rows['c_hr']) ?>
+                        </span>
                     </div>
-                </div>
-            </section>
-            <div class="breadcrumb">
-                <div class="container">
-                   
-                </div>
+                </div>      
             </div>
+        </div>
+    </div>
+</section>
+
+
             <div class="container m-t-30">
+          
                 <div class="row">
+
+                
                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-3">
                         
                          <div class="widget widget-cart">
                                 <div class="widget-heading">
+                                <?php if (isset($_SESSION['message'])): ?>
+    <div class="alert alert-<?php echo $_SESSION['message']['type']; ?> " role="alert" id="alert1">
+        <i class="fa-sharp fa-solid fa-circle-check"></i>
+        <?php echo $_SESSION['message']['message']; ?>
+    </div>
+    <?php unset($_SESSION['message']); // Unset the message after displaying it 
+    ?>
+<?php endif; ?>
                                     <h3 class="widget-title text-dark">
-                                 Your Cart
+                              
+Your Cart
                               </h3>
 							  				  
 							  
@@ -117,16 +146,14 @@ include_once 'product-action.php';
                                     <div class="widget-body">
 									
 									
-	<?php
+                                    <?php
+                                        $result = $index->getUserCart();
+                                        while ($row = mysqli_fetch_array($result)): ?>			
 
-$item_total = 0;
-
-foreach ($_SESSION["cart_item"] as $item)  
-{
-?>									
 									
                                         <div class="title-row">
-										<?php echo $item["title"]; ?><a href="dishes.php?res_id=<?php echo $_GET['res_id']; ?>&action=remove&id=<?php echo $item["d_id"]; ?>" >
+										<?php echo $item["dishName"]; ?>
+                                         <!-- <a href="dishes.php?res_id=?php echo $_GET['res_id']; ?>&action=remove&id=<?php echo $item["d_id"]; ?>" -->
 										<i class="fa fa-trash pull-right"></i></a>
 										</div>
 										
@@ -139,13 +166,8 @@ foreach ($_SESSION["cart_item"] as $item)
                                                <input class="form-control" type="text" readonly value='<?php echo $item["quantity"]; ?>' id="example-number-input"> </div>
                                         
 									  </div>
-									  
-	<?php
-$item_total += ($item["price"]*$item["quantity"]); 
-}
-?>								  
-									  
-									  
+				  
+							  
 									  
                                     </div>
                                 </div>
@@ -157,21 +179,15 @@ $item_total += ($item["price"]*$item["quantity"]);
                                         <p>TOTAL</p>
                                         <h3 class="value"><strong><?php echo "₱".$item_total; ?></strong></h3>
                                         <p>Free Delivery!</p>
-                                        <?php
-                                        if($item_total==0){
-                                        ?>
+                             
 
                                         
                                         <a href="checkout.php?res_id=<?php echo $_GET['res_id'];?>&action=check"  class="btn btn-danger btn-lg disabled">Checkout</a>
 
-                                        <?php
-                                        }
-                                        else{   
-                                        ?>
+            
+
                                         <a href="checkout.php?res_id=<?php echo $_GET['res_id'];?>&action=check"  class="btn btn-success btn-lg active">Checkout</a>
-                                        <?php   
-                                        }
-                                        ?>
+                                        <?php endwhile; ?>
 
                                     </div>
                                 </div>
@@ -197,7 +213,7 @@ $item_total += ($item["price"]*$item["quantity"]);
                             </div>
                             <div class="collapse in" id="popular2">
 						<?php  
-					$stmt = $db->prepare("SELECT * FROM dishes 
+					$stmt = $index->con->prepare("SELECT * FROM dishes 
                     WHERE dishes.status = 1 
                     AND rs_id = ?");
                     $stmt->bind_param("i", $_GET['res_id']);  // Assuming res_id is an integer
@@ -212,30 +228,68 @@ $item_total += ($item["price"]*$item["quantity"]);
 													
 													 
 													 ?>
-                                <div class="food-item">
-                                    <div class="row">
-                                        <div class="col-xs-12 col-sm-12 col-lg-8">
-										<form method="post" action='dishes.php?res_id=<?php echo $_GET['res_id'];?>&action=add&id=<?php echo $product['d_id']; ?>'>
-                                            <div class="rest-logo pull-left">
-                                                <a class="restaurant-logo pull-left" href="#"><?php echo '<img src="admin/Res_img/dishes/'.$product['img'].'" alt="Food logo">'; ?></a>
-                                            </div>
-                                
-                                            <div class="rest-descr">
-                                                <h6><a href="#"><?php echo $product['title']; ?></a></h6>
-                                                <p> <?php echo $product['slogan']; ?></p>
-                                            </div>
-                           
-                                        </div>
-                               
-                                        <div class="col-xs-12 col-sm-12 col-lg-3 pull-right item-cart-info"> 
-										<span class="price pull-left" >₱<?php echo $product['price']; ?></span>
-										  <input class="b-r-0" type="text" name="quantity"  style="margin-left:30px;" value="1" size="2" />
-										  <input type="submit" class="btn theme-btn" style="margin-left:40px;" value="Add To Cart" />
-										</div>
-										</form>
-                                    </div>
-              
-                                </div>
+                            <div class="food-item py-3 border-bottom">
+   
+                            <form method="POST" action="">
+    <div class="row align-items-center">
+
+        <!-- Image -->
+        <div class="col-12 col-sm-3 col-lg-2 mb-3 mb-sm-0">
+            <div class="rest-logo">
+                <a class="restaurant-logo" href="#">
+                    <img 
+                        src="admin/Res_img/dishes/<?= htmlspecialchars($product['img']) ?>" 
+                        alt="Food Image" 
+                        style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px;"
+                    />
+                </a>
+            </div>
+        </div>
+
+        <!-- Dish info -->
+        <div class="col-12 col-sm-6 col-lg-7">
+            <div class="rest-descr">
+                <h6 class="mb-1">
+                    <a href="#" style="color: #333;"><?= htmlspecialchars($product['title']) ?></a>
+                </h6>
+                <p class="small text-muted mb-0"><?= htmlspecialchars($product['slogan']) ?></p>
+            </div>
+        </div>
+
+        <!-- Price + Quantity + Button -->
+        <div class="col-12 col-sm-3 col-lg-3 text-sm-right">
+            <div class="item-cart-info d-flex flex-column align-items-start align-items-sm-end">
+                <span class="price mb-2" style="font-weight: bold; font-size: 18px;">₱<?= htmlspecialchars($product['price']) ?></span>
+
+                <!-- Quantity -->
+                <input 
+                    class="form-control form-control-sm mb-2" 
+                    type="number" 
+                    name="quantity" 
+                    value="1" 
+                    min="1" 
+                    style="width: 170px;"
+                />
+
+                <!-- Hidden fields -->
+                <input type="hidden" name="dishes_id" value="<?= htmlspecialchars($product['d_id']) ?>">
+                <input type="hidden" name="user_id" value="<?= $_SESSION['user_id'] ?>">
+
+                <!-- Submit -->
+                <input 
+                    type="submit" 
+                    name="submit"
+                    class="btn btn-sm theme-btn" 
+                    value="Add To Cart"
+                />
+            </div>
+        </div>
+
+    </div>
+</form>
+
+</div>
+
                 
 								
 								<?php
@@ -437,14 +491,7 @@ $item_total += ($item["price"]*$item["quantity"]);
         </div>
     </div>
  
-    <script src="js/jquery.min.js"></script>
-    <script src="js/tether.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/animsition.min.js"></script>
-    <script src="js/bootstrap-slider.min.js"></script>
-    <script src="js/jquery.isotope.min.js"></script>
-    <script src="js/headroom.js"></script>
-    <script src="js/foodpicky.min.js"></script>
-</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-</html>
+
+    <?php include 'layouts/footer.php'; ?>

@@ -1,4 +1,5 @@
 <?php
+session_start();
 include("../connection/connect.php");
 error_reporting(0);
 session_start();
@@ -26,11 +27,16 @@ session_start();
         <div class="d-flex justify-content-end my-2">
             <a href="add_menu.php" class="btn btn-primary">Add Menu</a>
         </div>
+        <!-- fix alrt here in backend -->
+
+        <php include '../admin/layouts/alert.' ?>
 
         <div class="row">
             <div class="col-12">
                 <div class="col-lg-12">
                     <div class="card card-outline-primary">
+
+
 
                         <div class="card-header bg-primary">
                             <h5 class="mb-0 text-white">Menu Details</h5>
@@ -87,31 +93,34 @@ session_start();
                                                     <td><?= htmlspecialchars($rows['available_quantity']) ?></td>
                                                     <td>₱<?= htmlspecialchars($rows['price']) ?></td>
                                                     <td>
-    <div class="ratio ratio-4x3" style="max-width: 100px;">
-        <?php
-            $imagePath = "../admin/Res_img/dishes/" . htmlspecialchars($rows['img']);
-            if (!empty($rows['img']) && file_exists($imagePath)) {
-        ?>
-            <img src="<?= $imagePath ?>"
-                class="rounded shadow-sm object-fit-cover w-100 h-100"
-                alt="Dish Image">
-        <?php } else { ?>
-            <div class="d-flex align-items-center justify-content-center bg-light text-muted w-100 h-100 rounded shadow-sm" style="font-size: 12px;">
-                No Data
-            </div>
-        <?php } ?>
-    </div>
-</td>
+                                                        <div class="ratio ratio-4x3" style="max-width: 100px;">
+                                                            <?php
+                                                            $imagePath = "../admin/Res_img/dishes/" . htmlspecialchars($rows['img']);
+                                                            if (!empty($rows['img']) && file_exists($imagePath)) {
+                                                                ?>
+                                                                <img src="<?= $imagePath ?>"
+                                                                    class="rounded shadow-sm object-fit-cover w-100 h-100"
+                                                                    alt="Dish Image">
+                                                            <?php } else { ?>
+                                                                <div class="d-flex align-items-center justify-content-center bg-light text-muted w-100 h-100 rounded shadow-sm"
+                                                                    style="font-size: 12px;">
+                                                                    No Data
+                                                                </div>
+                                                            <?php } ?>
+                                                        </div>
+                                                    </td>
 
 
                                                     <td>
                                                         <span class="badge <?= $badgeClass ?>"><?= $statusText ?></span>
                                                     </td>
                                                     <td>
-                                                        <a href="delete_menu.php?menu_del=<?= $rows['d_id'] ?>"
+                                                        <a href="delete_menu.php?menu_del=<?= htmlspecialchars($rows['d_id']) ?>"
+                                                            onclick="return confirm('Are you sure you want to delete this menu?');"
                                                             class="btn btn-sm btn-danger">
                                                             <i class="bx bx-trash"></i>
                                                         </a>
+
                                                         <a href="update_menu.php?menu_upd=<?= $rows['d_id'] ?>"
                                                             class="btn btn-sm btn-info">
                                                             <i class="bx bx-edit"></i>

@@ -100,9 +100,9 @@ class Index
         $o_hr,
         $c_hr,
         $o_days,
-        $c_name,
         $image,
-        $address
+        $address,
+        $c_id
     ) {
         // Escape variables
         $res_name = mysqli_real_escape_string($this->con, $res_name);
@@ -112,8 +112,8 @@ class Index
         $o_hr = mysqli_real_escape_string($this->con, $o_hr);
         $c_hr = mysqli_real_escape_string($this->con, $c_hr);
         $o_days = mysqli_real_escape_string($this->con, $o_days);
-        $c_name = mysqli_real_escape_string($this->con, $c_name);
         $address = mysqli_real_escape_string($this->con, $address);
+        $c_id = mysqli_real_escape_string($this->con, $c_id);
 
         // Email uniqueness check
         $checkQuery = "SELECT * FROM restaurant WHERE email = '$email'";
@@ -144,7 +144,7 @@ class Index
         $sql = "INSERT INTO restaurant 
             (title, email, phone, url, o_hr, c_hr, o_days, address, c_id, image)
             VALUES 
-            ('$res_name', '$email', '$phone', '$url', '$o_hr', '$c_hr', '$o_days', '$address', '$c_name', '$imagePathForDB')";
+            ('$res_name', '$email', '$phone', '$url', '$o_hr', '$c_hr', '$o_days', '$address', '$c_id', '$imagePathForDB')";
 
         return mysqli_query($this->con, $sql);
     }
@@ -785,7 +785,7 @@ class Index
         return $result;
     }
 
-    
+
     public function getDeliveredRating($transacId)
     {
         $transacId = intval($transacId);
@@ -805,4 +805,51 @@ class Index
         $data = mysqli_fetch_assoc($result);
         return $data ?: ['avg_rating' => 0, 'total' => 0];
     }
+
+    public function addToCart($user_id, $quantity, $dishes_id)
+    {
+        // Escape variables
+        $user_id = mysqli_real_escape_string($this->con, $user_id);
+        $d_id = mysqli_real_escape_string($this->con, $dishes_id);
+        $quantity = mysqli_real_escape_string($this->con, $quantity);
+    
+        // Check if the dish is already in the user's cart
+        $checkSql = "SELECT * FROM carts WHERE user_id = '$user_id' AND dishes_id = '$d_id'";
+        $checkResult = mysqli_query($this->con, $checkSql);
+    
+        if (mysqli_num_rows($checkResult) > 0) {
+            // If the dish is already in the cart, update the quantity
+            $updateSql = "UPDATE carts SET quantity = quantity + '$quantity' WHERE user_id = '$user_id' AND dishes_id = '$d_id'";
+            return mysqli_query($this->con, $updateSql);
+        } else {
+            // If the dish is not in the cart, insert it
+            $insertSql = "INSERT INTO carts (user_id, dishes_id, quantity) VALUES ('$user_id', '$d_id', '$quantity')";
+            return mysqli_query($this->con, $insertSql);
+        }
+    }
+    
+    
+    public function getUserCart()
+    {
+        // Corrected SQL query with total price calculation
+        $sql = "SELECT 
+                    dishes.title as dishName, 
+                    dishes.id AS dishesId, 
+                    carts.id AS cartId,
+                    dishes.img, 
+                    dishes.price,
+                    carts.quantity,
+                    (dishes.price * carts.quantity) AS totalPrice
+                FROM carts
+                LEFT JOIN dishes ON dishes.d_id = carts.dishes_id";
+    
+        $result = mysqli_query($this->con, $sql);
+    
+        if (!$result) {
+            die('Query failed: ' . mysqli_error($this->con));
+        }
+    
+        return $result;
+    }
+    
 }
