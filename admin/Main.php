@@ -808,7 +808,7 @@ class Index
 
     public function addToCart($user_id, $quantity, $dishes_id)
     {
-        // Escape variables
+        // Escape variables 
         $user_id = mysqli_real_escape_string($this->con, $user_id);
         $d_id = mysqli_real_escape_string($this->con, $dishes_id);
         $quantity = mysqli_real_escape_string($this->con, $quantity);
@@ -834,7 +834,7 @@ class Index
         // Corrected SQL query with total price calculation
         $sql = "SELECT 
                     dishes.title as dishName, 
-                    dishes.id AS dishesId, 
+                    dishes.d_id AS dishesId, 
                     carts.id AS cartId,
                     dishes.img, 
                     dishes.price,
@@ -851,5 +851,59 @@ class Index
     
         return $result;
     }
+
+    public function viewCheckOutDetails($cartId)
+    {
+        $sql = "SELECT 
+            dishes.title AS dishesName, 
+            (dishes.price * carts.quantity) AS totalPrice,
+            restaurant.title AS restauName,
+            dishes.rs_id, 
+            users.address AS userAddress
+        FROM carts
+        LEFT JOIN users ON users.u_id = carts.user_id
+        LEFT JOIN dishes ON dishes.d_id = carts.dishes_id
+        LEFT JOIN restaurant ON restaurant.rs_id = dishes.rs_id
+        WHERE carts.id = '$cartId'";
+    
+        $result = mysqli_query($this->con, $sql);
+    
+        if (!$result) {
+            die('Query failed: ' . mysqli_error($this->con));
+        }
+    
+        return $result;
+    }
+
+
+
+    public function checkoutOrder
+    (
+    $user_id,
+    $quantity,
+    $d_id,
+    $gcash_proof,
+    $mod,
+    $delivery_type,
+    $total_price,
+    $dishesName,
+    $restauName,
+    $userAddress)
+    {
+        // Escape inputs to prevent SQL injection
+        $stall_name = mysqli_real_escape_string($this->con, $stall_name);
+        $restaurant_id = mysqli_real_escape_string($this->con, $restaurant_id);
+        $rating = mysqli_real_escape_string($this->con, $rating);
+        $complaint = mysqli_real_escape_string($this->con, $complaint);
+        $user_id = mysqli_real_escape_string($this->con, $user_id);
+
+        // Insert into restaurant_rating table
+        $sql = "INSERT INTO transations (user_id, restaurant_id, stall_name, rating, complaint) 
+                VALUES ('$user_id', '$restaurant_id', '$stall_name', '$rating', '$complaint')";
+
+        return mysqli_query($this->con, $sql);
+    }
+
+    
     
 }

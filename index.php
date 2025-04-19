@@ -71,7 +71,7 @@ session_start();
             <?php
             $query_res = mysqli_query($db, "SELECT * FROM restaurant WHERE status = 0");
             while ($r = mysqli_fetch_array($query_res)):
-                ?>
+            ?>
                 <div class="col-xs-12 col-sm-6 col-md-4 food-item">
                     <div class="food-item-wrap">
                         <div style="background-image: url('admin/Res_img/<?= htmlspecialchars($r['image']) ?>'); 
@@ -215,7 +215,7 @@ session_start();
                     $o_hr = htmlspecialchars($rows['o_hr']);
                     $c_hr = htmlspecialchars($rows['c_hr']);
 
-                    ?>
+                ?>
                     <div class="col-xs-12 col-sm-12 col-md-6 single-restaurant all <?= $categoryClass ?>">
                         <div class="restaurant-wrap">
                             <div class="row g-0"> <!-- Added g-0 to remove extra gaps if needed -->
@@ -252,7 +252,7 @@ session_start();
                         </div>
                     </div>
 
-                    <?php
+                <?php
                 }
                 ?>
 
