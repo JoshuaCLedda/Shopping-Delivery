@@ -145,6 +145,9 @@ if (isset($_POST['submit'])) {
 
                         <div class="clearfix"></div>
                     </div>
+
+
+                    
                     <div class="order-row bg-white">
                         <div class="widget-body">
 
@@ -177,15 +180,10 @@ if (isset($_POST['submit'])) {
 
 
 
-                    <div class="widget-body">
-                        <div class="price-wrap text-xs-center">
-                            <p>TOTAL</p>
-                            <h3 class="value"><strong>
-                            </h3>
-                            <p>Free Delivery!</p>
-
-                            <a href="checkout.php?cartId=<?php echo $row['cartId']; ?>" class="btn btn-success btn-lg active">Checkout</a>
-                        <?php endwhile; ?>
+                    <div class="">
+                        <div class="my-2">
+                            <a href="checkout.php?cartId=<?php echo $row['cartId']; ?>" class="btn btn-success btn-sm active mx-">Checkout</a>
+                            <?php endwhile; ?>
 
                         </div>
                     </div>

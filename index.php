@@ -74,11 +74,11 @@ session_start();
             ?>
                 <div class="col-xs-12 col-sm-6 col-md-4 food-item">
                     <div class="food-item-wrap">
-                        <div style="background-image: url('admin/Res_img/<?= htmlspecialchars($r['image']) ?>'); 
-           background-size: cover; 
-           background-position: center; 
-           width: 100%; 
-           height: 200px;">
+                        <div style="background-image: url('admin/<?= htmlspecialchars($r['image']) ?>'); 
+                                background-size: cover; 
+                                background-position: center; 
+                                width: 100%; 
+                                height: 200px;">
                         </div>
 
                         <div class="content">
@@ -223,7 +223,7 @@ session_start();
                                 <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 text-center">
                                     <a class="restaurant-logo" href="dishes.php?res_id=<?= $restaurantId ?>">
                                         <div style="
-                        background-image: url('admin/Res_img/<?= $restaurantImage ?>');
+                        background-image: url('admin/<?= $restaurantImage ?>');
                         background-size: cover;
                         background-position: center;
                         width: 100%;

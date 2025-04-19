@@ -877,33 +877,55 @@ class Index
 
 
 
-    public function checkoutOrder
-    (
-    $user_id,
-    $quantity,
-    $d_id,
-    $gcash_proof,
-    $mod,
-    $delivery_type,
-    $total_price,
-    $dishesName,
-    $restauName,
-    $userAddress)
-    {
+    public function checkoutOrder(
+        $user_id,
+        $quantity,
+        $d_id,
+        $gcash_proof,
+        $mod,
+        $delivery_type,
+        $total_price,
+        $dishesName,
+        $restauName,
+        $userAddress
+    ) {
         // Escape inputs to prevent SQL injection
-        $stall_name = mysqli_real_escape_string($this->con, $stall_name);
-        $restaurant_id = mysqli_real_escape_string($this->con, $restaurant_id);
-        $rating = mysqli_real_escape_string($this->con, $rating);
-        $complaint = mysqli_real_escape_string($this->con, $complaint);
-        $user_id = mysqli_real_escape_string($this->con, $user_id);
-
-        // Insert into restaurant_rating table
-        $sql = "INSERT INTO transations (user_id, restaurant_id, stall_name, rating, complaint) 
-                VALUES ('$user_id', '$restaurant_id', '$stall_name', '$rating', '$complaint')";
-
-        return mysqli_query($this->con, $sql);
+        $user_id       = mysqli_real_escape_string($this->con, $user_id);
+        $quantity      = mysqli_real_escape_string($this->con, $quantity);
+        $d_id          = mysqli_real_escape_string($this->con, $d_id);
+        $gcash_proof   = mysqli_real_escape_string($this->con, $gcash_proof);
+        $mod           = mysqli_real_escape_string($this->con, $mod);
+        $delivery_type = mysqli_real_escape_string($this->con, $delivery_type);
+        $total_price   = mysqli_real_escape_string($this->con, $total_price);
+        $dishesName    = mysqli_real_escape_string($this->con, $dishesName);
+        $restauName    = mysqli_real_escape_string($this->con, $restauName);
+        $userAddress   = mysqli_real_escape_string($this->con, $userAddress);
+    
+        // Generate the current date and time for order_date
+        $order_date = date("Y-m-d H:i:s");
+    
+        // Determine the payment status based on the chosen payment method (COD/GCash)
+        $payment_status = ($mod == "GCash" && $gcash_proof) ? "Pending" : "Paid";
+    
+        // Insert into transactions table
+        $sql = "INSERT INTO transaction (
+                    u_id, total_price, address, stall_id, order_date, status, payment_status,
+                    titles, total_quantity, rs_id, payment_method, gcash_proof
+                ) 
+                VALUES (
+                    '$user_id', '$total_price', '$userAddress', '$d_id', '$order_date', 'Pending', 
+                    '$payment_status', '$dishesName', '$quantity', '$d_id', '$mod', '$gcash_proof'
+                )";
+    
+        if (mysqli_query($this->con, $sql)) {
+            // Return true if the query was successful
+            return true;
+        } else {
+            // Return false if there was an error
+            return false;
+        }
     }
-
+    
     
     
 }

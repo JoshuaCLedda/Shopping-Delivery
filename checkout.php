@@ -78,7 +78,7 @@ if (isset($_POST['submit'])) {
             $_SESSION['message'] = ['type' => 'danger', 'message' => 'Failed to place the order.'];
         }
 
-        header("Location: dishes.php?res_id=" . $_GET['res_id']);
+        header("Location: your_orders.php");
         exit();
     } else {
         $_SESSION['message'] = ['type' => 'danger', 'message' => 'Invalid user or item.'];

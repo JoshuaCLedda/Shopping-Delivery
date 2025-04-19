@@ -1,7 +1,7 @@
 <?php
+session_start();
 include("connection/connect.php");
 error_reporting(0);
-session_start();
 
 if (empty($_SESSION['user_id'])) {
     header('location:login.php');
@@ -17,11 +17,13 @@ if (empty($_SESSION['user_id'])) {
         <div class="row">
             <div class="col-lg-12">
 
+            <?php include 'layouts/alert.php' ?>
+
                 <div class="card shadow-sm rounded-4">
 
 
                     <div class="card-body p-4">
-                    <h3>My Orders</h3>
+                        <h3>My Orders</h3>
 
                         <div class="table-responsive">
                             <table id="myTable" class="table table-bordered table-hover align-middle text-center">
@@ -47,18 +49,18 @@ if (empty($_SESSION['user_id'])) {
                                             $status = $row['status'];
                                             $rider_id = $row['rider_id'];
                                             $rs_id = $row['rs_id'];
-                                    ?>
+                                            ?>
                                             <tr>
                                                 <td><?php echo $id; ?>
-                                               </td>
+                                                </td>
                                                 <td><?php echo $total_price; ?></td>
                                                 <td><?php echo $stall; ?></td>
                                                 <td>
-                                                    <?php if ($status === 'Order_Received') : ?>
+                                                    <?php if ($status === 'Order_Received'): ?>
                                                         <span class="badge bg-success">Order Received</span>
-                                                    <?php elseif ($status === 'Order_Canceled' || $status === 'Order_Cancelled') : ?>
+                                                    <?php elseif ($status === 'Order_Canceled' || $status === 'Order_Cancelled'): ?>
                                                         <span class="badge bg-danger">Order Cancelled</span>
-                                                    <?php else : ?>
+                                                    <?php else: ?>
                                                         <span class="badge bg-warning text-dark">
                                                             <?php echo ucwords(str_replace('_', ' ', strtolower($status))); ?>
                                                         </span>
@@ -66,37 +68,40 @@ if (empty($_SESSION['user_id'])) {
 
                                                 </td>
                                                 <td>
-    <?php if ($status !== 'Order_Received' && $status !== 'Order_Canceled' && $status !== 'Order_Cancelled') { ?>
+                                                    <?php if ($status !== 'Order_Received' && $status !== 'Order_Canceled' && $status !== 'Order_Cancelled') { ?>
 
-        <!-- Check if rider_id is not null or not 0 -->
-        <?php if (!empty($rider_id) && $rider_id != 0): ?>
-            <a href="update_order_status.php?order_id=<?php echo $id; ?>"
-                onclick="return confirm('Are you sure you have received your order?');"
-                class="btn btn-success btn-sm mb-1">Received</a>
-        <?php else: ?>
-            <button class="btn btn-success btn-sm mb-1" disabled>Received</button>
-        <?php endif; ?>
+                                                        <!-- Check if rider_id is not null or not 0 -->
+                                                        <?php if (!empty($rider_id) && $rider_id != 0): ?>
+                                                            <a href="update_order_status.php?order_id=<?php echo $id; ?>"
+                                                                onclick="return confirm('Are you sure you have received your order?');"
+                                                                class="btn btn-success btn-sm mb-1">Received</a>
+                                                        <?php else: ?>
+                                                            <button class="btn btn-success btn-sm mb-1" disabled>Received</button>
+                                                        <?php endif; ?>
 
-        <a href="cancel_order.php?order_id=<?php echo $id; ?>"
-            onclick="return confirm('Are you sure you want to cancel this order?');"
-            class="btn btn-danger btn-sm mb-1">Cancel</a>
+                                                        <a href="cancel_order.php?order_id=<?php echo $id; ?>"
+                                                            onclick="return confirm('Are you sure you want to cancel this order?');"
+                                                            class="btn btn-danger btn-sm mb-1">Cancel</a>
 
-    <?php } elseif ($status === 'Order_Received') { ?>
-        <a href="rate_rider.php?rider_id=<?php echo $rider_id; ?>"
-            class="btn btn-outline-success btn-sm mb-1">Rate Rider<?php echo $rider_id; ?></a>
-        <a href="rate_stall.php?rider_id=<?php echo $rs_id; ?>"
-            class="btn btn-outline-success btn-sm mb-1">Rate Stall<?php echo $rs_id; ?></a>
-    <?php } ?>
-</td>
+                                                    <?php } elseif ($status === 'order_delivered') { ?>
+                                                        <a href="rate_rider.php?rider_id=<?php echo $rider_id; ?>"
+                                                            class="btn btn-outline-success btn-sm mb-1">Rate
+                                                            Rider
+                                                        <a href="rate_stall.php?rider_id=<?php echo $rs_id; ?>"
+                                                            class="btn btn-outline-success btn-sm mb-1">Rate
+                                                            Stall
+                                                    <?php } ?>
+                                                </td>
 
                                             </tr>
-                                        <?php
+                                            <?php
                                         }
                                     } else {
                                         ?>
                                         <tr>
                                             <td colspan="5">
-                                                <div class="text-center text-muted py-3">You have no orders placed yet.</div>
+                                                <div class="text-center text-muted py-3">You have no orders placed yet.
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php } ?>
@@ -114,16 +119,16 @@ if (empty($_SESSION['user_id'])) {
 
 
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('#myTable').DataTable({
             "pageLength": 10,
             "order": [
                 [0, "desc"]
             ],
             "columnDefs": [{
-                    "orderable": false,
-                    "targets": 4
-                } 
+                "orderable": false,
+                "targets": 4
+            }
             ]
         });
     });
@@ -132,7 +137,7 @@ if (empty($_SESSION['user_id'])) {
 <style>
     /* CARD STYLING */
     .card {
-        margin: 15px ;
+        margin: 15px;
         background-color: #fff;
         border: none;
         box-shadow: 0 0 1.25rem rgba(0, 0, 0, 0.06);
