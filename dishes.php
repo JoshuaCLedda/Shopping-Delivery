@@ -106,8 +106,8 @@ if (isset($_POST['submit'])) {
                                 <a href="#" style="color: black;"><?= htmlspecialchars($rows['title']) ?></a>
                             </h6>
                             <p style="color: black;">
-    <?= htmlspecialchars($rows['address'] ?? 'No address available') ?>
-</p>
+                                <?= htmlspecialchars($rows['address'] ?? 'No address available') ?>
+                            </p>
 
                             <span class="product-name" style="text-transform: uppercase; color: #333">
                                 <?= htmlspecialchars($rows['o_hr']) ?> - <?= htmlspecialchars($rows['c_hr']) ?>
@@ -138,55 +138,47 @@ if (isset($_POST['submit'])) {
                             ?>
                         <?php endif; ?>
                         <h3 class="widget-title text-dark">
-
                             Your Cart
                         </h3>
-
-
                         <div class="clearfix"></div>
                     </div>
 
+                    <form action="checkout.php" method="GET"> 
+    <?php
+    $result = $index->getUserCart();
+    while ($row = mysqli_fetch_array($result)): ?>
+        <div class="order-row bg-white">
+            <div class="widget-body">
 
-                    
-                    <div class="order-row bg-white">
-                        <div class="widget-body">
+                <!-- Checkbox with cart ID -->
+                <input type="checkbox" name="selected_items[]" value="<?php echo $row['cartId']; ?>">
 
+                <div class="title-row">
+                    <?php echo $row["dishName"]; ?>
+                    <i class="fa fa-trash pull-right"></i>
+                </div>
 
-                            <?php
-                            $result = $index->getUserCart();
-                            while ($row = mysqli_fetch_array($result)): ?>
-                                <div class="title-row">
-                                    <?php echo $row["dishName"]; ?>
-                                    <!-- <a href="dishes.php?res_id=?php echo $_GET['res_id']; ?>&action=remove&id=<?php echo $row["d_id"]; ?>" -->
-                                    <i class="fa fa-trash pull-right"></i></a>
-                                </div>
-                                <div class="form-group row no-gutter">
-                                    <div class="col-xs-8">
-                                        <input type="text" class="form-control b-r-0"
-                                            value="<?php echo htmlspecialchars(isset($row['totalPrice']) && $row['totalPrice'] !== null ? '₱' . $row['totalPrice'] : 'No data'); ?>"
-                                            readonly id="exampleSelect1">
-
-                                    </div>
-                                    <div class="col-xs-4">
-                                        <input class="form-control" type="text" readonly value='<?php echo $row["quantity"]; ?>' id="example-number-input">
-                                    </div>
-
-                                </div>
-
-
-
-                        </div>
+                <div class="form-group row no-gutter">
+                    <div class="col-xs-8">
+                        <input type="text" class="form-control b-r-0"
+                            value="<?php echo htmlspecialchars(isset($row['totalPrice']) && $row['totalPrice'] !== null ? '₱' . $row['totalPrice'] : 'No data'); ?>"
+                            readonly id="exampleSelect1">
                     </div>
-
-
-
-                    <div class="">
-                        <div class="my-2">
-                            <a href="checkout.php?cartId=<?php echo $row['cartId']; ?>" class="btn btn-success btn-sm active mx-">Checkout</a>
-                            <?php endwhile; ?>
-
-                        </div>
+                    <div class="col-xs-4">
+                        <input class="form-control" type="text" readonly value='<?php echo $row["quantity"]; ?>' id="example-number-input">
                     </div>
+                </div>
+
+            </div>
+        </div>
+    <?php endwhile; ?>
+
+    <!-- Single checkout button outside the loop -->
+    <div class="text-center my-3">
+        <button type="submit" class="btn btn-success btn-sm active">Checkout Selected</button>
+    </div>
+</form>
+
 
 
 

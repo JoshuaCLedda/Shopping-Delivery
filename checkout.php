@@ -4,10 +4,8 @@ error_reporting(E_ALL);
 ini_set('display_errors', value: 1); // Ensure errors are displayed
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-
 // include_once 'product-action.php'; 
 $cartId = $_GET['cartId'];
-
 
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
@@ -29,66 +27,85 @@ if (isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
+
 // details here
-$result = $index->viewCheckOutDetails($cartId);
-while ($row = mysqli_fetch_object($result)) {
-    $dishesName    = $row->dishesName ?? 'N/A';
-    $totalPrice    = $row->totalPrice ?? 'No Data';
-    $restauName    = $row->restauName ?? '';
-    $userAddress   = $row->userAddress ?? 'No Address';
-}
+// $result = $index->viewCheckOutDetails($cartId);
+// while ($row = mysqli_fetch_object($result)) {
+//     $dishesName    = $row->dishesName ?? 'N/A';
+//     $totalPrice    = $row->totalPrice ?? 'No Data';
+//     $restauName    = $row->restauName ?? '';
+//     $userAddress   = $row->userAddress ?? 'No Address';
+// }
 
 if (isset($_POST['submit'])) {
     // Collect form data
     $total_price    = $_POST['total_price'] ?? 0;
     $mod            = $_POST['mod'] ?? '';
     $delivery_type  = $_POST['delivery_type'] ?? 'standard';
+    $selectedCarts  = $_POST['selected_items'] ?? []; // <-- Collect selected cart IDs
 
-    // Handle GCash Proof Upload (only if GCash is selected)
+    // Handle GCash Proof Upload (if GCash selected)
     $gcash_proof = null;
     if ($mod == "GCash" && isset($_FILES['gcash_proof']) && $_FILES['gcash_proof']['error'] == 0) {
-        $uploadDir = "uploads/"; // Make sure this folder exists and is writable
+        $uploadDir = "uploads/";
         $gcash_proof = $uploadDir . basename($_FILES['gcash_proof']['name']);
         move_uploaded_file($_FILES['gcash_proof']['tmp_name'], $gcash_proof);
     }
 
-    // Assume these variables are available / get them properly:
-    $user_id = $_SESSION['user_id'] ?? null; // Adjust depending on your login/session logic
-    $quantity = 1; // or however you define it
-    $d_id = $cartId; // assuming cart ID is dish ID or however you track
+    $user_id = $_SESSION['user_id'] ?? null;
 
-    if ($user_id && $d_id) {
-        // Call the model function
-        $result = $index->checkoutOrder(
-            $user_id,
-            $quantity,
-            $d_id,
-            $gcash_proof,
-            $mod,
-            $delivery_type,
-            $total_price,
-            $dishesName,
-            $restauName,
-            $userAddress
-        );
+    if ($user_id && !empty($selectedCarts)) {
+        $all_success = true; // Track if all checkout items succeed
 
-        if ($result) {
-            $_SESSION['message'] = ['type' => 'success', 'message' => 'Order placed successfully!'];
+        foreach ($selectedCarts as $cartId) {
+            // Fetch the cart details first (dishes ID, quantity, etc.)
+            $cartResult = mysqli_query($index->con, 
+            "SELECT carts.*, dishes.title AS dishName, restaurants.title AS restauName, users.address AS userAddress
+                FROM carts
+                LEFT JOIN dishes ON carts.dishes_id = dishes.d_id
+                LEFT JOIN restaurants ON dishes.rs_id = restaurants.rs_id
+                LEFT JOIN users ON carts.user_id = users.u_id
+                WHERE carts.id = '$cartId'");
+
+            if ($cartRow = mysqli_fetch_assoc($cartResult)) {
+                $quantity     = $cartRow['quantity'];
+                $dishesId     = $cartRow['dishes_id'];
+                $dishesName   = $cartRow['dishName'];
+                $restauName   = $cartRow['restauName'];
+                $userAddress  = $cartRow['userAddress'];
+
+                // Insert the checkout order
+                $result = $index->checkoutOrder(
+                    $user_id,
+                    $quantity,
+                    $dishesId,
+                    $gcash_proof,
+                    $mod,
+                    $delivery_type,
+                    $total_price,
+                    $dishesName,
+                    $restauName,
+                    $userAddress
+                );
+
+                if (!$result) {
+                    $all_success = false;
+                }
+            }
+        }
+
+        if ($all_success) {
+            $_SESSION['message'] = ['type' => 'success', 'message' => 'All orders placed successfully!'];
         } else {
-            $_SESSION['message'] = ['type' => 'danger', 'message' => 'Failed to place the order.'];
+            $_SESSION['message'] = ['type' => 'danger', 'message' => 'Some orders failed to be placed.'];
         }
 
         header("Location: your_orders.php");
         exit();
     } else {
-        $_SESSION['message'] = ['type' => 'danger', 'message' => 'Invalid user or item.'];
+        $_SESSION['message'] = ['type' => 'danger', 'message' => 'No items selected or invalid user.'];
     }
 }
-
-
-
-
-
 
 ?>
 
@@ -116,73 +133,99 @@ if (isset($_POST['submit'])) {
                         </h4>
                     </div>
                     <div class="card-body">
-                        <form action="" method="post" enctype="multipart/form-data">
+                 
+                    <form action="checkout.php" method="post" enctype="multipart/form-data">
 
-                            <h5 class="mb-3">Cart Summary</h5>
+<!-- Hidden inputs for each selected cartId -->
+<?php
+if (!empty($selectedCarts)) {
+    foreach ($selectedCarts as $cartId) {
+        echo '<input type="hidden" name="selected_items[]" value="' . htmlspecialchars($cartId) . '">';
+    }
+}
+?>
 
-                            <table class="table table-borderless">
-                                <tbody>
-                                    <tr>
-                                        <td>Cart Subtotal</td>
-                                        <td id="cartSubtotal" class="text-end">₱<?php echo number_format($totalPrice, 2); ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Delivery Charges</td>
-                                        <td id="deliveryCharges" class="text-end">₱30.00</td>
-                                    </tr>
-                                    <tr class="fw-bold">
-                                        <td>Total</td>
-                                        <td class="text-end">
-                                            ₱<span id="totalPriceText"><?php echo number_format($totalPrice + 30, 2); ?></span>
-                                            <input type="hidden" name="total_price" id="totalPriceInput" value="<?php echo $totalPrice + 30; ?>">
-                                        </td>
-                                    </tr>
+<h5 class="mb-3">Cart Summary</h5>
 
-                                </tbody>
-                            </table>
+<table class="table table-borderless">
+    <tbody>
+        <tr>
+            <td>Cart Subtotal</td>
+            <td id="cartSubtotal" class="text-end">₱<?php echo number_format($totalPrice, 2); ?></td>
+        </tr>
+        <tr>
+            <td>Delivery Charges</td>
+            <td id="deliveryCharges" class="text-end">₱30.00</td>
+        </tr>
+        <tr class="fw-bold">
+            <td>Total</td>
+            <td class="text-end">
+                ₱<span id="totalPriceText"><?php echo number_format($totalPrice + 30, 2); ?></span>
+                <input type="hidden" name="total_price" id="totalPriceInput" value="<?php echo $totalPrice + 30; ?>">
+            </td>
+        </tr>
+    </tbody>
+</table>
 
-                            <div class="mb-3">
-                                <label class="form-label">Restaurant Name:</label>
-                                <p class="form-control-plaintext"><?php echo htmlspecialchars($restauName); ?></p>
-                            </div>
+<div class="mb-3">
+    <label class="form-label">Restaurant Name:</label>
+    <p class="form-control-plaintext"><?php echo htmlspecialchars($restauName); ?></p>
+</div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Address:</label>
-                                <p class="form-control-plaintext"><?php echo htmlspecialchars($userAddress); ?></p>
-                            </div>
+<div class="mb-3">
+    <label class="form-label">Address:</label>
+    <p class="form-control-plaintext"><?php echo htmlspecialchars($userAddress); ?></p>
+</div>
 
-                            <div class="mb-3">
-                                <label class="form-label d-block">Payment Options</label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="mod" value="COD" id="cod" checked onclick="toggleUpload()">
-                                    <label class="form-check-label" for="cod">Cash on Delivery</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="mod" value="GCash" id="gcash" onclick="toggleUpload()">
-                                    <label class="form-check-label" for="gcash">GCash</label>
-                                </div>
-                            </div>
+<div class="mb-3">
+    <label class="form-label d-block">Payment Options</label>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="mod" value="COD" id="cod" checked onclick="toggleUpload()">
+        <label class="form-check-label" for="cod">Cash on Delivery</label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="mod" value="GCash" id="gcash" onclick="toggleUpload()">
+        <label class="form-check-label" for="gcash">GCash</label>
+    </div>
+</div>
 
-                            <div id="gcash-upload" class="mb-3" style="display: none;">
-                                <label for="gcash-proof" class="form-label">Upload GCash Payment Proof</label>
-                                <input type="file" name="gcash_proof" id="gcash-proof" class="form-control" accept="image/*">
-                            </div>
+<div id="gcash-upload" class="mb-3" style="display: none;">
+    <label for="gcash-proof" class="form-label">Upload GCash Payment Proof</label>
+    <input type="file" name="gcash_proof" id="gcash-proof" class="form-control" accept="image/*">
+</div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Delivery Type</label>
-                                <select name="delivery_type" class="form-select">
-                                    <option value="standard">Standard Delivery (₱30)</option>
-                                    <option value="rush">Rush Delivery (₱50)</option>
-                                </select>
-                            </div>
+<div class="mb-3">
+    <label class="form-label">Delivery Type</label>
+    <select name="delivery_type" class="form-select">
+        <option value="standard">Standard Delivery (₱30)</option>
+        <option value="rush">Rush Delivery (₱50)</option>
+    </select>
+</div>
 
-                            <div class="d-grid my-3">
-                                <button type="submit" name="submit" class="btn btn-success" onclick="return confirm('Confirm the order?');">
-                                    Order Now
-                                </button>
-                            </div>
+<div class="d-grid my-3">
+    <button type="submit" name="submit" class="btn btn-success" onclick="return confirm('Confirm the order?');">
+        Order Now
+    </button>
+</div>
 
-                        </form>
+</form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                     </div>
                 </div>
