@@ -125,68 +125,9 @@ if (isset($_POST['submit'])) {
         <div class="row">
 
 
-            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-3">
+      
 
-                <div class="widget widget-cart">
-                    <div class="widget-heading">
-                        <?php if (isset($_SESSION['message'])): ?>
-                            <div class="alert alert-<?php echo $_SESSION['message']['type']; ?> " role="alert" id="alert1">
-                                <i class="fa-sharp fa-solid fa-circle-check"></i>
-                                <?php echo $_SESSION['message']['message']; ?>
-                            </div>
-                            <?php unset($_SESSION['message']); // Unset the message after displaying it 
-                            ?>
-                        <?php endif; ?>
-                        <h3 class="widget-title text-dark">
-                            Your Cart
-                        </h3>
-                        <div class="clearfix"></div>
-                    </div>
-
-                    <form action="checkout.php" method="GET"> 
-    <?php
-    $result = $index->getUserCart();
-    while ($row = mysqli_fetch_array($result)): ?>
-        <div class="order-row bg-white">
-            <div class="widget-body">
-
-                <!-- Checkbox with cart ID -->
-                <input type="checkbox" name="selected_items[]" value="<?php echo $row['cartId']; ?>">
-
-                <div class="title-row">
-                    <?php echo $row["dishName"]; ?>
-                    <i class="fa fa-trash pull-right"></i>
-                </div>
-
-                <div class="form-group row no-gutter">
-                    <div class="col-xs-8">
-                        <input type="text" class="form-control b-r-0"
-                            value="<?php echo htmlspecialchars(isset($row['totalPrice']) && $row['totalPrice'] !== null ? '₱' . $row['totalPrice'] : 'No data'); ?>"
-                            readonly id="exampleSelect1">
-                    </div>
-                    <div class="col-xs-4">
-                        <input class="form-control" type="text" readonly value='<?php echo $row["quantity"]; ?>' id="example-number-input">
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    <?php endwhile; ?>
-
-    <!-- Single checkout button outside the loop -->
-    <div class="text-center my-3">
-        <button type="submit" class="btn btn-success btn-sm active">Checkout Selected</button>
-    </div>
-</form>
-
-
-
-
-
-                </div>
-            </div>
-
-            <div class="col-md-8">
+            <div class="col-md-12">
 
 
                 <div class="menu-widget" id="2">

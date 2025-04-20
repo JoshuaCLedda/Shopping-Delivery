@@ -6,7 +6,7 @@ session_start();
 ?>
 
 <?php include "layouts/header.php"; ?>
-<?php include "layouts/home/navbar.php"; ?>
+<?php include "layouts/navbar.php"; ?>
 
 
 

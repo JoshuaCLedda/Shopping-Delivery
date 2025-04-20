@@ -1,25 +1,45 @@
+<header id="header" class="shadow-sm sticky-top bg-white">
+    <nav class="navbar navbar-expand-lg bg-white">
+        <div class="container">
+            
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="index.php">
+                <i class="bx bx-user fs-3 me-2"></i> Shopping
+            </a>
 
-<header id="header" class="header-scroll top-header headrom">
-        <nav class="navbar navbar-white">
-            <div class="container">
-                <button class="navbar-toggler hidden-lg-up" type="button" data-toggle="collapse" data-target="#mainNavbarCollapse">&#9776;</button>
-                <a class="navbar-brand" href="index.php"> <i class="bx bx-user"></i>
-                </a>
-                <div class="collapse navbar-toggleable-md float-lg-right" id="mainNavbarCollapse">
-                    <ul class="nav navbar-nav">
-                        <li class="nav-item"> <a class="nav-link active" href="index.php">Home</a> </li>
-                        <li class="nav-item"> <a class="nav-link active" href="restaurants.php">Stalls</a> </li>
-                        <?php
-                        if (empty($_SESSION["user_id"])) {
-                            echo '<li class="nav-item"><a href="login.php" class="nav-link active">Login</a> </li>
-                                  <li class="nav-item"><a href="registration.php" class="nav-link active">Register</a> </li>';
-                        } else {
-                            echo '<li class="nav-item"><a href="your_orders.php" class="nav-link active">My Orders</a> </li>';
-                            echo '<li class="nav-item"><a href="logout.php" class="nav-link active">Logout</a> </li>';
-                        }
-                        ?>
-                    </ul>
-                </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : ''; ?>" href="index.php">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'restaurants.php' ? 'active' : ''; ?>" href="restaurants.php">Stalls</a>
+                    </li>
+
+                    <?php if (empty($_SESSION["user_id"])): ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="login.php">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="registration.php">Register</a>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="your_orders.php">My Orders</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="carts.php">My Cart</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-danger" href="logout.php">Logout</a>
+                        </li>
+                    <?php endif; ?>
+                </ul>
             </div>
-        </nav>
-    </header>
+
+        </div>
+    </nav>
+</header>

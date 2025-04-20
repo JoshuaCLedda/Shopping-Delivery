@@ -5,7 +5,7 @@ ini_set('display_errors', value: 1); // Ensure errors are displayed
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 // include_once 'product-action.php'; 
-$cartId = $_GET['cartId'];
+// $cartId = $_GET['cartId'];
 
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
@@ -29,20 +29,44 @@ if (isset($_SESSION['user_id'])) {
 }
 
 // details here
-// $result = $index->viewCheckOutDetails($cartId);
-// while ($row = mysqli_fetch_object($result)) {
-//     $dishesName    = $row->dishesName ?? 'N/A';
-//     $totalPrice    = $row->totalPrice ?? 'No Data';
-//     $restauName    = $row->restauName ?? '';
-//     $userAddress   = $row->userAddress ?? 'No Address';
-// }
+$selectedCarts = $_POST['selected_items'] ?? $_SESSION['selected_items'] ?? [];
+
+// If posted now, save to session
+if (!empty($_POST['selected_items'])) {
+    $_SESSION['selected_items'] = $_POST['selected_items'];
+}
+
+// Calculate total price based on selected carts
+$totalPrice = 0;
+$restauName = '';
+$userAddress = $user['address'] ?? '';
+
+if (!empty($selectedCarts)) {
+    foreach ($selectedCarts as $cartId) {
+        $result = mysqli_query($index->con,
+            "SELECT carts.*, dishes.price, dishes.title AS dishName, restaurants.title AS restauName
+            FROM carts
+            LEFT JOIN dishes ON carts.dishes_id = dishes.d_id
+            LEFT JOIN restaurants ON dishes.rs_id = restaurants.rs_id
+            WHERE carts.id = '$cartId'"
+        );
+
+        if ($row = mysqli_fetch_assoc($result)) {
+            $totalPrice += ($row['price'] * $row['quantity']);
+            $restauName = $row['restauName'];
+        }
+    }
+} else {
+    $_SESSION['message'] = ['type' => 'danger', 'message' => 'No cart selected.'];
+    exit();
+}
 
 if (isset($_POST['submit'])) {
     // Collect form data
     $total_price    = $_POST['total_price'] ?? 0;
     $mod            = $_POST['mod'] ?? '';
     $delivery_type  = $_POST['delivery_type'] ?? 'standard';
-    $selectedCarts  = $_POST['selected_items'] ?? []; // <-- Collect selected cart IDs
+    $selectedCarts  = $_POST['selected_items'] ?? []; 
 
     // Handle GCash Proof Upload (if GCash selected)
     $gcash_proof = null;
@@ -110,9 +134,6 @@ if (isset($_POST['submit'])) {
 ?>
 
 
-<!DOCTYPE html>
-<html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -134,16 +155,14 @@ if (isset($_POST['submit'])) {
                     </div>
                     <div class="card-body">
                  
+                   
+
                     <form action="checkout.php" method="post" enctype="multipart/form-data">
 
-<!-- Hidden inputs for each selected cartId -->
-<?php
-if (!empty($selectedCarts)) {
-    foreach ($selectedCarts as $cartId) {
-        echo '<input type="hidden" name="selected_items[]" value="' . htmlspecialchars($cartId) . '">';
-    }
-}
-?>
+<!-- Pass Selected Carts Again -->
+<?php foreach ($selectedCarts as $cartId): ?>
+    <input type="hidden" name="selected_items[]" value="<?php echo htmlspecialchars($cartId); ?>">
+<?php endforeach; ?>
 
 <h5 class="mb-3">Cart Summary</h5>
 
@@ -196,8 +215,8 @@ if (!empty($selectedCarts)) {
 
 <div class="mb-3">
     <label class="form-label">Delivery Type</label>
-    <select name="delivery_type" class="form-select">
-        <option value="standard">Standard Delivery (₱30)</option>
+    <select name="delivery_type" class="form-select" onchange="updateDeliveryCharge()">
+        <option value="standard" selected>Standard Delivery (₱30)</option>
         <option value="rush">Rush Delivery (₱50)</option>
     </select>
 </div>
@@ -209,23 +228,6 @@ if (!empty($selectedCarts)) {
 </div>
 
 </form>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
                     </div>
                 </div>
