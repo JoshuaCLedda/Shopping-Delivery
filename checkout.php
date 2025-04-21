@@ -41,13 +41,17 @@ $totalPrice = 0;
 $restauName = '';
 $userAddress = $user['address'] ?? '';
 
+
+// Carts View/Details
 if (!empty($selectedCarts)) {
     foreach ($selectedCarts as $cartId) {
-        $result = mysqli_query($index->con,
-            "SELECT carts.*, dishes.price, dishes.title AS dishName, restaurants.title AS restauName
+        $result = mysqli_query(
+            $index->con,
+            "SELECT carts.*, dishes.price, dishes.title AS dishName, carts.dishes_id AS dishId,
+            restaurant.title AS restauName
             FROM carts
             LEFT JOIN dishes ON carts.dishes_id = dishes.d_id
-            LEFT JOIN restaurants ON dishes.rs_id = restaurants.rs_id
+            LEFT JOIN restaurant ON dishes.rs_id = restaurant.rs_id
             WHERE carts.id = '$cartId'"
         );
 
@@ -61,14 +65,14 @@ if (!empty($selectedCarts)) {
     exit();
 }
 
+////Submit the form
 if (isset($_POST['submit'])) {
     // Collect form data
     $total_price    = $_POST['total_price'] ?? 0;
     $mod            = $_POST['mod'] ?? '';
     $delivery_type  = $_POST['delivery_type'] ?? 'standard';
-    $selectedCarts  = $_POST['selected_items'] ?? []; 
+    $selectedCarts  = $_POST['selected_items'] ?? [];
 
-    // Handle GCash Proof Upload (if GCash selected)
     $gcash_proof = null;
     if ($mod == "GCash" && isset($_FILES['gcash_proof']) && $_FILES['gcash_proof']['error'] == 0) {
         $uploadDir = "uploads/";
@@ -79,49 +83,64 @@ if (isset($_POST['submit'])) {
     $user_id = $_SESSION['user_id'] ?? null;
 
     if ($user_id && !empty($selectedCarts)) {
-        $all_success = true; // Track if all checkout items succeed
+        $all_success = true;
 
-        foreach ($selectedCarts as $cartId) {
-            // Fetch the cart details first (dishes ID, quantity, etc.)
-            $cartResult = mysqli_query($index->con, 
-            "SELECT carts.*, dishes.title AS dishName, restaurants.title AS restauName, users.address AS userAddress
-                FROM carts
-                LEFT JOIN dishes ON carts.dishes_id = dishes.d_id
-                LEFT JOIN restaurants ON dishes.rs_id = restaurants.rs_id
-                LEFT JOIN users ON carts.user_id = users.u_id
-                WHERE carts.id = '$cartId'");
+        // Fetch first cart just to get user address (you can also separately get it)
+        $cartResultFirst = mysqli_query(
+            $index->con,
+            "SELECT users.address AS userAddress
+            FROM carts
+            LEFT JOIN users ON carts.user_id = users.u_id
+            WHERE carts.id = '" . $selectedCarts[0] . "'"
+        );
+        $cartFirstRow = mysqli_fetch_assoc($cartResultFirst);
+        $userAddress = $cartFirstRow['userAddress'] ?? '';
 
-            if ($cartRow = mysqli_fetch_assoc($cartResult)) {
-                $quantity     = $cartRow['quantity'];
-                $dishesId     = $cartRow['dishes_id'];
-                $dishesName   = $cartRow['dishName'];
-                $restauName   = $cartRow['restauName'];
-                $userAddress  = $cartRow['userAddress'];
+        // 🔥 Create only ONE transaction first
+        $transaction_id = $index->checkoutOrder(
+            $user_id,
+            $gcash_proof,
+            $mod,
+            $delivery_type,
+            $total_price,
+            $userAddress
+        );
 
-                // Insert the checkout order
-                $result = $index->checkoutOrder(
-                    $user_id,
-                    $quantity,
-                    $dishesId,
-                    $gcash_proof,
-                    $mod,
-                    $delivery_type,
-                    $total_price,
-                    $dishesName,
-                    $restauName,
-                    $userAddress
+        if ($transaction_id) {
+            // Now foreach cart items, insert into order_items
+            foreach ($selectedCarts as $cartId) {
+                $cartResult = mysqli_query(
+                    $index->con,
+                    "SELECT carts.*, (dishes.price * carts.quantity) AS dishTotal
+                    FROM carts
+                    LEFT JOIN dishes ON carts.dishes_id = dishes.d_id
+                    WHERE carts.id = '$cartId'"
                 );
 
-                if (!$result) {
-                    $all_success = false;
+                if ($cartRow = mysqli_fetch_assoc($cartResult)) {
+                    $quantity     = $cartRow['quantity'];
+                    $dishesId     = $cartRow['dishes_id'];
+                    $dishTotal    = $cartRow['dishTotal'];
+
+                    $insertOrderItem = mysqli_query(
+                        $index->con,
+                        "INSERT INTO order_items (transaction_id, dishes_id, quantity, total_price)
+                         VALUES ('$transaction_id', '$dishesId', '$quantity', '$dishTotal')"
+                    );
+
+                    if (!$insertOrderItem) {
+                        $all_success = false;
+                    }
                 }
             }
-        }
 
-        if ($all_success) {
-            $_SESSION['message'] = ['type' => 'success', 'message' => 'All orders placed successfully!'];
+            if ($all_success) {
+                $_SESSION['message'] = ['type' => 'success', 'message' => 'All orders placed successfully!'];
+            } else {
+                $_SESSION['message'] = ['type' => 'danger', 'message' => 'Some items failed to be placed.'];
+            }
         } else {
-            $_SESSION['message'] = ['type' => 'danger', 'message' => 'Some orders failed to be placed.'];
+            $_SESSION['message'] = ['type' => 'danger', 'message' => 'Transaction creation failed.'];
         }
 
         header("Location: your_orders.php");
@@ -134,180 +153,281 @@ if (isset($_POST['submit'])) {
 ?>
 
 
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/yourfontawesomekit.js" crossorigin="anonymous"></script> <!-- Add your FA Kit -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        .cart-card {
+            background: #f8f9fa;
+            /* light gray background */
+            border-radius: 1rem;
+            /* rounded corners */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            /* softer shadow */
+            transition: all 0.3s ease;
+            /* smooth animation */
+        }
 
-<body class="bg-light">
+        .cart-card:hover {
+            transform: translateY(-5px);
+            /* lift up */
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+            /* deeper shadow on hover */
+        }
 
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-6">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-success text-white text-center">
-                        <h4 class="mb-0">Checkout
-                            <?php echo $cartId ?>
+        .cart-badge {
+            font-size: 0.75rem;
+            padding: 0.4em 0.6em;
+            border-radius: 50rem;
+            /* pill shape */
+        }
+    </style>
 
-                        </h4>
-                    </div>
-                    <div class="card-body">
-                 
-                   
+<body>
 
-                    <form action="checkout.php" method="post" enctype="multipart/form-data">
 
-<!-- Pass Selected Carts Again -->
-<?php foreach ($selectedCarts as $cartId): ?>
-    <input type="hidden" name="selected_items[]" value="<?php echo htmlspecialchars($cartId); ?>">
-<?php endforeach; ?>
 
-<h5 class="mb-3">Cart Summary</h5>
+    <?php include 'layouts/navbar.php'; ?>
 
-<table class="table table-borderless">
-    <tbody>
-        <tr>
-            <td>Cart Subtotal</td>
-            <td id="cartSubtotal" class="text-end">₱<?php echo number_format($totalPrice, 2); ?></td>
-        </tr>
-        <tr>
-            <td>Delivery Charges</td>
-            <td id="deliveryCharges" class="text-end">₱30.00</td>
-        </tr>
-        <tr class="fw-bold">
-            <td>Total</td>
-            <td class="text-end">
-                ₱<span id="totalPriceText"><?php echo number_format($totalPrice + 30, 2); ?></span>
-                <input type="hidden" name="total_price" id="totalPriceInput" value="<?php echo $totalPrice + 30; ?>">
-            </td>
-        </tr>
-    </tbody>
-</table>
+    <body class="bg-light">
 
-<div class="mb-3">
-    <label class="form-label">Restaurant Name:</label>
-    <p class="form-control-plaintext"><?php echo htmlspecialchars($restauName); ?></p>
-</div>
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
 
-<div class="mb-3">
-    <label class="form-label">Address:</label>
-    <p class="form-control-plaintext"><?php echo htmlspecialchars($userAddress); ?></p>
-</div>
+                    <h3 class="mb-4 fw-bold text-center">🛍️ Checkout</h3>
 
-<div class="mb-3">
-    <label class="form-label d-block">Payment Options</label>
-    <div class="form-check">
-        <input class="form-check-input" type="radio" name="mod" value="COD" id="cod" checked onclick="toggleUpload()">
-        <label class="form-check-label" for="cod">Cash on Delivery</label>
-    </div>
-    <div class="form-check">
-        <input class="form-check-input" type="radio" name="mod" value="GCash" id="gcash" onclick="toggleUpload()">
-        <label class="form-check-label" for="gcash">GCash</label>
-    </div>
-</div>
+                    <form action="" method="post" enctype="multipart/form-data">
+                        <?php foreach ($selectedCarts as $cartId): ?>
+                            <input type="hidden" name="selected_items[]" value="<?php echo htmlspecialchars($cartId); ?>">
+                        <?php endforeach; ?>
 
-<div id="gcash-upload" class="mb-3" style="display: none;">
-    <label for="gcash-proof" class="form-label">Upload GCash Payment Proof</label>
-    <input type="file" name="gcash_proof" id="gcash-proof" class="form-control" accept="image/*">
-</div>
+                        <!-- Cart Summary -->
+                        <div class="card cart-card border-0 mb-4">
+                            <div class="card-body p-4">
+                                <h5 class="fw-bold mb-3">🛒 Cart Summary</h5>
 
-<div class="mb-3">
-    <label class="form-label">Delivery Type</label>
-    <select name="delivery_type" class="form-select" onchange="updateDeliveryCharge()">
-        <option value="standard" selected>Standard Delivery (₱30)</option>
-        <option value="rush">Rush Delivery (₱50)</option>
-    </select>
-</div>
+                                <div class="list-group list-group-flush">
+                                    <?php
+                                    foreach ($selectedCarts as $cartId):
+                                        $dishResult = mysqli_query(
+                                            $index->con,
+                                            "SELECT dishes.title AS dishName, (dishes.price * carts.quantity) AS dishTotal
+                                    FROM carts
+                                    LEFT JOIN dishes ON carts.dishes_id = dishes.d_id
+                                    WHERE carts.id = '$cartId'"
+                                        );
+                                        if ($dish = mysqli_fetch_assoc($dishResult)):
+                                    ?>
+                                            <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                                <div class="fw-semibold"><?php echo htmlspecialchars($dish['dishName']); ?></div>
+                                                <span class="badge bg-primary cart-badge">₱<?php echo number_format($dish['dishTotal'], 2); ?></span>
+                                            </div>
+                                    <?php endif;
+                                    endforeach; ?>
+                                </div>
 
-<div class="d-grid my-3">
-    <button type="submit" name="submit" class="btn btn-success" onclick="return confirm('Confirm the order?');">
-        Order Now
-    </button>
-</div>
+                                <hr>
 
-</form>
+                                <div class="d-flex justify-content-between">
+                                    <span>Cart Subtotal</span>
+                                    <strong>₱<?php echo number_format($totalPrice, 2); ?></strong>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>Delivery Charges</span>
+                                    <strong id="deliveryCharges">₱30.00</strong>
+                                </div>
+                                <div class="d-flex justify-content-between fw-bold fs-5 mt-2">
+                                    <span>Total</span>
+                                    <span>₱<span id="totalPriceText"><?php echo number_format($totalPrice + 30, 2); ?></span></span>
+                                </div>
 
-                    </div>
+                                <input type="hidden" name="total_price" id="totalPriceInput" value="<?php echo $totalPrice + 30; ?>">
+                            </div>
+                        </div>
+
+                        <!-- Address & Restaurant Info -->
+                        <div class="card cart-card border-0 mb-4">
+                            <div class="card-body p-4">
+                                <h5 class="fw-bold mb-3">📍 Delivery Info</h5>
+
+                                <p class="mb-2">
+                                    <strong>Restaurant:</strong> <?php echo htmlspecialchars($restauName); ?>
+                                </p>
+                                <p class="mb-0">
+                                    <strong>Address:</strong> <?php echo htmlspecialchars($userAddress); ?>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Payment Options -->
+                        <div class="card cart-card border-0 mb-4">
+                            <div class="card-body p-4">
+                                <h5 class="fw-bold mb-3">💳 Payment Options</h5>
+
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="mod" value="COD" id="cod" checked onclick="toggleUpload()">
+                                    <label class="form-check-label" for="cod">Cash on Delivery</label>
+                                </div>
+
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="mod" value="GCash" id="gcash" onclick="toggleUpload()">
+                                    <label class="form-check-label" for="gcash">GCash</label>
+                                </div>
+
+                                <div id="gcash-upload" class="mt-3" style="display: none;">
+                                    <label for="gcash-proof" class="form-label">Upload GCash Payment Proof</label>
+                                    <input type="file" name="gcash_proof" id="gcash-proof" class="form-control" accept="image/*">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Delivery Type -->
+                        <div class="card cart-card border-0 mb-4">
+                            <div class="card-body p-4">
+                                <h5 class="fw-bold mb-3">🚚 Delivery Type</h5>
+                                <select name="delivery_type" class="form-select" onchange="updateDeliveryCharge()">
+                                    <option value="standard" selected>Standard Delivery (₱30)</option>
+                                    <option value="rush">Rush Delivery (₱50)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid my-4">
+                            <button type="submit" name="submit" class="btn btn-success btn-lg rounded-pill fw-bold" onclick="return confirm('Confirm the order?');">
+                                <i class="bx bx-cart me-2"></i>Order Now
+                            </button>
+                        </div>
+
+                    </form>
+
                 </div>
             </div>
         </div>
-    </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            let basePrice = <?php echo $totalPrice ? (float)$totalPrice : 0; ?>;
+        <script>
+            function toggleUpload() {
+                const gcashUpload = document.getElementById('gcash-upload');
+                const gcashRadio = document.getElementById('gcash');
+                gcashUpload.style.display = gcashRadio.checked ? 'block' : 'none';
+            }
 
-            function updateTotal() {
-                let deliveryCharge = 0;
+            function updateDeliveryCharge() {
+                const deliveryType = document.querySelector('select[name="delivery_type"]').value;
+                const deliveryCharges = document.getElementById('deliveryCharges');
+                const totalPriceText = document.getElementById('totalPriceText');
+                const totalPriceInput = document.getElementById('totalPriceInput');
 
-                if ($('select[name="delivery_type"]').val() === 'standard') {
-                    deliveryCharge = 30;
-                } else if ($('select[name="delivery_type"]').val() === 'rush') {
-                    deliveryCharge = 50;
+                let newCharge = (deliveryType === 'rush') ? 50 : 30;
+                let cartSubtotal = <?php echo $totalPrice; ?>;
+                let newTotal = cartSubtotal + newCharge;
+
+                deliveryCharges.innerText = `₱${newCharge.toFixed(2)}`;
+                totalPriceText.innerText = newTotal.toFixed(2);
+                totalPriceInput.value = newTotal.toFixed(2);
+            }
+        </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                let basePrice = <?php echo $totalPrice ? (float)$totalPrice : 0; ?>;
+
+                function updateTotal() {
+                    let deliveryCharge = 0;
+
+                    if ($('select[name="delivery_type"]').val() === 'standard') {
+                        deliveryCharge = 30;
+                    } else if ($('select[name="delivery_type"]').val() === 'rush') {
+                        deliveryCharge = 50;
+                    }
+
+                    let finalTotal = basePrice + deliveryCharge;
+
+                    // Update display
+                    $('#totalPriceText').text(finalTotal.toFixed(2));
+
+                    // Update hidden input value
+                    $('#totalPriceInput').val(finalTotal.toFixed(2));
+
+                    // Update delivery charges display too (optional)
+                    $('#deliveryCharges').text('₱' + deliveryCharge.toFixed(2));
                 }
 
-                let finalTotal = basePrice + deliveryCharge;
+                $('select[name="delivery_type"]').on('change', updateTotal);
 
-                // Update display
-                $('#totalPriceText').text(finalTotal.toFixed(2));
+                updateTotal(); // trigger on page load
+            });
+        </script>
 
-                // Update hidden input value
-                $('#totalPriceInput').val(finalTotal.toFixed(2));
 
-                // Update delivery charges display too (optional)
-                $('#deliveryCharges').text('₱' + deliveryCharge.toFixed(2));
+        <script>
+            function toggleUpload() {
+                const gcashUpload = document.getElementById('gcash-upload');
+                const gcashRadio = document.getElementById('gcash');
+
+                if (gcashRadio.checked) {
+                    gcashUpload.style.display = 'block';
+                } else {
+                    gcashUpload.style.display = 'none';
+                }
             }
+        </script>
 
-            $('select[name="delivery_type"]').on('change', updateTotal);
+        <script>
+            function toggleUpload() {
+                const gcashUpload = document.getElementById('gcash-upload');
+                const gcashRadio = document.querySelector('input[name="mod"][value="GCash"]');
 
-            updateTotal(); // trigger on page load
-        });
-    </script>
-
-
-    <script>
-        function toggleUpload() {
-            const gcashUpload = document.getElementById('gcash-upload');
-            const gcashRadio = document.getElementById('gcash');
-
-            if (gcashRadio.checked) {
-                gcashUpload.style.display = 'block';
-            } else {
-                gcashUpload.style.display = 'none';
+                if (gcashRadio.checked) {
+                    gcashUpload.style.display = 'block';
+                } else {
+                    gcashUpload.style.display = 'none';
+                }
             }
-        }
-    </script>
+        </script>
 
-    <script>
-        function toggleUpload() {
-            const gcashUpload = document.getElementById('gcash-upload');
-            const gcashRadio = document.querySelector('input[name="mod"][value="GCash"]');
 
-            if (gcashRadio.checked) {
-                gcashUpload.style.display = 'block';
-            } else {
-                gcashUpload.style.display = 'none';
+        <script>
+            function toggleUpload() {
+                let gcashUpload = document.getElementById("gcash-upload");
+                let selectedValue = document.querySelector('input[name="mod"]:checked').value;
+
+                if (selectedValue === "GCash") {
+                    gcashUpload.style.display = "block";
+                } else {
+                    gcashUpload.style.display = "none";
+                }
             }
-        }
-    </script>
+        </script>
 
-
-    <script>
-        function toggleUpload() {
-            let gcashUpload = document.getElementById("gcash-upload");
-            let selectedValue = document.querySelector('input[name="mod"]:checked').value;
-
-            if (selectedValue === "GCash") {
-                gcashUpload.style.display = "block";
-            } else {
-                gcashUpload.style.display = "none";
-            }
-        }
-    </script>
-
-</body>
+    </body>
 
 </html>
