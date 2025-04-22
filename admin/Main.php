@@ -1,8 +1,7 @@
 <?php
 error_reporting(E_ALL);
-ini_set('display_errors', value: 1); // Ensure errors are displayed
+ini_set('display_errors', 1); // Corrected: Ensure errors are displayed
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-
 
 class Index
 {
