@@ -95,8 +95,6 @@ v>
 
 
     <section class="inner-page-hero bg-image" data-image-src="images/img/rest.png">
-
-
         <?php $ress = mysqli_query($index->con, "select * from restaurant where rs_id='$_GET[res_id]'");
         $rows = mysqli_fetch_array($ress);
 
@@ -141,6 +139,8 @@ v>
 
 
     <div class="container m-t-30">
+    <?php include 'layouts/alert.php'?>
+
     <div class="row">
         <div class="col-md-12">
             <div class="menu-widget" id="2">
@@ -229,6 +229,8 @@ v>
             </div> <!-- /.menu-widget -->
         </div>
     </div>
+
+    
 </div>
 
 

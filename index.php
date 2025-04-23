@@ -168,104 +168,84 @@ session_start();
         </div>
     </div>
 </section>
-<section class="featured-restaurants">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-4">
-                <div class="title-block pull-left">
-                    <h4>Featured Stalls</h4>
-                </div>
-            </div>
-            <div class="col-sm-8">
-                <div class="restaurants-filter pull-right">
-                    <nav class="primary pull-left">
-                        <ul>
-                            <li><a href="#" class="selected" data-filter="*">all</a> </li>
-                            <?php
-                            $res = mysqli_query($db, "select * from res_category");
-                            while ($row = mysqli_fetch_array($res)) {
-                                echo '<li><a href="#" data-filter=".' . $row['c_name'] . '"> ' . $row['c_name'] . '</a> </li>';
-                            }
-                            ?>
 
-                        </ul>
-                    </nav>
-                </div>
+
+
+<section class="featured-restaurants py-5 bg-light">
+    <div class="container">
+        <!-- Header -->
+        <div class="row align-items-center mb-4">
+            <div class="col-sm-6">
+                <h4 class="mb-0">Featured Stalls</h4>
+            </div>
+            <div class="col-sm-6 text-sm-end">
+            <nav class="primary pull-left">
+    <ul class="list-inline mb-0">
+        <li class="list-inline-item">
+            <a href="#" class="selected" data-filter="*">All</a>
+        </li>
+        <?php
+        $res = mysqli_query($db, "SELECT * FROM res_category");
+        while ($row = mysqli_fetch_array($res)) {
+            echo '<li class="list-inline-item"><a href="#" data-filter=".' . htmlspecialchars($row['c_name']) . '">' . htmlspecialchars($row['c_name']) . '</a></li>';
+        }
+        ?>
+    </ul>
+</nav>
 
             </div>
         </div>
 
-        <div class="row">
-            <div class="restaurant-listing">
+        <!-- Restaurant Cards -->
+        <div class="row g-4">
+            <?php
+            $ress = mysqli_query($db, "SELECT * FROM restaurant");
+            while ($rows = mysqli_fetch_array($ress)) {
+                $query = mysqli_query($db, "SELECT * FROM res_category WHERE c_id = '" . $rows['c_id'] . "'");
+                $rowss = mysqli_fetch_array($query);
 
+                $categoryClass = htmlspecialchars($rowss['c_name']);
+                $restaurantId = htmlspecialchars($rows['rs_id']);
+                $restaurantTitle = htmlspecialchars($rows['title']);
+                $restaurantAddress = htmlspecialchars($rows['address']);
+                $restaurantImage = htmlspecialchars($rows['image']);
+                $o_hr = htmlspecialchars($rows['o_hr']);
+                $c_hr = htmlspecialchars($rows['c_hr']);
+            ?>
+                <div class="col-md-6 <?= $categoryClass ?>">
+                    <div class="card shadow-sm border-0 h-100">
+                        <div class="row g-0 h-100">
+                            <!-- Image -->
+                            <div class="col-4 d-flex align-items-center justify-content-center">
+                                <a href="dishes.php?res_id=<?= $restaurantId ?>" class="w-100">
+                                    <div style="background-image: url('admin/<?= $restaurantImage ?>'); background-size: cover; background-position: center; width: 100%; height: 100px; border-radius: 0.375rem;"></div>
+                                </a>
+                            </div>
 
-                <?php
-                $ress = mysqli_query($db, "SELECT * FROM restaurant");
-                while ($rows = mysqli_fetch_array($ress)) {
-                    // Get restaurant category
-                    $query = mysqli_query($db, "SELECT * FROM res_category WHERE c_id = '" . $rows['c_id'] . "'");
-                    $rowss = mysqli_fetch_array($query);
-
-                    // Prepare variables
-                    $categoryClass = htmlspecialchars($rowss['c_name']);
-                    $restaurantId = htmlspecialchars($rows['rs_id']);
-                    $restaurantTitle = htmlspecialchars($rows['title']);
-                    $restaurantAddress = htmlspecialchars($rows['address']);
-                    $restaurantImage = htmlspecialchars($rows['image']);
-                    $o_hr = htmlspecialchars($rows['o_hr']);
-                    $c_hr = htmlspecialchars($rows['c_hr']);
-
-                ?>
-                    <div class="col-xs-12 col-sm-12 col-md-6 single-restaurant all <?= $categoryClass ?>">
-                        <div class="restaurant-wrap">
-                            <div class="row g-0"> <!-- Added g-0 to remove extra gaps if needed -->
-
-                                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 text-center">
-                                    <a class="restaurant-logo" href="dishes.php?res_id=<?= $restaurantId ?>">
-                                        <div style="
-                        background-image: url('admin/<?= $restaurantImage ?>');
-                        background-size: cover;
-                        background-position: center;
-                        width: 100%;
-                        height: 120px;
-                        border-radius: 8px;">
-                                        </div>
-                                    </a>
+                            <!-- Content -->
+                            <div class="col-8">
+                                <div class="card-body py-2 px-3">
+                                    <h5 class="card-title mb-1">
+                                        <a href="dishes.php?res_id=<?= $restaurantId ?>" class="text-decoration-none text-dark">
+                                            <?= $restaurantTitle ?>
+                                        </a>
+                                    </h5>
+                                    <p class="card-text text-muted mb-1 small">
+                                        <?= !empty($restaurantAddress) ? $restaurantAddress : '<em>No Address</em>' ?>
+                                    </p>
+                                    <p class="card-text text-uppercase text-secondary small mb-0">
+                                        <?= $o_hr ?> - <?= $c_hr ?>
+                                    </p>
                                 </div>
-
-                                <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                                    <div class="p-2">
-                                        <h5 class="mb-1">
-                                            <a href="dishes.php?res_id=<?= $restaurantId ?>"><?= $restaurantTitle ?></a>
-                                        </h5>
-                                        <div class="mb-1 text-muted">
-                                            <?= !empty($restaurantAddress) ? $restaurantAddress : '<em>No Address</em>' ?>
-                                        </div>
-
-                                        <div class="product-name text-uppercase" style="font-size: 14px; color: #888;">
-                                            <?= htmlspecialchars($rows['o_hr']) ?> - <?= htmlspecialchars($rows['c_hr']) ?>
-                                        </div>
-                                    </div>
-                                </div>
-
                             </div>
                         </div>
                     </div>
-
-                <?php
-                }
-                ?>
-
-
-
-
-
-            </div>
+                </div>
+            <?php } ?>
         </div>
-
-
     </div>
 </section>
+
 
 
 <footer class="footer">
