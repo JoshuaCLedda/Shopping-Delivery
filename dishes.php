@@ -1,7 +1,7 @@
 <?php
 session_start();
 error_reporting(E_ALL);
-ini_set('display_errors', value: 1); 
+ini_set('display_errors', 1); 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 
@@ -61,17 +61,37 @@ if (isset($_POST['submit'])) {
 
 
 <div class="page-wrapper">
-    <div class="top-links">
-        <div class="container">
-            <ul class="row links">
+<div class="bg-light py-3 border-bottom">
+    <div class="container">
+        <div class="row text-center">
 
-                <li class="col-xs-12 col-sm-4 link-item"><span>1</span><a href="restaurants.php">Choose Stall</a></li>
-                <li class="col-xs-12 col-sm-4 link-item active"><span>2</span><a href="dishes.php?res_id=<?php echo $_GET['res_id']; ?>">Pick Your favorite food</a></li>
-                <li class="col-xs-12 col-sm-4 link-item"><span>3</span><a href="#">Order and Pay</a></li>
+            <div class="col-md-4 mb-2">
+                <div class="p-2 rounded <?= !isset($_GET['res_id']) ? 'bg-primary text-white' : '' ?>">
+                    <span class="fw-bold me-2">1</span>
+                    <a href="restaurants.php" class="text-decoration-none <?= !isset($_GET['res_id']) ? 'text-white' : 'text-dark' ?>">Choose Stall</a>
+                </div>
+            </div>
 
-            </ul>
+            <div class="col-md-4 mb-2">
+                <div class="p-2 rounded bg-primary text-white">
+                    <span class="fw-bold me-2">2</span>
+                    <a href="dishes.php?res_id=<?= $_GET['res_id'] ?>" class="text-decoration-none text-white">Pick Your Favorite Food</a>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-2">
+                <div class="p-2 rounded <?= !isset($_GET['order']) ? 'text-dark' : 'bg-primary text-white' ?>">
+                    <span class="fw-bold me-2">3</span>
+                    <a href="#" class="text-decoration-none <?= !isset($_GET['order']) ? 'text-dark' : 'text-white' ?>">Order and Pay</a>
+                </div>
+            </div>
+
         </div>
     </div>
+</div>
+v>
+</div>
+
 
 
     <section class="inner-page-hero bg-image" data-image-src="images/img/rest.png">
@@ -89,11 +109,11 @@ if (isset($_POST['submit'])) {
                     <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 text-center">
                         <a class="restaurant-logo" href="dishes.php?res_id=<?= $restaurantId ?>">
                             <div style="
-                            background-image: url('admin/Res_img/<?= htmlspecialchars($rows['image']) ?>');
+                            background-image: url('admin/<?= htmlspecialchars($rows['image']) ?>');
                             background-size: cover;
                             background-position: center;
                             width: 100%;
-                            height: 120px;
+                            height: 220px;
                             border-radius: 8px;">
                             </div>
                         </a>
@@ -103,13 +123,13 @@ if (isset($_POST['submit'])) {
                     <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 profile-desc d-flex flex-column justify-content-center p-4" style="border-radius: 0 10px 10px 0;">
                         <div class="right-text">
                             <h6 class="mb-2">
-                                <a href="#" style="color: black;"><?= htmlspecialchars($rows['title']) ?></a>
+                                <p style="color: black;"><?= htmlspecialchars($rows['title']) ?></a=>
                             </h6>
                             <p style="color: black;">
                                 <?= htmlspecialchars($rows['address'] ?? 'No address available') ?>
                             </p>
 
-                            <span class="product-name" style="text-transform: uppercase; color: #333">
+                            <span class="product-name" style="text-transform: uppercase; color: #333"> Open From: 
                                 <?= htmlspecialchars($rows['o_hr']) ?> - <?= htmlspecialchars($rows['c_hr']) ?>
                             </span>
                         </div>
@@ -121,308 +141,119 @@ if (isset($_POST['submit'])) {
 
 
     <div class="container m-t-30">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="menu-widget" id="2">
+                <div class="widget-heading d-flex justify-content-between align-items-center">
+                    <h3 class="widget-title text-dark mb-0">MENU</h3>
+                    <a class="btn btn-link" data-toggle="collapse" href="#popular2" aria-expanded="true">
+                        <i class="fa fa-angle-down"></i>
+                    </a>
+                </div>
 
-        <div class="row">
+                <div class="collapse show" id="popular2">
+                    <?php
+                    $stmt = $index->con->prepare("SELECT * FROM dishes WHERE dishes.status = 1 AND rs_id = ?");
+                    $stmt->bind_param("i", $_GET['res_id']);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
 
-
-      
-
-            <div class="col-md-12">
-
-
-                <div class="menu-widget" id="2">
-                    <div class="widget-heading">
-                        <h3 class="widget-title text-dark">
-                            MENU <a class="btn btn-link pull-right" data-toggle="collapse" href="#popular2" aria-expanded="true">
-                                <i class="fa fa-angle-right pull-right"></i>
-                                <i class="fa fa-angle-down pull-right"></i>
-                            </a>
-                        </h3>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="collapse in" id="popular2">
-                        <?php
-                        $stmt = $index->con->prepare("SELECT * FROM dishes 
-                    WHERE dishes.status = 1 
-                    AND rs_id = ?");
-                        $stmt->bind_param("i", $_GET['res_id']);  // Assuming res_id is an integer
-                        $stmt->execute();
-                        $products = $stmt->get_result();
-
-                        if (!empty($products)) {
-                            foreach ($products as $product) {
-
-
-
-                        ?>
-                                <div class="food-item py-3 border-bottom">
-
-                                    <form method="POST" action="">
-                                        <div class="row align-items-center">
-
-                                            <!-- Image -->
-                                            <div class="col-12 col-sm-3 col-lg-2 mb-3 mb-sm-0">
-                                                <div class="rest-logo">
-                                                    <a class="restaurant-logo" href="#">
-                                                        <img
-                                                            src="admin/Res_img/dishes/<?= htmlspecialchars($product['img']) ?>"
-                                                            alt="Food Image"
-                                                            style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px;" />
-                                                    </a>
-                                                </div>
-                                            </div>
-
-                                            <!-- Dish info -->
-                                            <div class="col-12 col-sm-6 col-lg-7">
-                                                <div class="rest-descr">
-                                                    <h6 class="mb-1">
-                                                        <a href="#" style="color: #333;"><?= htmlspecialchars($product['title']) ?></a>
-                                                    </h6>
-                                                    <p class="small text-muted mb-0"><?= htmlspecialchars($product['slogan']) ?></p>
-                                                </div>
-                                            </div>
-
-                                            <!-- Price + Quantity + Button -->
-                                            <div class="col-12 col-sm-3 col-lg-3 text-sm-right">
-                                                <div class="item-cart-info d-flex flex-column align-items-start align-items-sm-end">
-                                                    <span class="price mb-2" style="font-weight: bold; font-size: 18px;">₱<?= htmlspecialchars($product['price']) ?></span>
-
-                                                    <!-- Quantity -->
-                                                    <input
-                                                        class="form-control form-control-sm mb-2"
-                                                        type="number"
-                                                        name="quantity"
-                                                        value="1"
-                                                        min="1"
-                                                        style="width: 170px;" />
-
-                                                    <!-- Hidden fields -->
-                                                    <input type="hidden" name="dishes_id" value="<?= htmlspecialchars($product['d_id']) ?>">
-                                                    <input type="hidden" name="user_id" value="<?= $_SESSION['user_id'] ?>">
-
-                                                    <!-- Submit -->
-                                                    <input
-                                                        type="submit"
-                                                        name="submit"
-                                                        class="btn btn-sm theme-btn"
-                                                        value="Add To Cart" />
-                                                </div>
-                                            </div>
-
+                    if ($result->num_rows > 0) {
+                        while ($product = $result->fetch_assoc()) {
+                    ?>
+                        <div class="food-item py-3 border-bottom">
+                            <form method="POST" action="">
+                                <div class="row align-items-center">
+                                    <!-- Image -->
+                                    <div class="col-12 col-sm-3 col-lg-2 mb-3 mb-sm-0">
+                                        <div class="rest-logo">
+                                            <a class="restaurant-logo" href="#">
+                                                <img
+                                                    src="admin/Res_img/dishes/<?= htmlspecialchars($product['img']) ?>"
+                                                    alt="Food Image"
+                                                    style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px;" />
+                                            </a>
                                         </div>
-                                    </form>
+                                    </div>
 
+                                    <!-- Dish info -->
+                                    <div class="col-12 col-sm-6 col-lg-7">
+                                        <div class="rest-descr">
+                                            <h6 class="mb-1">
+                                                <a href="#" style="color: #333;"><?= htmlspecialchars($product['title']) ?></a>
+                                            </h6>
+                                            <p class="small text-muted mb-0"><?= htmlspecialchars($product['slogan']) ?></p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Price + Quantity + Button -->
+                                    <div class="col-12 col-sm-3 col-lg-3 text-sm-right">
+                                        <div class="item-cart-info d-flex flex-column align-items-start align-items-sm-end">
+                                            <span class="price mb-2" style="font-weight: bold; font-size: 18px;">₱<?= htmlspecialchars($product['price']) ?></span>
+
+                                            <!-- Quantity -->
+                                            <input
+                                                class="form-control form-control-sm mb-2"
+                                                type="number"
+                                                name="quantity"
+                                                value="1"
+                                                min="1"
+                                                style="width: 170px;" />
+
+                                            <!-- Hidden fields -->
+                                            <input type="hidden" name="dishes_id" value="<?= htmlspecialchars($product['d_id']) ?>">
+                                            <input type="hidden" name="user_id" value="<?= $_SESSION['user_id'] ?>">
+
+                                            <!-- Submit -->
+                                            <input
+                                                type="submit"
+                                                name="submit"
+                                                class="btn btn-sm theme-btn"
+                                                value="Add To Cart" />
+                                        </div>
+                                    </div>
                                 </div>
-
-
-
-                        <?php
-                            }
+                            </form>
+                        </div>
+                    <?php
                         }
+                    } else {
+                    ?>
+                        <div class="py-5 text-center">
+                            <p class="text-muted" style="font-size: 18px;">No dishes available at the moment.</p>
+                        </div>
+                    <?php
+                    }
+                    ?>
+                </div> <!-- /.collapse -->
+            </div> <!-- /.menu-widget -->
+        </div>
+    </div>
+</div>
 
-                        ?>
 
 
 
-                    </div>
-
-                </div>
 
 
-            </div>
+
+
+
+
+
+
 
         </div>
 
     </div>
 
-    <footer class="footer">
-        <div class="container">
-
-            <div class="row bottom-footer">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-3 payment-options color-gray">
-                            <h5>Payment Options</h5>
-                            <ul>
-                                <li>
-                                    <a href="#"> <img src="images/paypal.png" alt="Paypal"> </a>
-                                </li>
-                                <li>
-                                    <a href="#"> <img src="images/mastercard.png" alt="Mastercard"> </a>
-                                </li>
-                                <li>
-                                    <a href="#"> <img src="images/maestro.png" alt="Maestro"> </a>
-                                </li>
-                                <li>
-                                    <a href="#"> <img src="images/stripe.png" alt="Stripe"> </a>
-                                </li>
-                                <li>
-                                    <a href="#"> <img src="images/bitcoin.png" alt="Bitcoin"> </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="col-xs-12 col-sm-4 address color-gray">
-                            <h5>Address</h5>
-                            <p>1086 Stockert Hollow Road, Seattle</p>
-                            <h5>Phone: 75696969855</a></h5>
-                        </div>
-                        <div class="col-xs-12 col-sm-5 additional-info color-gray">
-                            <h5>Addition informations</h5>
-                            <p>Join thousands of other restaurants who benefit from having partnered with us.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </footer>
+  
 
 </div>
 
 </div>
 
 
-<div class="modal fade" id="order-modal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
-            <div class="modal-body cart-addon">
-                <div class="food-item white">
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-6 col-lg-6">
-                            <div class="item-img pull-left">
-                                <a class="restaurant-logo pull-left" href="#"><img src="http://placehold.it/70x70" alt="Food logo"></a>
-                            </div>
-
-                            <div class="rest-descr">
-                                <h6><a href="#">Sandwich de Alegranza Grande Menü (28 - 30 cm.)</a></h6>
-                            </div>
-
-                        </div>
-
-                        <div class="col-xs-6 col-sm-2 col-lg-2 text-xs-center"> <span class="price pull-left">₱ 2.99</span></div>
-                        <div class="col-xs-6 col-sm-4 col-lg-4">
-                            <div class="row no-gutter">
-                                <div class="col-xs-7">
-                                    <select class="form-control b-r-0" id="exampleSelect2">
-                                        <option>Size SM</option>
-                                        <option>Size LG</option>
-                                        <option>Size XL</option>
-                                    </select>
-                                </div>
-                                <div class="col-xs-5">
-                                    <input class="form-control" type="number" value="0" id="quant-input-2">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="food-item">
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-6 col-lg-6">
-                            <div class="item-img pull-left">
-                                <a class="restaurant-logo pull-left" href="#"><img src="http://placehold.it/70x70" alt="Food logo"></a>
-                            </div>
-
-                            <div class="rest-descr">
-                                <h6><a href="#">Sandwich de Alegranza Grande Menü (28 - 30 cm.)</a></h6>
-                            </div>
-
-                        </div>
-
-                        <div class="col-xs-6 col-sm-2 col-lg-2 text-xs-center"> <span class="price pull-left">₱ 2.49</span></div>
-                        <div class="col-xs-6 col-sm-4 col-lg-4">
-                            <div class="row no-gutter">
-                                <div class="col-xs-7">
-                                    <select class="form-control b-r-0" id="exampleSelect3">
-                                        <option>Size SM</option>
-                                        <option>Size LG</option>
-                                        <option>Size XL</option>
-                                    </select>
-                                </div>
-                                <div class="col-xs-5">
-                                    <input class="form-control" type="number" value="0" id="quant-input-3">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="food-item">
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-6 col-lg-6">
-                            <div class="item-img pull-left">
-                                <a class="restaurant-logo pull-left" href="#"><img src="http://placehold.it/70x70" alt="Food logo"></a>
-                            </div>
-
-                            <div class="rest-descr">
-                                <h6><a href="#">Sandwich de Alegranza Grande Menü (28 - 30 cm.)</a></h6>
-                            </div>
-
-                        </div>
-
-                        <div class="col-xs-6 col-sm-2 col-lg-2 text-xs-center"> <span class="price pull-left">₱ 1.99</span></div>
-                        <div class="col-xs-6 col-sm-4 col-lg-4">
-                            <div class="row no-gutter">
-                                <div class="col-xs-7">
-                                    <select class="form-control b-r-0" id="exampleSelect5">
-                                        <option>Size SM</option>
-                                        <option>Size LG</option>
-                                        <option>Size XL</option>
-                                    </select>
-                                </div>
-                                <div class="col-xs-5">
-                                    <input class="form-control" type="number" value="0" id="quant-input-4">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="food-item">
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-6 col-lg-6">
-                            <div class="item-img pull-left">
-                                <a class="restaurant-logo pull-left" href="#"><img src="http://placehold.it/70x70" alt="Food logo"></a>
-                            </div>
-
-                            <div class="rest-descr">
-                                <h6><a href="#">Sandwich de Alegranza Grande Menü (28 - 30 cm.)</a></h6>
-                            </div>
-
-                        </div>
-
-                        <div class="col-xs-6 col-sm-2 col-lg-2 text-xs-center"> <span class="price pull-left">₱ 3.15</span></div>
-                        <div class="col-xs-6 col-sm-4 col-lg-4">
-                            <div class="row no-gutter">
-                                <div class="col-xs-7">
-                                    <select class="form-control b-r-0" id="exampleSelect6">
-                                        <option>Size SM</option>
-                                        <option>Size LG</option>
-                                        <option>Size XL</option>
-                                    </select>
-                                </div>
-                                <div class="col-xs-5">
-                                    <input class="form-control" type="number" value="0" id="quant-input-5">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn theme-btn">Add To Cart</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
