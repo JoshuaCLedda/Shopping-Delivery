@@ -3,6 +3,19 @@ session_start();
 include("connection/connect.php");
 error_reporting(0);
 
+// login security
+if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
+  $role = $_SESSION["role"];
+  $redirectUrl = ($role == 1) ? "admin/dashboard.php" :
+                 (($role == 2) ? "rider/index.php" :
+                 (($role == 3) ? "stall/index.php" : "index.php"));
+  header("Location: $redirectUrl");
+  exit();
+}
+
+
+
+
 if (isset($_POST['submit'])) {
   $username = trim($_POST['username']);
   $password = trim($_POST['password']);
