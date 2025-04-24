@@ -7,7 +7,7 @@ $index = new Index;
 
 $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
 
-// Default value
+
 $stall_name = ''; 
 
 // Get the restaurant (stall) details if ID is passed
@@ -46,7 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -54,127 +53,82 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rate Rider</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .rating-container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            width: 350px;
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 15px;
-        }
-
-        label {
-            font-weight: bold;
-            display: block;
-            margin: 10px 0 5px;
-        }
-
-        select,
-        textarea,
-        button {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .rating {
-            display: flex;
-            justify-content: center;
-            margin: 10px 0;
-        }
-
-        .star {
-            font-size: 30px;
-            cursor: pointer;
-            color: gray;
-            transition: color 0.3s;
-        }
-
-        .star:hover,
-        .star.selected {
-            color: gold;
-        }
-
-        button {
-            background-color: #28a745;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        button:hover {
-            background-color: #218838;
-        }
-    </style>
-    <!-- for the meantime -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
 
 <body>
 
+<?php include 'layouts/navbar.php'; ?>
 
+<div class="container my-4">
+    <div class="row text-center">
+        <div class="col-md-4 mb-2">
+            <div class="border p-2 rounded">
+                <i class='bx bx-store-alt'></i>
+                <a href="#" class="text-decoration-none text-dark fw-bold ms-1">1. Choose Stall</a>
+            </div>
+        </div>
+        <div class="col-md-4 mb-2">
+            <div class="border p-2 rounded">
+                <i class='bx bx-bowl-hot'></i>
+                <a href="#" class="text-decoration-none text-dark fw-bold ms-1">2. Order Food</a>
+            </div>
+        </div>
+        <div class="col-md-4 mb-2">
+    <div class="bg-primary text-white p-2 rounded fw-bold">
+        <i class='bx bxs-star'></i>
+        <span class="ms-1">3. Rate Stall</span>
+    </div>
+</div>
 
+    </div>
+</div>
 
 <div class="container my-5">
-    <div class="card shadow rounded-4">
+    <div class="card shadow-lg rounded-4 mx-auto" style="max-width: 600px;">
         <div class="card-body p-4">
-            <h3 class="card-title text-center mb-4">Rate a Stall</h3>
+            <h3 class="text-center mb-4 text-primary">
+                <i class='bx bxs-store-alt'></i> Rate a Stall
+            </h3>
 
-        <?php include 'layouts/alert.php' ?>
-        <form action="" method="POST">
+            <?php include 'layouts/alert.php'; ?>
 
-            <div class="mb-3">
-                <label for="rider" class="form-label">Select Restaurant:</label>
-                <input type="text" class="form-control" id="rider" name="stall_name"
-                    value="<?php echo htmlspecialchars($stall_name); ?>" readonly>
-                <input type="hidden" name="restaurant_id" value="<?php echo $restaurant_id; ?>">
+            <form action="" method="POST">
+                <div class="mb-3">
+                    <label for="stall" class="form-label">
+                        <i class='bx bx-restaurant'></i> Restaurant:
+                    </label>
+                    <input type="text" class="form-control" id="stall" name="stall_name"
+                           value="<?= htmlspecialchars($stall_name); ?>" readonly>
+                    <input type="hidden" name="restaurant_id" value="<?= $restaurant_id; ?>">
+                </div>
 
-            </div>
-
-            <div class="mb-3">
-                    <label class="form-label d-block">Rate Stall (1 to 5):</label>
-                    <div class="d-flex justify-content-between">
-                        <?php for ($i = 1; $i <= 5; $i++): ?>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="rating" id="rating<?= $i ?>" value="<?= $i ?>" required>
-                                <label class="form-check-label" for="rating<?= $i ?>"><?= $i ?></label>
-                            </div>
+                <div class="mb-3">
+                    <label class="form-label d-block">
+                        <i class='bx bx-like'></i> Rate Rider:
+                    </label>
+                    <div class="btn-group w-100 justify-content-center" role="group" aria-label="Star Rating">
+                        <?php for ($i = 5; $i >= 1; $i--): ?>
+                            <input type="radio" class="btn-check" name="rating" id="star<?= $i ?>" value="<?= $i ?>" required>
+                            <label class="btn btn-outline-warning" for="star<?= $i ?>"><i class='bx bxs-star'></i></label>
                         <?php endfor; ?>
                     </div>
                 </div>
+                
+                <div class="mb-3">
+                    <label for="complaint" class="form-label">
+                        <i class='bx bx-message-dots'></i> Feedback (Optional):
+                    </label>
+                    <textarea name="complaint" class="form-control" rows="4" placeholder="Share your thoughts..."></textarea>
+                </div>
 
-
-            <label for="complaint">Feedback:</label>
-            <textarea name="complaint" class="form-control" placeholder="Describe your complaint or feedback (if any)..."></textarea>
-
-            <button type="submit" class="my-2">Submit Rating</button>
-        </form>
+                <div class="text-end">
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class='bx bx-send'></i> Submit
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-
-
-
-</body>
-
-</html>
+</div>

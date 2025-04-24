@@ -1,8 +1,9 @@
 <?php
 session_start();
 error_reporting(E_ALL);
-ini_set('display_errors', 1);  // Ensure errors are displayed
+ini_set('display_errors', 1); 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
@@ -108,7 +109,7 @@ if (isset($_SESSION['user_id'])) {
                                     </div>
 
                                     <div>
-                                        <a href="delete-cart-item.php?id=<?php echo $row['cartId']; ?>"
+                                        <a href="delete_cart_item.php?id=<?php echo $row['cartId']; ?>"
                                             class="btn btn-outline-danger btn-sm"
                                             onclick="return confirm('Are you sure you want to remove this item from your cart?');">
                                             <i class='bx bx-trash'></i>

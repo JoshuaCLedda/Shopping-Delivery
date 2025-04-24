@@ -61,51 +61,53 @@ session_start();
     </div>
 </section>
 
-<section class="popular">
+<section class="popular py-5 bg-light">
     <div class="container">
-        <div class="title text-xs-center m-b-30">
-            <h2>List or Stalls</h2>
-            <p class="lead">Easiest way to order your favourite food among these top 6 dishes</p>
+        <!-- Title -->
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">List of Stalls</h2>
+            <p class="lead text-muted">Easiest way to order your favourite food among these top 6 dishes</p>
         </div>
-        <div class="row">
+
+        <!-- Restaurant Cards -->
+        <div class="row g-4">
             <?php
             $query_res = mysqli_query($db, "SELECT * FROM restaurant WHERE status = 0");
             while ($r = mysqli_fetch_array($query_res)):
             ?>
-                <div class="col-xs-12 col-sm-6 col-md-4 food-item">
-                    <div class="food-item-wrap">
-                        <div style="background-image: url('admin/<?= htmlspecialchars($r['image']) ?>'); 
-                                background-size: cover; 
-                                background-position: center; 
-                                width: 100%; 
-                                height: 200px;">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm border-0">
+                        <!-- Image -->
+                        <div style="background-image: url('admin/<?= htmlspecialchars($r['image']) ?>');
+                                    background-size: cover;
+                                    background-position: center;
+                                    height: 200px;
+                                    border-top-left-radius: .375rem;
+                                    border-top-right-radius: .375rem;">
                         </div>
 
-                        <div class="content">
-                            <h5>
-                                <a
-                                    href="dishes.php?res_id=<?= htmlspecialchars($r['rs_id']) ?>"><?= htmlspecialchars($r['title']) ?></a>
+                        <!-- Content -->
+                        <div class="card-body">
+                            <h5 class="card-title mb-1">
+                                <a href="dishes.php?res_id=<?= htmlspecialchars($r['rs_id']) ?>" class="text-decoration-none text-dark fw-semibold">
+                                    <?= htmlspecialchars($r['title']) ?>
+                                </a>
                             </h5>
-
-                            <div class="product-name">
+                            <p class="text-muted mb-2 small">
                                 <?= !empty($r['address']) ? htmlspecialchars($r['address']) : 'Address Not Available' ?>
-                            </div>
-
-                            <div class="price-btn-block">
-                                <span class="product-name"
-                                    style="text-transform: uppercase;"><?= htmlspecialchars($r['o_hr']) ?> -
-                                    <?= htmlspecialchars($r['c_hr']) ?></span>
-                                <a href="dishes.php?res_id=<?= htmlspecialchars($r['rs_id']) ?>"
-                                    class="btn theme-btn-dash pull-right">View Stall</a>
-                            </div>
+                            </p>
+                            <p class="text-uppercase text-secondary small mb-3">
+                              Open From:  <?= htmlspecialchars($r['o_hr']) ?> - <?= htmlspecialchars($r['c_hr']) ?>
+                            </p>
+                            <a href="dishes.php?res_id=<?= htmlspecialchars($r['rs_id']) ?>" class="btn btn-outline-primary btn-sm w-100">View Stall</a>
                         </div>
                     </div>
                 </div>
             <?php endwhile; ?>
         </div>
-
     </div>
 </section>
+
 
 <section class="how-it-works">
     <div class="container">
@@ -170,29 +172,30 @@ session_start();
 </section>
 
 
-
 <section class="featured-restaurants py-5 bg-light">
     <div class="container">
+
         <!-- Header -->
         <div class="row align-items-center mb-4">
             <div class="col-sm-6">
-                <h4 class="mb-0">Featured Stalls</h4>
+                <h4 class="fw-bold mb-0">
+                    <i class='bx bxs-star'></i> Featured Stalls
+                </h4>
             </div>
             <div class="col-sm-6 text-sm-end">
-            <nav class="primary pull-left">
-    <ul class="list-inline mb-0">
-        <li class="list-inline-item">
-            <a href="#" class="selected" data-filter="*">All</a>
-        </li>
-        <?php
-        $res = mysqli_query($db, "SELECT * FROM res_category");
-        while ($row = mysqli_fetch_array($res)) {
-            echo '<li class="list-inline-item"><a href="#" data-filter=".' . htmlspecialchars($row['c_name']) . '">' . htmlspecialchars($row['c_name']) . '</a></li>';
-        }
-        ?>
-    </ul>
-</nav>
-
+                <ul class="list-inline mb-0">
+                    <li class="list-inline-item">
+                        <a href="#" class="btn btn-outline-primary btn-sm active" data-filter="*">All</a>
+                    </li>
+                    <?php
+                    $res = mysqli_query($db, "SELECT * FROM res_category");
+                    while ($row = mysqli_fetch_array($res)) {
+                        echo '<li class="list-inline-item">
+                                <a href="#" class="btn btn-outline-primary btn-sm" data-filter=".' . htmlspecialchars($row['c_name']) . '">' . htmlspecialchars($row['c_name']) . '</a>
+                              </li>';
+                    }
+                    ?>
+                </ul>
             </div>
         </div>
 
@@ -212,33 +215,21 @@ session_start();
                 $o_hr = htmlspecialchars($rows['o_hr']);
                 $c_hr = htmlspecialchars($rows['c_hr']);
             ?>
-                <div class="col-md-6 <?= $categoryClass ?>">
-                    <div class="card shadow-sm border-0 h-100">
-                        <div class="row g-0 h-100">
-                            <!-- Image -->
-                            <div class="col-4 d-flex align-items-center justify-content-center">
-                                <a href="dishes.php?res_id=<?= $restaurantId ?>" class="w-100">
-                                    <div style="background-image: url('admin/<?= $restaurantImage ?>'); background-size: cover; background-position: center; width: 100%; height: 100px; border-radius: 0.375rem;"></div>
-                                </a>
+                <div class="col-md-6 col-lg-4 <?= $categoryClass ?>">
+                    <div class="card shadow-sm h-100 border-0">
+                        <a href="dishes.php?res_id=<?= $restaurantId ?>" class="text-decoration-none text-dark">
+                            <div class="card-img-top" style="background-image: url('admin/<?= $restaurantImage ?>'); background-size: cover; background-position: center; height: 150px; border-top-left-radius: .5rem; border-top-right-radius: .5rem;"></div>
+                            <div class="card-body">
+                                <h5 class="card-title mb-1"><?= $restaurantTitle ?></h5>
+                                <p class="card-text text-muted small mb-1">
+                                    <i class='bx bx-map-pin'></i>
+                                    <?= !empty($restaurantAddress) ? $restaurantAddress : '<em>No Address</em>' ?>
+                                </p>
+                                <p class="card-text text-uppercase text-secondary small">
+                                    <i class='bx bx-time'></i> <?= $o_hr ?> - <?= $c_hr ?>
+                                </p>
                             </div>
-
-                            <!-- Content -->
-                            <div class="col-8">
-                                <div class="card-body py-2 px-3">
-                                    <h5 class="card-title mb-1">
-                                        <a href="dishes.php?res_id=<?= $restaurantId ?>" class="text-decoration-none text-dark">
-                                            <?= $restaurantTitle ?>
-                                        </a>
-                                    </h5>
-                                    <p class="card-text text-muted mb-1 small">
-                                        <?= !empty($restaurantAddress) ? $restaurantAddress : '<em>No Address</em>' ?>
-                                    </p>
-                                    <p class="card-text text-uppercase text-secondary small mb-0">
-                                        <?= $o_hr ?> - <?= $c_hr ?>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                        </a>
                     </div>
                 </div>
             <?php } ?>
@@ -247,29 +238,6 @@ session_start();
 </section>
 
 
-
-<footer class="footer">
-    <div class="container">
-
-
-        <div class="bottom-footer">
-            <div class="row">
-                <div class="col-xs-12 col-sm-3 payment-options color-gray">
-                    <h5>Payment Options</h5>
-                    <ul>
-                        <li>
-                            <a href="#"> <img src="images/paypal.png" alt="Paypal"> </a>
-                        </li>
-                        <li>
-                            <a href="#"> <img src="images/gcash.png" alt="GCash"> </a>
-                        </li>
-
-                </div>
-
-            </div>
-
-        </div>
-</footer>
 
 
 

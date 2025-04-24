@@ -197,6 +197,37 @@ if (isset($_POST['submit'])) {
     <?php include 'layouts/navbar.php'; ?>
 
     <body class="bg-light">
+   <div class="bg-light py-3 border-bottom">
+    <div class="container">
+        <div class="row text-center">
+            <!-- Step 1 -->
+            <div class="col-md-4 mb-2">
+                <div class="p-2 rounded text-dark">
+                    <span class="fw-bold me-2">1</span>
+                    <a href="restaurants.php" class="text-decoration-none text-dark">Choose Stall</a>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="col-md-4 mb-2">
+                <div class="p-2 rounded text-dark">
+                    <span class="fw-bold me-2">2</span>
+                    <a href="dishes.php" class="text-decoration-none text-dark">Pick Your Favorite Food</a>
+                </div>
+            </div>
+
+            <!-- Step 3 (Active) -->
+            <div class="col-md-4 mb-2">
+                <div class="p-2 rounded bg-primary text-white">
+                    <span class="fw-bold me-2">3</span>
+                    <a href="#" class="text-decoration-none text-white">Order and Pay</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
         <div class="container py-5">
             <div class="row justify-content-center">
