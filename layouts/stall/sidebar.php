@@ -21,12 +21,22 @@
           </a>
         </li>
 
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="earnings.php" aria-expanded="false">
+            <span>
+              <i class="bx bx-home-alt"></i>
+            </span>
+            <span class="hide-menu">Earnings</span>
+          </a>
+        </li>
+
+
         <li class="nav-small-cap">
           <i class="bx bx-dots-vertical-rounded nav-small-cap-icon fs-4"></i>
           <span class="hide-menu">Utilities</span>
         </li>
 
-      
+
 
         <li class="sidebar-item">
           <a class="sidebar-link" href="placed_orders.php" aria-expanded="false">

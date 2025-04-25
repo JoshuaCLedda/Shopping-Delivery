@@ -28,6 +28,8 @@ if (!$query) {
     die("Error fetching data: " . mysqli_error($index->con));
 }
 ?>
+
+
 <?php include '../admin/layouts/header.php' ?>
 <?php include '../layouts/stall/sidebar.php' ?>
 <?php include '../layouts/stall/navbar.php' ?>

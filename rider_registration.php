@@ -1,9 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
 <?php
 session_start();
 error_reporting(E_ALL); // Show all errors for debugging
 include("connection/connect.php");
+
+// Redirect if already logged in
+if (isset($_SESSION['user_id'])) {
+    switch ($_SESSION['role']) {
+      case 1:
+        header("Location: admin/dashboard.php");
+        break;
+      case 2:
+        header("Location: rider/index.php");
+        break;
+      case 3:
+        header("Location: stall/index.php");
+        break;
+      default:
+        header("Location: index.php");
+        break;
+    }
+    exit();
+  }
+
 
 if (!$db) {
     die("Connection failed: " . mysqli_connect_error());
