@@ -1,6 +1,8 @@
 <?php
 session_start();
-error_reporting(E_ALL); // Show all errors for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 include("connection/connect.php");
 
 // Redirect if already logged in
@@ -29,65 +31,71 @@ if (!$db) {
 
 if (isset($_POST['submit'])) {
     // Form validation
-    if (empty($_POST['username']) || 
+    if (
+        empty($_POST['username']) || 
         empty($_POST['firstname']) || 
         empty($_POST['lastname']) || 
         empty($_POST['email']) ||  
         empty($_POST['phone']) || 
         empty($_POST['password']) || 
         empty($_POST['cpassword']) ||
-        empty($_POST['security_question']) || 
-        empty($_POST['security_answer'])) {
+        empty($_POST['security_questions']) || 
+        empty($_POST['security_answer']) || 
+        empty($_POST['address'])
+
+    ) {
         echo "<script>alert('localhost says: All fields must be required!');</script>";
     } else {
-        // Escape user inputs for security
-        $username = mysqli_real_escape_string($db, $_POST['username']);
-        $firstname = mysqli_real_escape_string($db, $_POST['firstname']);
-        $lastname = mysqli_real_escape_string($db, $_POST['lastname']);
-        $email = mysqli_real_escape_string($db, $_POST['email']);
-        $phone = mysqli_real_escape_string($db, $_POST['phone']);
-        $password = md5($_POST['password']); // Consider using a stronger hash method
-        $security_question = mysqli_real_escape_string($db, $_POST['security_question']);
-        $security_answer = mysqli_real_escape_string($db, $_POST['security_answer']);
-        
-        // Check if the passwords match
+        // Escape user inputs
+        $username           = mysqli_real_escape_string($db, $_POST['username']);
+        $firstname          = mysqli_real_escape_string($db, $_POST['firstname']);
+        $lastname           = mysqli_real_escape_string($db, $_POST['lastname']);
+        $email              = mysqli_real_escape_string($db, $_POST['email']);
+        $phone              = mysqli_real_escape_string($db, $_POST['phone']);
+        $password           = md5($_POST['password']); // Stronger: password_hash
+        $security_question  = mysqli_real_escape_string($db, $_POST['security_questions']);
+        $security_answer    = mysqli_real_escape_string($db, $_POST['security_answer']);
+        $address    = mysqli_real_escape_string($db, $_POST['address']);
+        $role               = 2;
+
+        // Validation checks
         if ($_POST['password'] != $_POST['cpassword']) {
             echo "<script>alert('localhost says: Password does not match');</script>";
         } elseif (strlen($_POST['password']) < 6) {
             echo "<script>alert('localhost says: Password must be >= 6 characters');</script>";
         } elseif (strlen($_POST['phone']) < 10) {
             echo "<script>alert('localhost says: Invalid phone number!');</script>";
-        } elseif (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             echo "<script>alert('localhost says: Invalid email address!');</script>";
         } else {
-            // Check if the username or email already exists
-            $check_username = mysqli_query($db, "SELECT username FROM riders WHERE username = '$username'");
-            $check_email = mysqli_query($db, "SELECT email FROM riders WHERE email = '$email'");
-
+            // Check for existing username/email in the correct table
+            $check_username = mysqli_query($db, "SELECT username FROM users WHERE username = '$username'");
+            $check_email = mysqli_query($db, "SELECT email FROM users WHERE email = '$email'");
+            
             if (mysqli_num_rows($check_username) > 0) {
                 echo "<script>alert('localhost says: Username already exists!');</script>";
             } elseif (mysqli_num_rows($check_email) > 0) {
                 echo "<script>alert('localhost says: Email already exists!');</script>";
             } else {
-                // Insert user data into the database
-                $mql = "INSERT INTO riders (username, f_name, l_name, email, phone, password, security_question, answer)
-                        VALUES ('$username', '$firstname', '$lastname', '$email', '$phone', '$password', '$security_question', '$security_answer')";
+                // Insert user into users table
+                $mql = "INSERT INTO users (username, f_name, l_name, email, phone, password, address, security_questions, answer, role)
+                        VALUES ('$username', '$firstname', '$lastname', '$email', '$phone', '$password', '$address', '$security_questions', '$security_answer', '$role')";
 
-if (!mysqli_query($db, $mql)) {
-    echo "<script>alert('Error inserting user: " . mysqli_error($db) . "');</script>";
-} else {
-    // Alert before redirect
-    echo "<script>
-            alert('Registration successful! ');
-            window.location.href = 'login.php';
-          </script>";
-    exit(); // Prevent further code execution after the redirect
-}
+                if (!mysqli_query($db, $mql)) {
+                    echo "<script>alert('Error inserting user: " . mysqli_error($db) . "');</script>";
+                } else {
+                    echo "<script>
+                            alert('Registration successful!');
+                            window.location.href = 'login.php';
+                          </script>";
+                    exit();
+                }
             }
         }
     }
 }
 ?>
+
 
 <head>
     <meta charset="utf-8">
@@ -138,7 +146,7 @@ if (!mysqli_query($db, $mql)) {
                                 <center><h2>Rider Registration</h2></center>
                                 <form action="" method="post">
                                     <div class="row">
-                                        <div class="form-group col-sm-12">
+                                        <div class="form-group col-sm-6">
                                             <label for="exampleInputEmail1">User-Name</label>
                                             <input class="form-control" type="text" name="username" id="example-text-input" required>
                                         </div>
@@ -151,8 +159,12 @@ if (!mysqli_query($db, $mql)) {
                                             <input class="form-control" type="text" name="lastname" id="example-text-input-2" required>
                                         </div>
                                         <div class="form-group col-sm-6">
+                                            <label for="exampleInputEmail1">Address</label>
+                                            <input class="form-control" type="text" name="address" id="example-text-input-2" required>
+                                        </div>
+                                        <div class="form-group col-sm-6">
                                             <label for="exampleInputEmail1">Email Address</label>
-                                            <input type="text" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp" required>
+                                            <input type="email" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp" required>
                                         </div>
                                         <div class="form-group col-sm-6">
                                             <label for="exampleInputEmail1">Phone number</label>
@@ -168,7 +180,7 @@ if (!mysqli_query($db, $mql)) {
                                         </div>
                                         <div class="form-group col-sm-12">
                                             <label for="security_question">Security Question</label>
-                                            <select name="security_question" class="form-control" required>
+                                            <select name="security_questions" class="form-control" required>
                                                 <option value="Your first pet's name?">Your first pet's name?</option>
                                                 <option value="Your mother's maiden name?">Your mother's maiden name?</option>
                                                 <option value="City you were born in?">City you were born in?</option>
