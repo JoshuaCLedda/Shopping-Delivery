@@ -40,8 +40,7 @@ if (isset($_POST['submit'])) {
         empty($_POST['password']) || 
         empty($_POST['cpassword']) ||
         empty($_POST['security_questions']) || 
-        empty($_POST['security_answer']) || 
-        empty($_POST['address'])
+        empty($_POST['security_answer']) 
 
     ) {
         echo "<script>alert('localhost says: All fields must be required!');</script>";
@@ -55,7 +54,6 @@ if (isset($_POST['submit'])) {
         $password           = md5($_POST['password']); // Stronger: password_hash
         $security_question  = mysqli_real_escape_string($db, $_POST['security_questions']);
         $security_answer    = mysqli_real_escape_string($db, $_POST['security_answer']);
-        $address    = mysqli_real_escape_string($db, $_POST['address']);
         $role               = 2;
 
         // Validation checks
@@ -78,8 +76,8 @@ if (isset($_POST['submit'])) {
                 echo "<script>alert('localhost says: Email already exists!');</script>";
             } else {
                 // Insert user into users table
-                $mql = "INSERT INTO users (username, f_name, l_name, email, phone, password, address, security_questions, answer, role)
-                        VALUES ('$username', '$firstname', '$lastname', '$email', '$phone', '$password', '$address', '$security_questions', '$security_answer', '$role')";
+                $mql = "INSERT INTO users (username, f_name, l_name, email, phone, password, security_questions, answer, role)
+                        VALUES ('$username', '$firstname', '$lastname', '$email', '$phone', '$password', '$security_questions', '$security_answer', '$role')";
 
                 if (!mysqli_query($db, $mql)) {
                     echo "<script>alert('Error inserting user: " . mysqli_error($db) . "');</script>";
@@ -162,10 +160,7 @@ if (isset($_POST['submit'])) {
                                             <label for="exampleInputEmail1">Address</label>
                                             <input class="form-control" type="text" name="address" id="example-text-input-2" required>
                                         </div>
-                                        <div class="form-group col-sm-6">
-                                            <label for="exampleInputEmail1">Email Address</label>
-                                            <input type="email" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp" required>
-                                        </div>
+                                 
                                         <div class="form-group col-sm-6">
                                             <label for="exampleInputEmail1">Phone number</label>
                                             <input class="form-control" type="text" name="phone" id="example-tel-input-3" required>

@@ -70,6 +70,7 @@ if (isset($_POST['submit'])) {
     // Collect form data
     $total_price    = $_POST['total_price'] ?? 0;
     $mod            = $_POST['mod'] ?? '';
+    $address            = $_POST['address'] ?? '';
     $delivery_type  = $_POST['delivery_type'] ?? 'standard';
     $selectedCarts  = $_POST['selected_items'] ?? [];
 
@@ -103,7 +104,9 @@ if (isset($_POST['submit'])) {
             $mod,
             $delivery_type,
             $total_price,
-            $userAddress
+            $userAddress,
+            $address
+
         );
 
         if ($transaction_id) {
@@ -292,9 +295,11 @@ if (isset($_POST['submit'])) {
                                 <p class="mb-2">
                                     <strong>Restaurant:</strong> <?php echo htmlspecialchars($restauName); ?>
                                 </p>
-                                <p class="mb-0">
-                                    <strong>Address:</strong> <?php echo htmlspecialchars($userAddress); ?>
-                                </p>
+                                <div class="d-flex align-items-center mb-3">
+    <strong class="me-2" style="white-space: nowrap;">Address:</strong>
+    <input type="text" class="form-control flex-grow-1" name="address" required ?>
+</div>
+
                             </div>
                         </div>
 

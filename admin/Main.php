@@ -880,7 +880,8 @@ class Index
         $mod,
         $delivery_type,
         $total_price,
-        $userAddress
+        $userAddress,
+        $address
     ) {
         $user_id       = mysqli_real_escape_string($this->con, $user_id);
         $gcash_proof   = mysqli_real_escape_string($this->con, $gcash_proof);
@@ -888,6 +889,7 @@ class Index
         $delivery_type = mysqli_real_escape_string($this->con, $delivery_type);
         $total_price   = mysqli_real_escape_string($this->con, $total_price);
         $userAddress   = mysqli_real_escape_string($this->con, $userAddress);
+        $address   = mysqli_real_escape_string($this->con, $address);
     
         $order_date = date("Y-m-d H:i:s");
         $payment_status = ($mod == "GCash" && $gcash_proof) ? "Pending" : "Paid";
@@ -896,7 +898,7 @@ class Index
                     u_id, total_price, address, order_date, status, payment_status, payment_method, gcash_proof
                 ) 
                 VALUES (
-                    '$user_id', '$total_price', '$userAddress', '$order_date', 'Pending',
+                    '$user_id', '$total_price', '$address', '$order_date', 'Pending',
                     '$payment_status', '$mod', '$gcash_proof'
                 )";
     

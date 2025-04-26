@@ -31,7 +31,6 @@ if(isset($_POST['submit']))
        empty($_POST['phone']) ||
        empty($_POST['password']) ||
        empty($_POST['cpassword']) ||
-       empty($_POST['address']) ||
        empty($_POST['security_questions']) ||
        empty($_POST['answer']))
     {
@@ -46,7 +45,6 @@ if(isset($_POST['submit']))
         $phone = mysqli_real_escape_string($db, $_POST['phone']);
         $password = $_POST['password'];
         $cpassword = $_POST['cpassword'];
-        $address = mysqli_real_escape_string($db, $_POST['address']);
         $security_questions = mysqli_real_escape_string($db, $_POST['security_questions']);
         $answer = mysqli_real_escape_string($db, $_POST['answer']);
 
@@ -77,8 +75,8 @@ if(isset($_POST['submit']))
             $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
             // Insert user details into the database
-            $mql = "INSERT INTO users(username, f_name, l_name, email, phone, password, address, security_questions, answer) 
-                    VALUES('$username', '$firstname', '$lastname', '$email', '$phone', '$hashed_password', '$address', '$security_questions', '$answer')";
+            $mql = "INSERT INTO users(username, f_name, l_name, email, phone, password, security_questions, answer) 
+                    VALUES('$username', '$firstname', '$lastname', '$email', '$phone', '$hashed_password', '$security_questions', '$answer')";
 
             mysqli_query($db, $mql);
 
@@ -141,7 +139,7 @@ if(isset($_POST['submit']))
                          
                                     <form action="" method="post">
                                         <div class="row">
-                                            <div class="form-group col-sm-12">
+                                            <div class="form-group col-sm-6">
                                                 <label for="exampleInputEmail1">User-Name</label>
                                                 <input class="form-control" type="text" name="username" id="example-text-input">
                                             </div>
@@ -169,13 +167,10 @@ if(isset($_POST['submit']))
                                                 <label for="exampleInputPassword1">Confirm password</label>
                                                 <input type="password" class="form-control" name="cpassword" id="exampleInputPassword2">
                                             </div>
-                                            <div class="form-group col-sm-12">
-                                                <label for="exampleTextarea">Delivery Address</label>
-                                                <textarea class="form-control" id="exampleTextarea" name="address" rows="3"></textarea>
-                                            </div>
+                                    
 
                                             <!-- New Fields for Security Question and Answer -->
-                                            <div class="form-group col-sm-12">
+                                            <div class="form-group col-sm-6">
                                                 <label for="securityQuestion">Security Question</label>
                                                 <select class="form-control" name="security_questions" id="securityQuestion">
                                                     <option value="mother_maiden_name">What is your mother's maiden name?</option>
@@ -185,7 +180,7 @@ if(isset($_POST['submit']))
                                                 </select>
                                             </div>
 
-                                            <div class="form-group col-sm-12">
+                                            <div class="form-group col-sm-6">
                                                 <label for="securityAnswer">Answer</label>
                                                 <input class="form-control" type="text" name="answer" id="securityAnswer" required>
                                             </div>
