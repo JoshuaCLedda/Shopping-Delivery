@@ -469,8 +469,7 @@ class Index
                     transaction.total_price,
                     transaction.status,
                     transaction.order_date,
-                    transaction.titles AS dishesOrder,
-                    restaurant.title
+                    restaurant.title AS dishesOrder
                 FROM transaction
                 LEFT JOIN users ON users.u_id = transaction.u_id
                 LEFT JOIN restaurant ON restaurant.rs_id = transaction.rs_id
