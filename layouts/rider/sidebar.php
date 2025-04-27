@@ -7,9 +7,28 @@
     <!-- Sidebar navigation-->
     <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
       <ul id="sidebarnav">
-        <li class="nav-small-cap">
+       
+            
+      <li class="nav-small-cap">
           <i class="bx bx-dots-vertical-rounded nav-small-cap-icon fs-4"></i>
-          <span class="hide-menu">Home</span>
+          <span class="hide-menu">Main</span>
+        </li>
+
+
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="dashboard.php" aria-expanded="false">
+            <span>
+            <i class="bx bx-home-alt"></i>
+            </span>
+            <span class="hide-menu">Dashboard</span>
+          </a>
+        </li>
+      
+      
+      
+      <li class="nav-small-cap">
+          <i class="bx bx-dots-vertical-rounded nav-small-cap-icon fs-4"></i>
+          <span class="hide-menu">Orders</span>
         </li>
         <li class="sidebar-item">
           <a class="sidebar-link" href="index.php" aria-expanded="false">

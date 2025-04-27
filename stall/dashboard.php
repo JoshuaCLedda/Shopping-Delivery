@@ -1,7 +1,11 @@
 <?php
-include("../connection/connect.php");
-error_reporting(0);
 session_start();
+error_reporting(E_ALL);
+include "../admin/Main.php";
+$index = new Index;
+if (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];
+}
 
 ?>
 <?php include '../admin/layouts/header.php' ?>
@@ -18,7 +22,7 @@ session_start();
             <div class="row g-4">
 
                 <!-- Stalls -->
-                <div class="col-xxl-4 col-md-6">
+                <div class="col-xxl-6 col-md-6">
                     <div class="card info-card shadow-sm border-0 rounded-4">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
@@ -32,7 +36,7 @@ session_start();
                                 <h1 class="fw-bold text-primary mb-0">
                                     <?php
                                     $sql = "SELECT * FROM restaurant";
-                                    $result = mysqli_query($db, $sql);
+                                    $result = mysqli_query($index->con, $sql);
                                     echo mysqli_num_rows($result);
                                     ?>
                                 </h1>
@@ -42,7 +46,7 @@ session_start();
                 </div>
 
                 <!-- Dishes -->
-                <div class="col-xxl-4 col-md-6">
+                <div class="col-xxl-6 col-md-6">
                     <div class="card info-card shadow-sm border-0 rounded-4">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
@@ -56,7 +60,7 @@ session_start();
                                 <h1 class="fw-bold text-success mb-0">
                                     <?php
                                     $sql = "SELECT * FROM dishes";
-                                    $result = mysqli_query($db, $sql);
+                                    $result = mysqli_query($index->con, $sql);
                                     echo mysqli_num_rows($result);
                                     ?>
                                 </h1>
@@ -65,8 +69,12 @@ session_start();
                     </div>
                 </div>
 
+
+
+                
+
                 <!-- Users -->
-                <div class="col-xxl-4 col-md-6">
+                <div class="col-xxl-6 col-md-6">
                     <div class="card info-card shadow-sm border-0 rounded-4">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
@@ -80,7 +88,7 @@ session_start();
                                 <h1 class="fw-bold text-info mb-0">
                                     <?php
                                     $sql = "SELECT * FROM users";
-                                    $result = mysqli_query($db, $sql);
+                                    $result = mysqli_query($index->con, $sql);
                                     echo mysqli_num_rows($result);
                                     ?>
                                 </h1>
@@ -89,6 +97,44 @@ session_start();
                     </div>
                 </div>
 
+              
+
+
+                <div class="col-xx-6 col-md-6">
+                <div class="card info-card shadow-sm border-0 rounded-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <i class='bx bxs-star text-warning display-5 me-3'></i>
+                                <div>
+                                    <h6 class="mb-1 fw-semibold">Restaurant Rating</h6>
+                                    <small class="text-muted">Average from Customer Reviews</small>
+                                </div>
+                            </div>
+                            <h1 class="fw-bold text-warning mb-0">
+                                <?php
+                                $query = mysqli_query($index->con, "SELECT AVG(rating) AS avg_rating FROM
+                    restaurant_ratings WHERE restaurant_user_id = '$user_id'");
+                                $data = mysqli_fetch_assoc($query);
+                                $avgRating = $data['avg_rating'] ? round($data['avg_rating'], 1) : 0;
+                                echo $avgRating . " ★";
+                                ?>
+                            </h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+                </div>
         
             
 

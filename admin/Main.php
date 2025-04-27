@@ -174,7 +174,6 @@ class Index
                 transaction.id AS transacID, 
                 transaction.u_id, 
                 transaction.total_price, 
-                transaction.stall_id, 
                 transaction.status, 
                 transaction.order_date,
                 CONCAT(users.f_name, ' ', users.l_name) AS customerName,
@@ -339,16 +338,16 @@ class Index
     {
         $sql = "SELECT 
         transaction.id AS transacId,
+        transaction.address,
         users.f_name, 
         users.l_name, 
         transaction.total_price,
         transaction.status,
         transaction.order_date,
-        restaurant.title,
-        transaction.titles AS dishesOrder,
+        restaurant.title as Restaurant,
         transaction.payment_method AS payMethod,
-        transaction.total_quantity
-
+        transaction.total_quantity,
+        restaurant.rs_id AS restaurantId
         FROM transaction
         LEFT JOIN users ON users.u_id = transaction.u_id
         LEFT JOIN restaurant ON restaurant.rs_id = transaction.rs_id
@@ -715,7 +714,6 @@ class Index
                 transaction.id AS transacID, 
                 transaction.u_id, 
                 transaction.total_price, 
-                transaction.stall_id, 
                 transaction.status, 
                 transaction.order_date,
                 CONCAT(users.f_name, ' ', users.l_name) AS customerName,
@@ -743,7 +741,6 @@ class Index
                 transaction.id AS transacID, 
                 transaction.u_id, 
                 transaction.total_price, 
-                transaction.stall_id, 
                 transaction.status, 
                 transaction.order_date,
                 CONCAT(users.f_name, ' ', users.l_name) AS customerName,
@@ -909,6 +906,26 @@ class Index
         }
     }
     
+    public function viewOrderItems($transacId)
+    {
+        $transacId = mysqli_real_escape_string($this->con, $transacId); // security: prevent SQL injection
+        $sql = "SELECT 
+                    order_items.dishes_id, 
+                    order_items.quantity AS orderQuantity,
+                    order_items.total_price AS orderTotalPrice,
+                    dishes.title AS dishName
+                FROM order_items
+                LEFT JOIN dishes ON dishes.d_id = order_items.dishes_id
+                WHERE order_items.transaction_id = '$transacId'";
+    
+        $result = mysqli_query($this->con, $sql);
+    
+        if (!$result) {
+            die('Query failed: ' . mysqli_error($this->con));
+        }
+    
+        return $result;
+    }
     
     
     
