@@ -8,21 +8,21 @@ include("connection/connect.php");
 // Redirect if already logged in
 if (isset($_SESSION['user_id'])) {
     switch ($_SESSION['role']) {
-      case 1:
-        header("Location: admin/dashboard.php");
-        break;
-      case 2:
-        header("Location: rider/index.php");
-        break;
-      case 3:
-        header("Location: stall/index.php");
-        break;
-      default:
-        header("Location: index.php");
-        break;
+        case 1:
+            header("Location: admin/dashboard.php");
+            break;
+        case 2:
+            header("Location: rider/index.php");
+            break;
+        case 3:
+            header("Location: stall/index.php");
+            break;
+        default:
+            header("Location: index.php");
+            break;
     }
     exit();
-  }
+}
 
 
 if (!$db) {
@@ -32,15 +32,15 @@ if (!$db) {
 if (isset($_POST['submit'])) {
     // Form validation
     if (
-        empty($_POST['username']) || 
-        empty($_POST['firstname']) || 
-        empty($_POST['lastname']) || 
-        empty($_POST['email']) ||  
-        empty($_POST['phone']) || 
-        empty($_POST['password']) || 
+        empty($_POST['username']) ||
+        empty($_POST['firstname']) ||
+        empty($_POST['lastname']) ||
+        empty($_POST['email']) ||
+        empty($_POST['phone']) ||
+        empty($_POST['password']) ||
         empty($_POST['cpassword']) ||
-        empty($_POST['security_questions']) || 
-        empty($_POST['security_answer']) 
+        empty($_POST['security_questions']) ||
+        empty($_POST['security_answer'])
 
     ) {
         echo "<script>alert('localhost says: All fields must be required!');</script>";
@@ -69,7 +69,7 @@ if (isset($_POST['submit'])) {
             // Check for existing username/email in the correct table
             $check_username = mysqli_query($db, "SELECT username FROM users WHERE username = '$username'");
             $check_email = mysqli_query($db, "SELECT email FROM users WHERE email = '$email'");
-            
+
             if (mysqli_num_rows($check_username) > 0) {
                 echo "<script>alert('localhost says: Username already exists!');</script>";
             } elseif (mysqli_num_rows($check_email) > 0) {
@@ -108,95 +108,120 @@ if (isset($_POST['submit'])) {
     <link href="css/animsition.min.css" rel="stylesheet">
     <link href="css/animate.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
+    <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
+
 <body>
-<div style="background-image: url('images/img/pimg.jpg');">
-    <header id="header" class="header-scroll top-header headrom">
-        <nav class="navbar navbar-dark">
-            <div class="container">
-                <button class="navbar-toggler hidden-lg-up" type="button" data-toggle="collapse" data-target="#mainNavbarCollapse">&#9776;</button>
-                <a class="navbar-brand" href="index.php"><img class="img-rounded" src="images/icn.png" alt=""></a>
-                <div class="collapse navbar-toggleable-md float-lg-right" id="mainNavbarCollapse">
-                    <ul class="nav navbar-nav">
-                        <li class="nav-item"><a class="nav-link active" href="index.php">Home <span class="sr-only">(current)</span></a></li>
-                        <li class="nav-item"><a class="nav-link active" href="restaurants.php">Stall <span class="sr-only"></span></a></li>
-                        <?php
-                        if (empty($_SESSION["user_id"])) {
-                            echo '<li class="nav-item"><a href="login.php" class="nav-link active">Login</a></li>
-                                  <li class="nav-item"><a href="registration.php" class="nav-link active">Register</a></li>';
-                        } else {
-                            echo '<li class="nav-item"><a href="your_orders.php" class="nav-link active">My Orders</a></li>';
-                            echo '<li class="nav-item"><a href="logout.php" class="nav-link active">Logout</a></li>';
-                        }
-                        ?>
-                    </ul>
-                </div>
+    <div style="background-image: url('images/img/pimg.jpg');">
+
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+
+            <div class="collapse navbar-collapse justify-content-end">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.php">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="restaurants.php">Stalls</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="login.php">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="registration.php">Register</a>
+                    </li>
+                </ul>
             </div>
         </nav>
-    </header>
-    <div class="page-wrapper">
-        <section class="contact-page inner-page">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="widget">
-                            <div class="widget-body">
-                                <center><h2>Rider Registration</h2></center>
-                                <form action="" method="post">
-                                    <div class="row">
-                                        <div class="form-group col-sm-6">
-                                            <label for="exampleInputEmail1">User-Name</label>
-                                            <input class="form-control" type="text" name="username" id="example-text-input" required>
+
+        <div class="page-wrapper">
+            <section class="contact-page inner-page">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="widget">
+                                <div class="widget-body">
+                                    <center>
+                                        <h2>Rider Registration</h2>
+                                    </center>
+                                    <form action="" method="post">
+                                        <div class="row">
+                                            <div class="form-group col-sm-6">
+                                                <label for="exampleInputEmail1">User-Name</label>
+                                                <input class="form-control" type="text" name="username" id="example-text-input" required>
+                                            </div>
+                                            <div class="form-group col-sm-6">
+                                                <label for="exampleInputEmail1">First Name</label>
+                                                <input class="form-control" type="text" name="firstname" id="example-text-input" required>
+                                            </div>
+                                            <div class="form-group col-sm-6">
+                                                <label for="exampleInputEmail1">Last Name</label>
+                                                <input class="form-control" type="text" name="lastname" id="example-text-input-2" required>
+                                            </div>
+                                            <div class="form-group col-sm-6">
+                                                <label for="exampleInputEmail1">Address</label>
+                                                <input class="form-control" type="text" name="address" id="example-text-input-2" required>
+                                            </div>
+
+                                            <div class="form-group col-sm-6">
+                                                <label for="exampleInputEmail1">Phone number</label>
+                                                <input class="form-control" type="text" name="phone" id="example-tel-input-3" required>
+                                            </div>
+                                            <div class="form-group col-sm-6 position-relative">
+                                                <label for="exampleInputPassword1">Password</label>
+                                                <div class="input-group">
+                                                    <input type="password" class="form-control" name="password" id="exampleInputPassword1" required>
+                                                    <span class="input-group-text" onclick="togglePassword('exampleInputPassword1', this)">
+                                                        <i class='bx bx-hide'></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="form-group col-sm-6">
+                                                <label for="exampleInputPassword1">Confirm password</label>
+                                                <input type="password" class="form-control" name="cpassword" id="exampleInputPassword2" required>
+                                            </div>
+                                            <div class="form-group col-sm-12">
+                                                <label for="security_question">Security Question</label>
+                                                <select name="security_questions" class="form-control" required>
+                                                    <option value="Your first pet's name?">Your first pet's name?</option>
+                                                    <option value="Your mother's maiden name?">Your mother's maiden name?</option>
+                                                    <option value="City you were born in?">City you were born in?</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group col-sm-12">
+                                                <label for="security_answer">Answer</label>
+                                                <input type="text" class="form-control" name="security_answer" placeholder="Answer" required>
+                                            </div>
                                         </div>
-                                        <div class="form-group col-sm-6">
-                                            <label for="exampleInputEmail1">First Name</label>
-                                            <input class="form-control" type="text" name="firstname" id="example-text-input" required>
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                <p><input type="submit" value="Register" name="submit" class="btn theme-btn"></p>
+                                            </div>
                                         </div>
-                                        <div class="form-group col-sm-6">
-                                            <label for="exampleInputEmail1">Last Name</label>
-                                            <input class="form-control" type="text" name="lastname" id="example-text-input-2" required>
-                                        </div>
-                                        <div class="form-group col-sm-6">
-                                            <label for="exampleInputEmail1">Address</label>
-                                            <input class="form-control" type="text" name="address" id="example-text-input-2" required>
-                                        </div>
-                                 
-                                        <div class="form-group col-sm-6">
-                                            <label for="exampleInputEmail1">Phone number</label>
-                                            <input class="form-control" type="text" name="phone" id="example-tel-input-3" required>
-                                        </div>
-                                        <div class="form-group col-sm-6">
-                                            <label for="exampleInputPassword1">Password</label>
-                                            <input type="password" class="form-control" name="password" id="exampleInputPassword1" required>
-                                        </div>
-                                        <div class="form-group col-sm-6">
-                                            <label for="exampleInputPassword1">Confirm password</label>
-                                            <input type="password" class="form-control" name="cpassword" id="exampleInputPassword2" required>
-                                        </div>
-                                        <div class="form-group col-sm-12">
-                                            <label for="security_question">Security Question</label>
-                                            <select name="security_questions" class="form-control" required>
-                                                <option value="Your first pet's name?">Your first pet's name?</option>
-                                                <option value="Your mother's maiden name?">Your mother's maiden name?</option>
-                                                <option value="City you were born in?">City you were born in?</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group col-sm-12">
-                                            <label for="security_answer">Answer</label>
-                                            <input type="text" class="form-control" name="security_answer" placeholder="Answer" required>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-4">
-                                            <p><input type="submit" value="Register" name="submit" class="btn theme-btn"></p>
-                                        </div>
-                                    </div>
-                                </form>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        
+            <script>
+function togglePassword(inputId, iconSpan) {
+  const input = document.getElementById(inputId);
+  const icon = iconSpan.querySelector('i');
+  if (input.type === "password") {
+    input.type = "text";
+    icon.classList.remove('bx-hide');
+    icon.classList.add('bx-show');
+  } else {
+    input.type = "password";
+    icon.classList.remove('bx-show');
+    icon.classList.add('bx-hide');
+  }
+}
+</script>

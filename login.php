@@ -60,6 +60,7 @@ if (isset($_POST['submit'])) {
       if ($isValid) {
         $_SESSION["user_id"] = $row['u_id'];
         $_SESSION["role"] = $row['role'];
+        $_SESSION["restaurant_id"] = $row['restaurant_id'];
 
         switch ($row['role']) {
           case 1:

@@ -6,23 +6,21 @@ error_reporting(E_ALL);
 
 include("../connection/connect.php");
 
-if(isset($_POST['submit'])) 
-{
-    if(empty($_POST['username']) || 
-       empty($_POST['firstname']) || 
-       empty($_POST['lastname']) || 
-       empty($_POST['email']) ||  
-       empty($_POST['phone']) ||
-       empty($_POST['password']) ||
-       empty($_POST['cpassword']) ||
-       empty($_POST['address']) ||
-       empty($_POST['security_questions']) ||
-       empty($_POST['answer']))
-    {
+if (isset($_POST['submit'])) {
+    if (
+        empty($_POST['username']) ||
+        empty($_POST['firstname']) ||
+        empty($_POST['lastname']) ||
+        empty($_POST['email']) ||
+        empty($_POST['phone']) ||
+        empty($_POST['password']) ||
+        empty($_POST['cpassword']) ||
+        empty($_POST['address']) ||
+        empty($_POST['security_questions']) ||
+        empty($_POST['answer'])
+    ) {
         echo "<script>alert('All fields must be required!');</script>";
-    }
-    else
-    {
+    } else {
         $username = mysqli_real_escape_string($db, $_POST['username']);
         $firstname = mysqli_real_escape_string($db, $_POST['firstname']);
         $lastname = mysqli_real_escape_string($db, $_POST['lastname']);
@@ -37,38 +35,31 @@ if(isset($_POST['submit']))
         $check_username = mysqli_query($db, "SELECT username FROM users WHERE username = '$username'");
         $check_email = mysqli_query($db, "SELECT email FROM users WHERE email = '$email'");
 
-        if($password !== $cpassword) {  
+        if ($password !== $cpassword) {
             $_SESSION['message'] = ['type' => 'danger', 'message' => 'Passwords do not match!'];
             header("Location: " . $_SERVER['PHP_SELF']); // Redirect back to the same page
             exit();
-        }
-        elseif(strlen($password) < 6) {
+        } elseif (strlen($password) < 6) {
             $_SESSION['message'] = ['type' => 'danger', 'message' => 'Password must be at least 6 characters!'];
             header("Location: " . $_SERVER['PHP_SELF']); // Redirect back to the same page
             exit();
-        }
-        elseif(strlen($phone) < 10) {
+        } elseif (strlen($phone) < 10) {
             $_SESSION['message'] = ['type' => 'danger', 'message' => 'Invalid phone number!'];
             header("Location: " . $_SERVER['PHP_SELF']); // Redirect back to the same page
             exit();
-        }
-        elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $_SESSION['message'] = ['type' => 'danger', 'message' => 'Invalid email address!'];
             header("Location: " . $_SERVER['PHP_SELF']); // Redirect back to the same page
             exit();
-        }
-        elseif(mysqli_num_rows($check_username) > 0) {
+        } elseif (mysqli_num_rows($check_username) > 0) {
             $_SESSION['message'] = ['type' => 'danger', 'message' => 'Username already exists!'];
             header("Location: " . $_SERVER['PHP_SELF']); // Redirect back to the same page
             exit();
-        }
-        elseif(mysqli_num_rows($check_email) > 0) {
+        } elseif (mysqli_num_rows($check_email) > 0) {
             $_SESSION['message'] = ['type' => 'danger', 'message' => 'Email already exists!'];
             header("Location: " . $_SERVER['PHP_SELF']); // Redirect back to the same page
             exit();
-        }
-        else
-        {
+        } else {
             // Secure password hashing using bcrypt
             $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
@@ -81,7 +72,7 @@ if(isset($_POST['submit']))
             } else {
                 $_SESSION['message'] = ['type' => 'danger', 'message' => 'Registration failed! Please try again.'];
             }
-            
+
             header("Location: " . $_SERVER['PHP_SELF']); // Redirect back to the same page
             exit();
         }
@@ -113,14 +104,14 @@ if(isset($_POST['submit']))
         <div class="d-flex justify-content-end my-2">
             <a href="all_users.php" class="btn btn-primary">Back</a>
         </div>
-        
+
         <?php include 'layouts/alert.php'; ?>
 
 
         <div class="row justify-content-center">
-                <div class="col-md-12">
-          <div class="card card-outline-primary">
-                    
+            <div class="col-md-12">
+                <div class="card card-outline-primary">
+
                     <div class="card-header bg-primary">
                         <h5 class="mb-0 text-white">Register New User</h5>
                     </div>
@@ -128,72 +119,119 @@ if(isset($_POST['submit']))
                     <div class="widget card-body shadow-sm">
 
                         <div class="widget-body">
-                         
-                                    <form action="add_user" method="POST">
-                                        <div class="row">
-                                            <div class="form-group col-sm-12">
-                                                <label for="exampleInputEmail1">User-Name</label>
-                                                <input class="form-control" type="text" name="username" id="example-text-input">
-                                            </div>
-                                            <div class="form-group col-sm-6">
-                                                <label for="exampleInputEmail1">First Name</label>
-                                                <input class="form-control" type="text" name="firstname" id="example-text-input">
-                                            </div>
-                                            <div class="form-group col-sm-6">
-                                                <label for="exampleInputEmail1">Last Name</label>
-                                                <input class="form-control" type="text" name="lastname" id="example-text-input-2">
-                                            </div>
-                                            <div class="form-group col-sm-6">
-                                                <label for="exampleInputEmail1">Email Address</label>
-                                                <input type="email" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp">
-                                            </div>
-                                            <div class="form-group col-sm-6">
-                                                <label for="exampleInputEmail1">Phone number</label>
-                                                <input class="form-control" type="text" name="phone" id="example-tel-input-3">
-                                            </div>
-                                            <div class="form-group col-sm-6">
-                                                <label for="exampleInputPassword1">Password</label>
-                                                <input type="password" class="form-control" name="password" id="exampleInputPassword1">
-                                            </div>
-                                            <div class="form-group col-sm-6">
-                                                <label for="exampleInputPassword1">Confirm password</label>
-                                                <input type="password" class="form-control" name="cpassword" id="exampleInputPassword2">
-                                            </div>
-                                            <div class="form-group col-sm-12">
-                                                <label for="exampleTextarea">Delivery Address</label>
-                                                <textarea class="form-control" id="exampleTextarea" name="address" rows="3"></textarea>
-                                            </div>
 
-                                            <!-- New Fields for Security Question and Answer -->
-                                            <div class="form-group col-sm-12">
-                                                <label for="securityQuestion">Security Question</label>
-                                                <select class="form-control" name="security_questions" id="securityQuestion">
-                                                    <option value="mother_maiden_name">What is your mother's maiden name?</option>
-                                                    <option value="pet_name">What is the name of your first pet?</option>
-                                                    <option value="birth_city">In what city were you born?</option>
-                                                    <option value="favorite_food">What is your favorite food?</option>
-                                                </select>
-                                            </div>
-
-                                            <div class="form-group col-sm-12">
-                                                <label for="securityAnswer">Answer</label>
-                                                <input class="form-control" type="text" name="answer" id="securityAnswer" required>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-sm-12 my-2">
-                                        <button type="submit" name="submit" class="btn btn-primary">Register User</button>
+                            <form action="add_user" method="POST">
+                                <div class="row">
+                                    <div class="form-group col-sm-12">
+                                        <label for="exampleInputEmail1">User-Name</label>
+                                        <input class="form-control" type="text" name="username" id="example-text-input">
                                     </div>
-                                    </form>
+                                    <div class="form-group col-sm-6">
+                                        <label for="exampleInputEmail1">First Name</label>
+                                        <input class="form-control" type="text" name="firstname" id="example-text-input">
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="exampleInputEmail1">Last Name</label>
+                                        <input class="form-control" type="text" name="lastname" id="example-text-input-2">
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="exampleInputEmail1">Email Address</label>
+                                        <input type="email" class="form-control" name="email" id="exampleInputEmail1" aria-describedby="emailHelp">
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="exampleInputEmail1">Phone number</label>
+                                        <input class="form-control" type="text" name="phone" id="example-tel-input-3">
+                                    </div>
+                                    <div class="form-group col-sm-6 position-relative">
+                                        <label for="exampleInputPassword1">Password</label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" name="password" id="exampleInputPassword1">
+                                            <span class="input-group-text" onclick="togglePassword('exampleInputPassword1', this)">
+                                                <i class='bx bx-hide'></i>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group col-sm-6 position-relative">
+                                        <label for="exampleInputPassword2">Confirm Password</label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" name="cpassword" id="exampleInputPassword2" onkeyup="validatePassword()">
+                                            <span class="input-group-text" onclick="togglePassword('exampleInputPassword2', this)">
+                                                <i class='bx bx-hide'></i>
+                                            </span>
+                                        </div>
+                                        <span id="password-error" class="text-danger small"></span>
+                                    </div>
+
+                                    <div class="form-group col-sm-12">
+                                        <label for="exampleTextarea">Delivery Address</label>
+                                        <textarea class="form-control" id="exampleTextarea" name="address" rows="3"></textarea>
+                                    </div>
+
+                                    <!-- New Fields for Security Question and Answer -->
+                                    <div class="form-group col-sm-12">
+                                        <label for="securityQuestion">Security Question</label>
+                                        <select class="form-control" name="security_questions" id="securityQuestion">
+                                            <option value="mother_maiden_name">What is your mother's maiden name?</option>
+                                            <option value="pet_name">What is the name of your first pet?</option>
+                                            <option value="birth_city">In what city were you born?</option>
+                                            <option value="favorite_food">What is your favorite food?</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group col-sm-12">
+                                        <label for="securityAnswer">Answer</label>
+                                        <input class="form-control" type="text" name="answer" id="securityAnswer" required>
+                                    </div>
+
+
                                 </div>
-                            </div>
+
+                                <div class="col-sm-12 my-2">
+                                    <button type="submit" name="submit" class="btn btn-primary">Register User</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
-    
-    </div>
+            </div>
         </div>
-            
+
+    </div>
+</div>
 
 
 
+<script>
+    function togglePassword(inputId, iconSpan) {
+        const input = document.getElementById(inputId);
+        const icon = iconSpan.querySelector('i');
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove('bx-hide');
+            icon.classList.add('bx-show');
+        } else {
+            input.type = "password";
+            icon.classList.remove('bx-show');
+            icon.classList.add('bx-hide');
+        }
+    }
+
+    function validatePassword() {
+        const password = document.getElementById('exampleInputPassword1').value;
+        const confirmPassword = document.getElementById('exampleInputPassword2').value;
+        const errorText = document.getElementById('password-error');
+
+        if (confirmPassword === "") {
+            errorText.textContent = "";
+        } else if (password === confirmPassword) {
+            errorText.textContent = "Passwords match.";
+            errorText.classList.remove('text-danger');
+            errorText.classList.add('text-success');
+        } else {
+            errorText.textContent = "Passwords do not match.";
+            errorText.classList.remove('text-success');
+            errorText.classList.add('text-danger');
+        }
+    }
+</script>
