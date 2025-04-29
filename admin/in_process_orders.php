@@ -53,7 +53,7 @@ $index = new Index;
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $result = $index->getOrders();
+                                        $result = $index->getInProcessOrders();
                                         while ($row = mysqli_fetch_array($result)) {
                                             $status = $row['status'] ?? '';
                                             $orderDate = !empty($row['order_date']) ? date("F j, Y g:i A", strtotime($row['order_date'])) : 'N/A';
@@ -78,7 +78,7 @@ $index = new Index;
                                                     $badgeClass = 'bg-warning text-dark';
                                                     break;
                                                 case 'place_order':
-                                                    $statusText = 'Pending';
+                                                    $statusText = 'Placed';
                                                     $badgeClass = 'bg-info text-dark';
                                                     break;
                                                 default:

@@ -28,7 +28,6 @@ if (isset($_SESSION['user_id'])) {
     exit();
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -41,59 +40,79 @@ if (isset($_SESSION['user_id'])) {
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
     <style>
-        .cart-card {
-            background: #f8f9fa;
-            /* light gray background */
+        body {
+            background-color: #f5f7fa;
+        }
+
+        .cart-wrapper {
+            background: #ffffff;
             border-radius: 1rem;
-            /* rounded corners */
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            /* softer shadow */
-            transition: all 0.3s ease;
-            /* smooth animation */
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
         }
 
-        .cart-card:hover {
-            transform: translateY(-5px);
-            /* lift up */
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-            /* deeper shadow on hover */
+        .restaurant-header {
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: #333;
         }
 
-        .cart-badge {
-            font-size: 0.75rem;
-            padding: 0.4em 0.6em;
+        .cart-item {
+            transition: 0.3s ease;
+        }
+
+        .cart-item:hover {
+            background-color: #f1f3f5;
+            transform: scale(1.01);
+        }
+
+        .badge {
+            font-size: 0.85rem;
+            padding: 0.4em 0.7em;
+        }
+
+        .btn-checkout {
+            font-size: 1.1rem;
+            padding: 0.7rem 2rem;
             border-radius: 50rem;
-            /* pill shape */
+        }
+
+        .alert i {
+            margin-right: 0.5rem;
         }
     </style>
-
 </head>
 
-<?php include 'layouts/navbar.php'; ?>
-<div class="container py-5">
-    <div class="row">
-        <div class="col-lg-10 mx-auto">
+<body>
+    <?php include 'layouts/navbar.php'; ?>
+
+    <div class="container py-5">
+        <div class="col-lg-10 mx-auto cart-wrapper">
 
             <?php if (isset($_SESSION['message'])): ?>
                 <div class="alert alert-<?php echo $_SESSION['message']['type']; ?> alert-dismissible fade show" role="alert">
-                    <i class="fa-solid fa-circle-check me-2"></i>
+                    <i class="fa-solid fa-circle-check"></i>
                     <?php echo $_SESSION['message']['message']; ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 <?php unset($_SESSION['message']); ?>
             <?php endif; ?>
 
-            <h3 class="mb-4 fw-bold"><i class="fa-solid fa-cart-shopping me-2"></i>My Cart</h3>
-            <a href="#" id="deleteSelectedBtn" class="btn btn-outline-danger btn-sm">
-    <i class='bx bx-trash me-1'></i> Delete Selected
-</a>
-
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold"><i class="fa-solid fa-cart-shopping me-2"></i>My Cart</h3>
+                <a href="#" id="deleteSelectedBtn" class="btn btn-outline-danger btn-sm">
+                    <i class='bx bx-trash me-1'></i> Delete Selected
+                </a>
+            </div>
 
             <form action="checkout.php" method="POST">
                 <?php
                 $result = $index->getUserCart($user_id);
                 if (mysqli_num_rows($result) > 0):
-
                     $cartByRestaurant = [];
                     while ($row = mysqli_fetch_assoc($result)) {
                         $cartByRestaurant[$row['restaurantName']][] = $row;
@@ -101,13 +120,13 @@ if (isset($_SESSION['user_id'])) {
 
                     foreach ($cartByRestaurant as $restaurantName => $items): ?>
                         <div class="mb-5">
-                            <div class="bg-light p-3 rounded d-flex align-items-center mb-3 shadow-sm">
-                                <i class="fa-solid fa-store text-warning me-2 fs-4"></i>
-                                <h5 class="mb-0 text-dark fw-bold"><?= htmlspecialchars($restaurantName) ?></h5>
+                            <div class="restaurant-header">
+                                <i class="fa-solid fa-store text-warning"></i>
+                                <?= htmlspecialchars($restaurantName) ?>
                             </div>
 
                             <?php foreach ($items as $item): ?>
-                                <div class="card mb-3 shadow-sm border-0">
+                                <div class="card mb-3 shadow-sm cart-item border-0">
                                     <div class="card-body d-flex align-items-center gap-3">
 
                                         <div class="form-check">
@@ -124,8 +143,8 @@ if (isset($_SESSION['user_id'])) {
 
                                         <div>
                                             <a href="delete_cart_item.php?cartId=<?= $item['cartId']; ?>" class="btn btn-sm btn-outline-danger"
-                                                onclick="return confirm('Remove this item from your cart?');">
-                                                <i class='bx bx-trash'></i><?= $item['cartId']; ?>
+                                               onclick="return confirm('Remove this item from your cart?');">
+                                                <i class='bx bx-trash'></i>
                                             </a>
                                         </div>
 
@@ -136,7 +155,7 @@ if (isset($_SESSION['user_id'])) {
                     <?php endforeach; ?>
 
                     <div class="text-center my-4">
-                        <button type="submit" class="btn btn-success px-5 py-2 rounded-pill fw-bold shadow">
+                        <button type="submit" class="btn btn-success btn-checkout shadow">
                             <i class="fa-solid fa-cart-arrow-down me-2"></i> Checkout Selected
                         </button>
                     </div>
@@ -150,7 +169,19 @@ if (isset($_SESSION['user_id'])) {
 
         </div>
     </div>
-</div>
+</body>
+
+</html>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $('form').on('submit', function (e) {
+        if ($('input[name="selected_items[]"]:checked').length === 0) {
+            e.preventDefault();
+            alert("Please select at least one item to checkout.");
+        }
+    });
+</script>
+
 
 <script>
     document.getElementById('deleteSelectedBtn').addEventListener('click', function(e) {

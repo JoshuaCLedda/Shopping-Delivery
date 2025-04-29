@@ -26,17 +26,6 @@
           <span class="hide-menu">Orders</span>
         </li>
 
-
-
-        <li class="sidebar-item">
-          <a class="sidebar-link" href="placed_orders.php" aria-expanded="false">
-            <span>
-              <i class="bx bx-receipt"></i>
-            </span>
-            <span class="hide-menu">Place Orders</span>
-          </a>
-        </li>
-
         <li class="sidebar-item">
           <a class="sidebar-link" href="orders.php" aria-expanded="false">
             <span>
@@ -45,6 +34,47 @@
             <span class="hide-menu">All Orders</span>
           </a>
         </li>
+
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="placed_orders.php" aria-expanded="false">
+            <span>
+              <i class="bx bx-receipt"></i>
+            </span>
+            <span class="hide-menu">Pending Orders</span>
+          </a>
+        </li>
+
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="in_process_orders.php" aria-expanded="false">
+            <span>
+            <i class='bx bx-loader-circle'></i>
+            </span>
+            <span class="hide-menu">Pending Orders</span>
+          </a>
+        </li>
+
+
+       
+
+        <li class="sidebar-item">
+  <a class="sidebar-link" href="delivered_orders.php" aria-expanded="false">
+    <span>
+      <i class="bx bx-check-circle"></i> <!-- icon for "delivered" -->
+    </span>
+    <span class="hide-menu">Delivered Orders</span>
+  </a>
+</li>
+
+<li class="sidebar-item">
+  <a class="sidebar-link" href="cancelled_orders.php" aria-expanded="false">
+    <span>
+      <i class="bx bx-x-circle"></i> <!-- icon for "cancelled" -->
+    </span>
+    <span class="hide-menu">Cancelled Orders</span>
+  </a>
+</li>
+
+
 
 
         <li class="sidebar-item">

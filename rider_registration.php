@@ -25,71 +25,36 @@ if (isset($_SESSION['user_id'])) {
 }
 
 
-if (!$db) {
-    die("Connection failed: " . mysqli_connect_error());
-}
-
 if (isset($_POST['submit'])) {
-    // Form validation
-    if (
-        empty($_POST['username']) ||
-        empty($_POST['firstname']) ||
-        empty($_POST['lastname']) ||
-        empty($_POST['email']) ||
-        empty($_POST['phone']) ||
-        empty($_POST['password']) ||
-        empty($_POST['cpassword']) ||
-        empty($_POST['security_questions']) ||
-        empty($_POST['security_answer'])
+    $fields = ['username', 'firstname', 'lastname', 'email', 'phone', 'password', 'cpassword', 'security_questions', 'security_answer'];
 
-    ) {
-        echo "<script>alert('localhost says: All fields must be required!');</script>";
+    // Extract & sanitize
+    $username  = mysqli_real_escape_string($db, $_POST['username']);
+    $firstname = mysqli_real_escape_string($db, $_POST['firstname']);
+    $lastname  = mysqli_real_escape_string($db, $_POST['lastname']);
+    $email     = mysqli_real_escape_string($db, $_POST['email']);
+    $phone     = mysqli_real_escape_string($db, $_POST['phone']);
+    $password  = $_POST['password'];
+    $cpassword = $_POST['cpassword'];
+    $question  = mysqli_real_escape_string($db, $_POST['security_questions']);
+    $answer    = mysqli_real_escape_string($db, $_POST['security_answer']);
+    $role      = 2;
+
+    // Check for duplicates
+    $exists = mysqli_query($db, "SELECT * FROM users WHERE username = '$username' OR email = '$email'");
+    if (mysqli_num_rows($exists)) {
+        echo "<script>alert('Username or email already exists!');</script>"; exit;
+    }
+
+    // Save user
+    $hashedPassword = md5($password); // Consider using password_hash() instead
+    $sql = "INSERT INTO users (username, f_name, l_name, email, phone, password, security_questions, answer, role) 
+            VALUES ('$username', '$firstname', '$lastname', '$email', '$phone', '$hashedPassword', '$question', '$answer', '$role')";
+
+    if (mysqli_query($db, $sql)) {
+        echo "<script>alert('Registration successful!'); window.location.href='login.php';</script>";
     } else {
-        // Escape user inputs
-        $username           = mysqli_real_escape_string($db, $_POST['username']);
-        $firstname          = mysqli_real_escape_string($db, $_POST['firstname']);
-        $lastname           = mysqli_real_escape_string($db, $_POST['lastname']);
-        $email              = mysqli_real_escape_string($db, $_POST['email']);
-        $phone              = mysqli_real_escape_string($db, $_POST['phone']);
-        $password           = md5($_POST['password']); // Stronger: password_hash
-        $security_question  = mysqli_real_escape_string($db, $_POST['security_questions']);
-        $security_answer    = mysqli_real_escape_string($db, $_POST['security_answer']);
-        $role               = 2;
-
-        // Validation checks
-        if ($_POST['password'] != $_POST['cpassword']) {
-            echo "<script>alert('localhost says: Password does not match');</script>";
-        } elseif (strlen($_POST['password']) < 6) {
-            echo "<script>alert('localhost says: Password must be >= 6 characters');</script>";
-        } elseif (strlen($_POST['phone']) < 10) {
-            echo "<script>alert('localhost says: Invalid phone number!');</script>";
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            echo "<script>alert('localhost says: Invalid email address!');</script>";
-        } else {
-            // Check for existing username/email in the correct table
-            $check_username = mysqli_query($db, "SELECT username FROM users WHERE username = '$username'");
-            $check_email = mysqli_query($db, "SELECT email FROM users WHERE email = '$email'");
-
-            if (mysqli_num_rows($check_username) > 0) {
-                echo "<script>alert('localhost says: Username already exists!');</script>";
-            } elseif (mysqli_num_rows($check_email) > 0) {
-                echo "<script>alert('localhost says: Email already exists!');</script>";
-            } else {
-                // Insert user into users table
-                $mql = "INSERT INTO users (username, f_name, l_name, email, phone, password, security_questions, answer, role)
-                        VALUES ('$username', '$firstname', '$lastname', '$email', '$phone', '$password', '$security_questions', '$security_answer', '$role')";
-
-                if (!mysqli_query($db, $mql)) {
-                    echo "<script>alert('Error inserting user: " . mysqli_error($db) . "');</script>";
-                } else {
-                    echo "<script>
-                            alert('Registration successful!');
-                            window.location.href = 'login.php';
-                          </script>";
-                    exit();
-                }
-            }
-        }
+        echo "<script>alert('Error: " . mysqli_error($db) . "');</script>";
     }
 }
 ?>
@@ -199,7 +164,7 @@ if (isset($_POST['submit'])) {
                                         </div>
                                         <div class="row">
                                             <div class="col-sm-4">
-                                                <p><input type="submit" value="Register" name="submit" class="btn theme-btn"></p>
+                                                <p><input type="submit" value="Register" name="submit" class="btn btn-primary"></p>
                                             </div>
                                         </div>
                                     </form>

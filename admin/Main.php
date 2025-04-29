@@ -333,7 +333,57 @@ class Index
         return $result;
     }
 
+    public function getInProcessOrders()
+    {
+        // Corrected SQL query
+        $sql = "SELECT 
+                    transaction.id AS transacId,
+                    users.f_name, 
+                    users.l_name, 
+                    transaction.total_price,
+                    transaction.status,
+                    transaction.order_date,
+                    restaurant.title
+                FROM transaction
+                LEFT JOIN users ON users.u_id = transaction.u_id
+                LEFT JOIN restaurant ON restaurant.rs_id = transaction.rs_id
+                WHERE transaction.status = 'in_process'
+                ORDER BY transaction.order_date DESC";
 
+        $result = mysqli_query($this->con, $sql);
+
+        if (!$result) {
+            die('Query failed:   ' . mysqli_error($this->con));
+        }
+
+        return $result;
+    }
+
+    public function getPendingOrders()
+    {
+        // Corrected SQL query
+        $sql = "SELECT 
+                    transaction.id AS transacId,
+                    users.f_name, 
+                    users.l_name, 
+                    transaction.total_price,
+                    transaction.status,
+                    transaction.order_date,
+                    restaurant.title
+                FROM transaction
+                LEFT JOIN users ON users.u_id = transaction.u_id
+                LEFT JOIN restaurant ON restaurant.rs_id = transaction.rs_id
+                WHERE transaction.status = 'place_order'
+                ORDER BY transaction.order_date DESC";
+
+        $result = mysqli_query($this->con, $sql);
+
+        if (!$result) {
+            die('Query failed:   ' . mysqli_error($this->con));
+        }
+
+        return $result;
+    }
     public function viewOrderDetails($transacId)
     {
         $sql = "SELECT 

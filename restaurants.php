@@ -59,43 +59,45 @@ session_start();
                             $ress = mysqli_query($db, "SELECT * FROM restaurant");
                             while ($rows = mysqli_fetch_array($ress)) {
                             ?>
-                              <div class="col-md-4">
-    <div class="border rounded p-3 bg-white h-100 d-flex flex-column justify-content-between">
-        <!-- Restaurant Image, Title, and Address -->
-        <div class="d-flex align-items-start gap-3 mb-3">
-            <div class="flex-shrink-0" style="width: 120px; height: 120px;">
-                <?php
-                $imagePath = "admin/" . htmlspecialchars($rows['image']);
-                if (!empty($rows['image']) && file_exists($imagePath)) {
-                ?>
-                    <img src="admin/<?= htmlspecialchars($rows['image']) ?>" 
-                         class="img-fluid rounded shadow-sm object-fit-cover w-100 h-100" />
-                <?php } else { ?>
-                    <div class="d-flex align-items-center justify-content-center bg-light text-muted w-100 h-100 rounded shadow-sm"
-                         style="font-size: 12px; height: 120px;">
-                        No Data
-                    </div>
-                <?php } ?>
-            </div>
+                                <div class="col-md-4">
+                                    <div class="border rounded p-3 bg-white h-100 d-flex flex-column justify-content-between">
+                                        <!-- Restaurant Image, Title, and Address -->
+                                        <div class="d-flex align-items-start gap-3 mb-3">
+                                            <div class="flex-shrink-0" style="width: 120px; height: 120px;">
+                                                <?php
+                                                $imagePath = "admin/" . htmlspecialchars($rows['image']);
+                                                if (!empty($rows['image']) && file_exists($imagePath)) {
+                                                ?>
+                                                    <img src="admin/<?= htmlspecialchars($rows['image']) ?>"
+                                                        class="img-fluid rounded shadow-sm object-fit-cover w-100 h-100" />
+                                                <?php } else { ?>
+                                                    <div class="d-flex align-items-center justify-content-center bg-light text-muted w-100 h-100 rounded shadow-sm"
+                                                        style="font-size: 12px; height: 120px;">
+                                                        No Data
+                                                    </div>
+                                                <?php } ?>
+                                            </div>
 
-            <div class="flex-grow-1">
-                <h5 class="mb-1">
-                    <a href="dishes.php?res_id=<?= $rows['rs_id'] ?>" class="text-decoration-none text-dark">
-                        <?= htmlspecialchars($rows['title']) ?>
-                    </a>
-                </h5>
-                <p class="text-muted mb-0 small"><?= htmlspecialchars($rows['address']) ?></p>
-            </div>
-        </div>
+                                            <div class="flex-grow-1">
+                                                <h5 class="mb-1">
+                                                    <a href="dishes.php?res_id=<?= $rows['rs_id'] ?>" class="text-decoration-none text-dark">
+                                                        <?= htmlspecialchars($rows['title']) ?>
+                                                    </a>
+                                                </h5>
+                                                <p class="text-muted mb-0 small"><?= htmlspecialchars($rows['address']) ?></p>
+                                                <p class="text-muted mb-0 small">Stall Link:<?= htmlspecialchars($rows['url']) ?></p>
 
-        <!-- Action Button -->
-        <div class="text-end mt-auto">
-            <a href="dishes.php?res_id=<?= $rows['rs_id'] ?>" class="btn btn-primary btn-sm">
-                View Menu
-            </a>
-        </div>
-    </div>
-</div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Action Button -->
+                                        <div class="text-end mt-auto">
+                                            <a href="dishes.php?res_id=<?= $rows['rs_id'] ?>" class="btn btn-primary btn-sm">
+                                                View Menu
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
 
 
 
@@ -110,4 +112,4 @@ session_start();
         </div>
     </section>
 
-<?php include 'layouts/footer.php'; ?>
+    <?php include 'layouts/footer.php'; ?>

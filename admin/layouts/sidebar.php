@@ -28,14 +28,37 @@
 
 
         <li class="sidebar-item">
-  <a class="sidebar-link" href="all_orders.php" aria-expanded="false">
-    <span>
-      <i class='bx bx-shopping-bag'></i>
-    </span>
-    <span class="hide-menu">Orders</span>
-  </a>
-</li>
+          <a class="sidebar-link" href="all_orders.php" aria-expanded="false">
+            <span>
+              <i class='bx bx-shopping-bag'></i>
+            </span>
+            <span class="hide-menu">Orders</span>
+          </a>
+        </li>
 
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="pending_orders.php" aria-expanded="false">
+            <span>
+              <i class='bx bx-time-five'></i> <!-- Clock icon for pending -->
+            </span>
+            <span class="hide-menu">Pending Orders</span>
+          </a>
+        </li>
+
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="in_process_orders.php" aria-expanded="false">
+            <span>
+              <i class='bx bx-loader-circle'></i> <!-- Processing/loading icon -->
+            </span>
+            <span class="hide-menu">In Process Orders</span>
+          </a>
+        </li>
+
+
+        <li class="nav-small-cap">
+          <i class="bx bx-dots-vertical-rounded nav-small-cap-icon fs-4"></i>
+          <span class="hide-menu">Others</span>
+        </li>
 
 
         <li class="sidebar-item">
@@ -72,13 +95,13 @@
         </li>
 
         <li class="sidebar-item">
-  <a class="sidebar-link" href="add_category.php" aria-expanded="false">
-    <span>
-      <i class="bx bx-category"></i>
-    </span>
-    <span class="hide-menu">Category</span>
-  </a>
-</li>
+          <a class="sidebar-link" href="add_category.php" aria-expanded="false">
+            <span>
+              <i class="bx bx-category"></i>
+            </span>
+            <span class="hide-menu">Category</span>
+          </a>
+        </li>
 
 
         <li class="sidebar-item" id="sidebarItem">
@@ -107,13 +130,13 @@
 
 
         <li class="sidebar-item">
-  <a class="sidebar-link" href="report.php" aria-expanded="false">
-    <span>
-      <i class="bx bx-bar-chart-alt-2"></i>
-    </span>
-    <span class="hide-menu">Report</span>
-  </a>
-</li>
+          <a class="sidebar-link" href="report.php" aria-expanded="false">
+            <span>
+              <i class="bx bx-bar-chart-alt-2"></i>
+            </span>
+            <span class="hide-menu">Report</span>
+          </a>
+        </li>
 
 
 

@@ -1,7 +1,7 @@
 <?php
 session_start();
 error_reporting(E_ALL);
-ini_set('display_errors', 1); 
+ini_set('display_errors', 1);
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 include "Main.php";
@@ -137,7 +137,7 @@ if (isset($_POST['submit'])) {
 
                                         <div class="col-md-6 mb-3">
                                             <div class="form-group has-danger">
-                                            <label class="control-label">Website <span class="text-success" style="font-style: italic">(if there are)</span></label>
+                                                <label class="control-label">Website <span class="text-success" style="font-style: italic">(if there are)</span></label>
 
                                                 <input type="text" name="url" class="form-control form-control-danger"
                                                     value="<?php echo $row['url']; ?>" placeholder="http://example.com">
@@ -225,27 +225,27 @@ if (isset($_POST['submit'])) {
                                         $imagePath = $row['image'];
                                         ?>
 
-<?php if (!empty($imagePath) && file_exists($imagePath)): ?>
-    
-    <div>
-        <label class="control-label">Restaurant Profile</label>
-        <input type="file" name="image" class="form-control">    
-    </div>
-    <div class="mt-2" id="image-preview">
-    <img src="<?= $imagePath ?>" alt="Restaurant Image" class="img-thumbnail" style="max-height: 120px;">
-    <button type="button" class="btn btn-sm btn-danger"
-            id="deleteImageBtn" data-rs-id="<?= $rs_id ?>">
-            <i class="bx bx-trash"></i>
-    </button>
-</div>
+                                        <?php if (!empty($imagePath) && file_exists($imagePath)): ?>
 
-<?php else: ?>
-    <div class="mt-2 text-muted">
-    <label class="control">Resturant Profile</label>
-    <input type="file" name="image" class="form-control">    
-        <p class="text-danger my-3">No Image Data</p>
-    </div>
-<?php endif; ?>
+                                            <div>
+                                                <label class="control-label">Restaurant Profile</label>
+                                                <input type="file" name="image" class="form-control">
+                                            </div>
+                                            <div class="mt-2" id="image-preview">
+                                                <img src="<?= $imagePath ?>" alt="Restaurant Image" class="img-thumbnail" style="max-height: 120px;">
+                                                <button type="button" class="btn btn-sm btn-danger"
+                                                    id="deleteImageBtn" data-rs-id="<?= $rs_id ?>">
+                                                    <i class="bx bx-trash"></i>
+                                                </button>
+                                            </div>
+
+                                        <?php else: ?>
+                                            <div class="mt-2 text-muted">
+                                                <label class="control">Resturant Profile</label>
+                                                <input type="file" name="image" class="form-control">
+                                                <p class="text-danger my-3">No Image Data</p>
+                                            </div>
+                                        <?php endif; ?>
 
 
 
@@ -286,24 +286,26 @@ if (isset($_POST['submit'])) {
 
 
 <script>
-$(document).on('click', '#deleteImageBtn', function () {
-    const rs_id = $(this).data('rs-id');
+    $(document).on('click', '#deleteImageBtn', function() {
+        const rs_id = $(this).data('rs-id');
 
-    if (confirm('Are you sure you want to delete this image?')) {
-        $.ajax({
-            url: 'delete_image.php',
-            type: 'POST',
-            data: { rs_id: rs_id },
-            success: function (response) {
-                if (response === 'success') {
-                    $('#image-preview').fadeOut();
-                } else {
-                    alert('Failed to delete image.');
+        if (confirm('Are you sure you want to delete this image?')) {
+            $.ajax({
+                url: 'delete_image.php',
+                type: 'POST',
+                data: {
+                    rs_id: rs_id
+                },
+                success: function(response) {
+                    if (response === 'success') {
+                        $('#image-preview').fadeOut();
+                    } else {
+                        alert('Failed to delete image.');
+                    }
                 }
-            }
-        });
-    }
-});
+            });
+        }
+    });
 </script>
 
 <?php include 'layouts/footer.php' ?>

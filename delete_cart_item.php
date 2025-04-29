@@ -13,7 +13,7 @@ if (isset($_GET['cartId']) && is_numeric($_GET['cartId'])) {
     $cartId = intval($_GET['cartId']);
 
     // Run DELETE query directly
-    $query = mysqli_query($db, "DELETE FROM carts WHERE id = '$cartId'");
+    $query = mysqli_query($index->con, "DELETE FROM carts WHERE id = '$cartId'");
 
 
     if ($query) {

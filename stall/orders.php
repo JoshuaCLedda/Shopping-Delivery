@@ -100,10 +100,14 @@ if (!$query) {
                                                         $statusText = 'In Process';
                                                         $badgeClass = 'bg-warning text-dark';
                                                         break;
-                                                    case 'place_order':
-                                                        $statusText = 'Placed';
-                                                        $badgeClass = 'bg-info text-dark';
+                                                    case 'order_delivered':
+                                                        $statusText = 'Delivered';
+                                                        $badgeClass = 'bg-success text-dark';
                                                         break;
+                                                    case 'place_order':
+                                                            $statusText = 'Placed';
+                                                            $badgeClass = 'bg-info text-dark';
+                                                            break;
                                                     default:
                                                         $statusText = ucfirst(str_replace('_', ' ', $status));
                                                         $badgeClass = 'bg-secondary';
