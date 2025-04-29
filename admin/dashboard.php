@@ -250,7 +250,6 @@ $index = new Index;
     ";
 
     $stmt = $index->con->prepare($query);
-    $stmt->bind_param("i", $stall_id);
     $stmt->execute();
     $result = $stmt->get_result();
 

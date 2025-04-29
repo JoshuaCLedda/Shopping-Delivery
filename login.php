@@ -14,8 +14,6 @@ if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
 }
 
 
-
-
 // Redirect if already logged in
 if (isset($_SESSION['user_id'])) {
   switch ($_SESSION['role']) {
@@ -141,9 +139,7 @@ if (isset($_POST['submit'])) {
 
 <body>
 
-  <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
-
     <div class="collapse navbar-collapse justify-content-end">
       <ul class="navbar-nav">
         <li class="nav-item">
@@ -156,7 +152,6 @@ if (isset($_POST['submit'])) {
     </div>
   </nav>
 
-  <!-- Background Section -->
   <div class="bg-cover d-flex justify-content-center align-items-center">
     <div class="card login-card p-4 shadow-lg">
       <div class="text-center mb-4">

@@ -823,29 +823,31 @@ class Index
         }
     }
     
-    
-    public function getUserCart()
+    public function getUserCart($user_id)
     {
-        // Corrected SQL query with total price calculation
+        $user_id = mysqli_real_escape_string($this->con, $user_id);
+    
         $sql = "SELECT 
-                    dishes.title as dishName, 
-                    dishes.d_id AS dishesId, 
                     carts.id AS cartId,
-                    dishes.img, 
-                    dishes.price,
                     carts.quantity,
-                    (dishes.price * carts.quantity) AS totalPrice
+                    carts.quantity * dishes.price AS totalPrice,
+                    dishes.title AS dishName,
+                    dishes.rs_id,
+                    restaurant.title AS restaurantName
                 FROM carts
-                LEFT JOIN dishes ON dishes.d_id = carts.dishes_id";
+                LEFT JOIN dishes ON dishes.d_id = carts.dishes_id
+                LEFT JOIN restaurant ON restaurant.rs_id = dishes.rs_id
+                WHERE carts.user_id = '$user_id'
+                ORDER BY restaurant.title";
     
         $result = mysqli_query($this->con, $sql);
-    
         if (!$result) {
             die('Query failed: ' . mysqli_error($this->con));
         }
     
         return $result;
     }
+    
 
     public function viewCheckOutDetails($cartId)
     {
@@ -926,7 +928,13 @@ class Index
         return $result;
     }
     
-    
+    public function deleteCartItem($cartId)
+{
+    $cartId = mysqli_real_escape_string($this->con, $cartId);
+    $sql = "DELETE FROM carts WHERE id = '$cartId'";
+    return mysqli_query($this->con, $sql);
+}
+
     
     
 }
