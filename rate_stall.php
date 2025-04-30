@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <i class='bx bxs-store-alt'></i> Rate a Stall
             </h3>
 
-            <?php include 'layouts/alert.php'; ?>
+            <?php include 'layouts/sweetalert.php'; ?>
 
             <form action="" method="POST">
                 <div class="mb-3">

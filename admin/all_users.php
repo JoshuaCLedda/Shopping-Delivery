@@ -27,7 +27,7 @@ error_reporting(0);
             <a href="add_user.php" class="btn btn-primary">Add User</a>
         </div>
 
-        <?php include 'layouts/alert.php' ?>
+        <?php include 'layouts/sweetalert.php' ?>
 
 
         <div class="row">

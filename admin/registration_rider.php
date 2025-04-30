@@ -74,7 +74,7 @@ if (isset($_POST['submit'])) {
 
 
 
-        <?php include 'layouts/alert.php'; ?>
+        <?php include 'layouts/sweetalert.php'; ?>
 
         <div class="row justify-content-center">
             <div class="col-md-12">

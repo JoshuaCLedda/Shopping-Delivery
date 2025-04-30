@@ -42,7 +42,8 @@
   <!-- Not yet deployed -->
   <script src="../assets/vendor/simple-datatables/simple-datatables.js"></script>
 
-
+<!-- Sweet Alert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script>
     $(document).ready(function() {

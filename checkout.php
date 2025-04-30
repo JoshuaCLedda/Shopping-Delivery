@@ -3,10 +3,8 @@ session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);  // Ensure errors are displayed
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-
 // include_once 'product-action.php'; 
 // $cartId = $_GET['cartId'];
-
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
 
@@ -28,20 +26,15 @@ if (isset($_SESSION['user_id'])) {
     exit();
 }
 
-// details here
 $selectedCarts = $_POST['selected_items'] ?? $_SESSION['selected_items'] ?? [];
 
-// If posted now, save to session
 if (!empty($_POST['selected_items'])) {
     $_SESSION['selected_items'] = $_POST['selected_items'];
 }
 
-// Calculate total price based on selected carts
 $totalPrice = 0;
 $restauName = '';
 $userAddress = $user['address'] ?? '';
-
-
 // Carts View/Details
 if (!empty($selectedCarts)) {
     foreach ($selectedCarts as $cartId) {
@@ -108,9 +101,9 @@ if (isset($_POST['submit'])) {
             $address
 
         );
-
         if ($transaction_id) {
-            // Now foreach cart items, insert into order_items
+            $all_success = true;
+
             foreach ($selectedCarts as $cartId) {
                 $cartResult = mysqli_query(
                     $index->con,
@@ -131,7 +124,10 @@ if (isset($_POST['submit'])) {
                          VALUES ('$transaction_id', '$dishesId', '$quantity', '$dishTotal')"
                     );
 
-                    if (!$insertOrderItem) {
+                    if ($insertOrderItem) {
+                        // Delete the cart item since it was successfully added to order_items
+                        mysqli_query($index->con, "DELETE FROM carts WHERE id = '$cartId'");
+                    } else {
                         $all_success = false;
                     }
                 }
@@ -154,8 +150,6 @@ if (isset($_POST['submit'])) {
 }
 
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -200,35 +194,35 @@ if (isset($_POST['submit'])) {
     <?php include 'layouts/navbar.php'; ?>
 
     <body class="bg-light">
-   <div class="bg-light py-3 border-bottom">
-    <div class="container">
-        <div class="row text-center">
-            <!-- Step 1 -->
-            <div class="col-md-4 mb-2">
-                <div class="p-2 rounded text-dark">
-                    <span class="fw-bold me-2">1</span>
-                    <a href="restaurants.php" class="text-decoration-none text-dark">Choose Stall</a>
-                </div>
-            </div>
+        <div class="bg-light py-3 border-bottom">
+            <div class="container">
+                <div class="row text-center">
+                    <!-- Step 1 -->
+                    <div class="col-md-4 mb-2">
+                        <div class="p-2 rounded text-dark">
+                            <span class="fw-bold me-2">1</span>
+                            <a href="restaurants.php" class="text-decoration-none text-dark">Choose Stall</a>
+                        </div>
+                    </div>
 
-            <!-- Step 2 -->
-            <div class="col-md-4 mb-2">
-                <div class="p-2 rounded text-dark">
-                    <span class="fw-bold me-2">2</span>
-                    <a href="dishes.php" class="text-decoration-none text-dark">Pick Your Favorite Food</a>
-                </div>
-            </div>
+                    <!-- Step 2 -->
+                    <div class="col-md-4 mb-2">
+                        <div class="p-2 rounded text-dark">
+                            <span class="fw-bold me-2">2</span>
+                            <a href="dishes.php" class="text-decoration-none text-dark">Pick Your Favorite Food</a>
+                        </div>
+                    </div>
 
-            <!-- Step 3 (Active) -->
-            <div class="col-md-4 mb-2">
-                <div class="p-2 rounded bg-primary text-white">
-                    <span class="fw-bold me-2">3</span>
-                    <a href="#" class="text-decoration-none text-white">Order and Pay</a>
+                    <!-- Step 3 (Active) -->
+                    <div class="col-md-4 mb-2">
+                        <div class="p-2 rounded bg-primary text-white">
+                            <span class="fw-bold me-2">3</span>
+                            <a href="#" class="text-decoration-none text-white">Order and Pay</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
 
 
@@ -296,9 +290,9 @@ if (isset($_POST['submit'])) {
                                     <strong>Restaurant:</strong> <?php echo htmlspecialchars($restauName); ?>
                                 </p>
                                 <div class="d-flex align-items-center mb-3">
-    <strong class="me-2" style="white-space: nowrap;">Address:</strong>
-    <input type="text" class="form-control flex-grow-1" name="address" required ?>
-</div>
+                                    <strong class="me-2" style="white-space: nowrap;">Address:</strong>
+                                    <input type="text" class="form-control flex-grow-1" name="address" required ?>
+                                </div>
 
                             </div>
                         </div>
@@ -389,6 +383,7 @@ if (isset($_POST['submit'])) {
 
 
 
+<?php include 'layouts/sweetalert.php'; ?>
 
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

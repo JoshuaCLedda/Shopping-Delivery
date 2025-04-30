@@ -1,8 +1,7 @@
 <?php
 session_start();
 error_reporting(E_ALL);
-ini_set('display_errors', 1);  // Ensure errors are displayed
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+ini_set('display_errors', E_ALL);  // Ensure errors are displayed
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 include "Main.php";
@@ -81,7 +80,7 @@ if (isset($_POST['dishedId'])) {
             </a>
         </div>
 
-        <?php include 'layouts/alert.php'; ?>
+        <?php include 'layouts/sweetalert.php'; ?>
 
 
         <div class="row justify-content-center">

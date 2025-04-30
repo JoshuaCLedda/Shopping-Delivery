@@ -39,7 +39,7 @@
         <li class="sidebar-item">
           <a class="sidebar-link" href="pending_orders.php" aria-expanded="false">
             <span>
-              <i class='bx bx-time-five'></i> <!-- Clock icon for pending -->
+              <i class='bx bx-time-five'></i>
             </span>
             <span class="hide-menu">Pending Orders</span>
           </a>
@@ -48,11 +48,22 @@
         <li class="sidebar-item">
           <a class="sidebar-link" href="in_process_orders.php" aria-expanded="false">
             <span>
-              <i class='bx bx-loader-circle'></i> <!-- Processing/loading icon -->
+              <i class='bx bx-loader-circle'></i>
             </span>
             <span class="hide-menu">In Process Orders</span>
           </a>
         </li>
+
+
+        <li class="sidebar-item">
+  <a class="sidebar-link" href="cancelled_orders.php" aria-expanded="false">
+    <span>
+      <i class='bx bx-x-circle'></i>
+    </span>
+    <span class="hide-menu">Cancelled Orders</span>
+  </a>
+</li>
+
 
 
         <li class="nav-small-cap">

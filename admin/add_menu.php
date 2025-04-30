@@ -85,7 +85,7 @@ if (isset($_POST['submit'])) {
             <a href="all_menu.php" class="btn btn-primary">Back</a>
         </div>
 
-        <?php include 'layouts/alert.php'; ?>
+        <?php include 'layouts/sweetalert.php'; ?>
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="card card-outline-primary">

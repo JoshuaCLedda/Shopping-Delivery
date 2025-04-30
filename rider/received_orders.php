@@ -59,8 +59,8 @@ if (isset($_POST['submit'])) {
         <div class="row">
             <div class="col-12">
                 <div class="col-lg-12">
+                    <?php include '../layouts/alert.php' ?>
                     <div class="card card-outline-primary">
-
                         <div class="card-header bg-primary">
                             <h5 class="mb-0 text-white">Received Orders
                              
@@ -79,7 +79,6 @@ if (isset($_POST['submit'])) {
                                             <th>Status</th>
                                             <th>Order Date</th>
                                             <th>Action</th>
-
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -150,9 +149,14 @@ if (isset($_POST['submit'])) {
                                                     <a href="view_received_orders.php?order_upd=<?= htmlspecialchars($row['transacID'] ?? '') ?>"
                                                         class="btn btn-sm btn-info ms-2">
                                                         <i class="bx bx-show"></i>
-
-
                                                     </a>
+
+                                                    <a href="update_received_order.php?order_upd=<?= htmlspecialchars($row['transacID'] ?? '') ?>"
+                                                        onclick="return confirm('Are you sure you want to confirm the order?');"
+                                                        class="btn btn-sm btn-info ms-2">
+                                                        Delivered
+                                                    </a>
+
                                                 </td>
                                             </tr>
 

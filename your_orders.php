@@ -40,8 +40,6 @@ if (empty($_SESSION['user_id'])) {
             <div class="row justify-content-center">
                 <div class="col-lg-10">
 
-                    <?php include 'layouts/alert.php'; ?>
-
                     <h2 class="text-center mb-4 fw-bold">🛒 My Orders</h2>
 
                     <!-- Filter Dropdown -->
@@ -154,7 +152,7 @@ if (empty($_SESSION['user_id'])) {
             </div>
         </section>
     </div>
-
+    <?php include 'layouts/sweetalert.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Filter Function

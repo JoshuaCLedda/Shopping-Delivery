@@ -18,12 +18,16 @@ if (isset($_GET['order_id'])) {
         // Update the order status to 'Order_Canceled'
         $update_query = mysqli_query($db, "UPDATE transaction SET status = 'Order_Canceled' WHERE id = '$order_id'");
 
+        // Check if the update was successful
         if ($update_query) {
-            header("Location: your_orders.php?status=canceled");
-            exit;
+            $_SESSION['message'] = ['type' => 'success', 'message' => 'Order Cancelled Successfully!'];
         } else {
-            echo "Error canceling order. Please try again.";
+            $_SESSION['message'] = ['type' => 'danger', 'message' => 'Failed to cancel the order.'];
         }
+        
+        session_write_close(); // ✅ Ensure session data is saved before redirecting
+        header("Location: your_orders.php");
+        exit();
     } else {
         echo "You don't have permission to cancel this order.";
     }

@@ -4,7 +4,6 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-
 // include_once 'product-action.php'; 
 
 if (isset($_SESSION['user_id'])) {
@@ -47,14 +46,15 @@ if (isset($_POST['submit'])) {
     } else {
         $_SESSION['message'] = ['type' => 'danger', 'message' => 'Failed to add item to cart.'];
     }
-
-    header("Location: stall_menus.php?res_id=" . $_GET['res_id']);
+    
+    header("Location: dishes.php?res_id=" . $_GET['res_id']);
     exit();
+    
+    
 }
 
 
 ?>
-
 
 <?php include 'layouts/header.php'; ?>
 <?php include 'layouts/navbar.php'; ?>
@@ -138,7 +138,6 @@ if (isset($_POST['submit'])) {
 
 
 <div class="container m-t-30">
-    <?php include 'layouts/alert.php' ?>
 
     <div class="row">
         <div class="col-md-12">
@@ -256,18 +255,8 @@ if (isset($_POST['submit'])) {
 
 </div>
 
+<?php include 'layouts/sweetalert.php'; ?>
 
-
-
-
-
-
-
-
-
-
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
 <?php include 'layouts/footer.php'; ?>

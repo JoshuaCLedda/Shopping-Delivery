@@ -2,14 +2,19 @@
 // Start session
 session_start();
 
-// Include connection file
-include_once __DIR__ . '/connection/connect.php'; 
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+  unset($_SESSION['allow_security_question']);
+  unset($_SESSION['allow_password_reset']);
+  unset($_SESSION['user_id']);
+  unset($_SESSION['security_question']);
+  unset($_SESSION['security_answer']);
+}
 
+include_once __DIR__ . '/connection/connect.php'; 
 // Check if connection was established
 if (!$db) {
     die("Error: Database connection is not established.");
 }
-
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['submit_username'])) {

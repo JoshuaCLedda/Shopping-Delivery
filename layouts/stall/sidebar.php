@@ -47,32 +47,29 @@
         <li class="sidebar-item">
           <a class="sidebar-link" href="in_process_orders.php" aria-expanded="false">
             <span>
-            <i class='bx bx-loader-circle'></i>
+              <i class='bx bx-loader-circle'></i>
             </span>
-            <span class="hide-menu">Pending Orders</span>
+            <span class="hide-menu">In Process Orders</span>
           </a>
         </li>
 
-
-       
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="delivered_orders.php" aria-expanded="false">
+            <span>
+              <i class="bx bx-check-circle"></i> <!-- icon for "delivered" -->
+            </span>
+            <span class="hide-menu">Delivered Orders</span>
+          </a>
+        </li>
 
         <li class="sidebar-item">
-  <a class="sidebar-link" href="delivered_orders.php" aria-expanded="false">
-    <span>
-      <i class="bx bx-check-circle"></i> <!-- icon for "delivered" -->
-    </span>
-    <span class="hide-menu">Delivered Orders</span>
-  </a>
-</li>
-
-<li class="sidebar-item">
-  <a class="sidebar-link" href="cancelled_orders.php" aria-expanded="false">
-    <span>
-      <i class="bx bx-x-circle"></i> <!-- icon for "cancelled" -->
-    </span>
-    <span class="hide-menu">Cancelled Orders</span>
-  </a>
-</li>
+          <a class="sidebar-link" href="cancelled_orders.php" aria-expanded="false">
+            <span>
+              <i class="bx bx-x-circle"></i> <!-- icon for "cancelled" -->
+            </span>
+            <span class="hide-menu">Cancelled Orders</span>
+          </a>
+        </li>
 
 
 
