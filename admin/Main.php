@@ -102,6 +102,7 @@ class Index
         $image,
         $address,
         $c_id
+        
     ) {
         // Escape variables
         $res_name = mysqli_real_escape_string($this->con, $res_name);
@@ -1014,5 +1015,23 @@ class Index
 }
 
     
+public function getActiveUsers()
+{
+    // Correct SQL query
+    $sql = "SELECT * FROM users";
+
+    // Execute the query
+    $result = mysqli_query($this->con, $sql);
+
+    // Check if the query was successful
+    if (!$result) {
+        // If the query failed, show the error message and stop
+        die('Query failed: ' . mysqli_error($this->con));
+    }
+
+    // Return the result
+    return $result;
+}
+
     
 }

@@ -66,7 +66,6 @@ error_reporting(0);
                                             </tr>
                                         <?php else: ?>
                                             <?php while ($rows = mysqli_fetch_array($query)): ?>
-
                                                 <?php
                                                 // Role badge logic
                                                 switch ($rows['role']) {
@@ -78,6 +77,10 @@ error_reporting(0);
                                                         $roleText = 'Rider';
                                                         $badgeClass = 'badge bg-warning text-dark rounded-pill';
                                                         break;
+                                                        case 3:
+                                                            $roleText = 'Stall';
+                                                            $badgeClass = 'badge bg-success text-dark rounded-pill';
+                                                            break;
                                                     case 0:
                                                         $roleText = 'User';
                                                         $badgeClass = 'badge bg-info text-dark rounded-pill';
@@ -88,7 +91,6 @@ error_reporting(0);
                                                         break;
                                                 }
                                                 ?>
-
                                                 <tr>
                                                     <td><?= htmlspecialchars($rows['username']) ?></td>
                                                     <td><?= htmlspecialchars($rows['f_name'] . ' ' . $rows['l_name']) ?></td>
@@ -109,7 +111,6 @@ error_reporting(0);
                                                         </a>
                                                     </td>
                                                 </tr>
-
                                             <?php endwhile; ?>
                                         <?php endif; ?>
 

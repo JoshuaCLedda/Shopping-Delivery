@@ -61,6 +61,9 @@ if (isset($_POST['submit'])) {
         $_SESSION["restaurant_id"] = $row['restaurant_id'];
 
         switch ($row['role']) {
+          case 0:
+            header("Location: index.php");
+            break;
           case 1:
             header("Location: admin/dashboard.php");
             break;

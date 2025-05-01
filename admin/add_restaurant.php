@@ -20,8 +20,7 @@ if (isset($_POST['submit'])) {
     $image = $_FILES['image'];
     $address = $_POST['address'];
     $c_id = $_POST['c_id'];
-
-
+    $user_id = $_POST['user_id'];
 
 
     // Call the model function with image path
@@ -35,7 +34,7 @@ if (isset($_POST['submit'])) {
         $o_days,
         $image,
         $address,
-        $c_id
+        $c_id,
 
     );
 
@@ -121,7 +120,7 @@ if (isset($_POST['submit'])) {
                                     </div>
                                 </div>
 
-                            
+
 
 
                                 <div class="col-md-6 mb-3">
@@ -187,22 +186,45 @@ if (isset($_POST['submit'])) {
 
 
 
-                                <div class="col-md-12 mb-3">
-    <div class="form-group">
-        <label class="control-label">Select Category</label>
-        <select name="c_id" class="form-control custom-select" required>
-            <option value="">-- Select Category --</option>
-            <?php
-            $resultType = $index->getRestCategory();
-            while ($row = mysqli_fetch_array($resultType)) {
-                $c_id = $row['c_id'];
-                $c_name = $row['c_name'];
-                echo '<option value="' . htmlspecialchars($c_id) . '">' . htmlspecialchars($c_name) . '</option>';
-            }
-            ?>
-        </select>
-    </div>
-</div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-group">
+                                        <label class="control-label">Select Category</label>
+                                        <select name="c_id" class="form-control custom-select" required>
+                                            <option value="">-- Select Category --</option>
+                                            <?php
+                                            $resultType = $index->getRestCategory();
+                                            while ($row = mysqli_fetch_array($resultType)) {
+                                                $c_id = $row['c_id'];
+                                                $c_name = $row['c_name'];
+                                                echo '<option value="' . htmlspecialchars($c_id) . '">' . htmlspecialchars($c_name) . '</option>';
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+                                </div>
+
+
+
+                                <!-- <div class="col-md-6 mb-3">
+                                    <div class="form-group">
+                                        <label class="control-label">Select Owner</label>
+                                        <select name="user_id" class="form-control custom-select" required>
+                                            <option value="">-- Select Owner --</option>
+                                             ?php
+                                            resultType = $index->getActiveUsers();
+                                            while ($row = mysqli_fetch_array($resultType)) {
+                                                $u_id = $row['u_id'];
+                                                $f_name = $row['f_name'];
+                                                $l_name = $row['l_name'];
+                                                echo '<option value="' . htmlspecialchars($u_id) . '">' . htmlspecialchars($f_name) . " " . htmlspecialchars($l_name) . '</option>';
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+                                </div> -->
+
+
+
 
 
                                 <div class="col-md-12 mb-3">
