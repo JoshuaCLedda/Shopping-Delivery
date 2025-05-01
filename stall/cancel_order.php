@@ -16,7 +16,7 @@ $sql = "SELECT t.id, t.total_price, t.status, t.order_date, t.rs_id,
           FROM transaction t
           LEFT JOIN restaurant r ON t.rs_id = r.rs_id
           LEFT JOIN users u ON t.u_id = u.u_id
-          WHERE t.status = 'cancelled' 
+          WHERE t.status = 'order_cancelled' 
           LIMIT $limit OFFSET $offset";
 $query = mysqli_query($db, $sql);
 

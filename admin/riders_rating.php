@@ -62,6 +62,7 @@ if (isset($_POST['submit'])) {
             </a>
         </div>
 
+        <?php include 'layouts/sweetalert.php' ?>
 
 
         <?php

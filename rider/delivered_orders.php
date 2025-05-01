@@ -63,9 +63,9 @@ if (isset($_POST['submit'])) {
 
                         <div class="card-header bg-primary">
                             <h5 class="mb-0 text-white">Delivered Orders
-
                             </h5>
                         </div>
+<?php include '../layouts/sweetalert.php' ?>
 
                         <div class="card-body">
                             <div class="table-responsive">

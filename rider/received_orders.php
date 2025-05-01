@@ -59,7 +59,7 @@ if (isset($_POST['submit'])) {
         <div class="row">
             <div class="col-12">
                 <div class="col-lg-12">
-                    <?php include '../layouts/alert.php' ?>
+                    <?php include '../layouts/sweetalert.php' ?>
                     <div class="card card-outline-primary">
                         <div class="card-header bg-primary">
                             <h5 class="mb-0 text-white">Received Orders
@@ -152,7 +152,7 @@ if (isset($_POST['submit'])) {
                                                     </a>
 
                                                     <a href="update_received_order.php?order_upd=<?= htmlspecialchars($row['transacID'] ?? '') ?>"
-                                                        onclick="return confirm('Are you sure you want to confirm the order?');"
+                                                        onclick="return confirm('Are you sure you want to confirm the order delivery?');"
                                                         class="btn btn-sm btn-info ms-2">
                                                         Delivered
                                                     </a>

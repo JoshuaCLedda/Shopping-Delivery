@@ -3,9 +3,7 @@ session_start();
 error_reporting(E_ALL);
 include "Main.php";
 $index = new Index;
-
 ?>
-
 
 <?php include 'layouts/header.php' ?>
 <?php include 'layouts/sidebar.php' ?>

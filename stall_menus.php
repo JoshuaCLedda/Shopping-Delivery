@@ -60,7 +60,7 @@ if (isset($_POST['submit'])) {
 <div class="page-wrapper">
     <div class="container">
         <div class="bg-light py-3 border-bottom">
-            <?php include 'layouts/alert.php' ?>
+            <?php include 'layouts/sweetalert.php' ?>
 
             <div class="row">
                 <div class="col-md-12">

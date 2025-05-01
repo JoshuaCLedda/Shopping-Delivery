@@ -27,7 +27,7 @@ session_start();
       <a href="registration_rider.php" class="btn btn-primary">Add Rider</a>
     </div>
 
-    <?php include 'layouts/alert.php' ?>
+    <?php include 'layouts/sweetalert.php' ?>
     <div class="row">
       <div class="col-12">
         <div class="col-lg-12">

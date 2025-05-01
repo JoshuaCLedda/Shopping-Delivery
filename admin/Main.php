@@ -198,16 +198,17 @@ class Index
         // Escape variables
         $rider_id = mysqli_real_escape_string($this->con, $rider_id);
         $transaction_id = mysqli_real_escape_string($this->con, $transaction_id);
-        $status = "order_confirmation";
+    
         // Update transaction with rider_id and status
         $sql = "UPDATE transaction 
                 SET rider_id = '$rider_id',
-                status = 'order_received'
-                updated_at = NOW()
+                    status = 'order_received',
+                    updated_at = NOW()
                 WHERE id = '$transaction_id'";
-
+    
         return mysqli_query($this->con, $sql);
     }
+    
 
     public function getRiderById($id)
     {
@@ -400,7 +401,7 @@ class Index
                 FROM transaction
                 LEFT JOIN users ON users.u_id = transaction.u_id
                 LEFT JOIN restaurant ON restaurant.rs_id = transaction.rs_id
-                WHERE transaction.status = 'place_order'
+                WHERE transaction.status = 'order_placed'
                 ORDER BY transaction.order_date DESC";
 
         $result = mysqli_query($this->con, $sql);
@@ -973,7 +974,7 @@ class Index
                     u_id, total_price, address, order_date, status, payment_status, payment_method, gcash_proof
                 ) 
                 VALUES (
-                    '$user_id', '$total_price', '$address', '$order_date', 'Pending',
+                    '$user_id', '$total_price', '$address', '$order_date', 'place_order',
                     '$payment_status', '$mod', '$gcash_proof'
                 )";
     

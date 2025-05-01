@@ -105,9 +105,9 @@ if (!$query) {
                                                         $badgeClass = 'bg-success text-dark';
                                                         break;
                                                     case 'place_order':
-                                                            $statusText = 'Placed';
-                                                            $badgeClass = 'bg-info text-dark';
-                                                            break;
+                                                        $statusText = 'Placed';
+                                                        $badgeClass = 'bg-info text-dark';
+                                                        break;
                                                     default:
                                                         $statusText = ucfirst(str_replace('_', ' ', $status));
                                                         $badgeClass = 'bg-secondary';
@@ -131,11 +131,9 @@ if (!$query) {
                                                             <select name="status"
                                                                 class="form-select form-select-sm d-inline w-auto">
                                                                 <option value="place_order" <?= $rowStatus == 'place_order' ? 'selected' : '' ?>>Placed</option>
-                                                                <option value="order_confirmation"
-                                                                    <?= $rowStatus == 'order_confirmation' ? 'selected' : '' ?>>
-                                                                    Confirmed</option>
+                                                                <option value="order_confirmation"<?= $rowStatus == 'order_confirmation' ? 'selected' : '' ?>>Confirmed</option>
                                                                 <option value="in_process" <?= $rowStatus == 'in_process' ? 'selected' : '' ?>>In Process</option>
-                                                                <option value="cancelled" <?= in_array($rowStatus, ['order_canceled', 'order_cancelled', 'cancelled']) ? 'selected' : '' ?>>Cancelled</option>
+                                                                <option value="order_cancelled" <?= in_array($rowStatus, ['order_canceled', 'order_cancelled', 'cancelled']) ? 'selected' : '' ?>>Cancelled</option>
                                                                 <option value="order_received" <?= $rowStatus == 'order_received' ? 'selected' : '' ?>>Received</option>
                                                                 <option value="order_delivered" <?= $rowStatus == 'order_delivered' ? 'selected' : '' ?>>Delivered</option>
                                                             </select>

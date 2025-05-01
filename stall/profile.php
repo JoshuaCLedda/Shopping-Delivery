@@ -72,7 +72,7 @@ if (isset($_POST['submit']) && $user_id) {
     <div class="main-container">
         <div class="row">
             <div class="col-lg-12">
-                <?php include '../layouts/alert.php'; ?>
+                <?php include '../layouts/sweetalert.php'; ?>
                 <div class="card card-outline-primary" id="first">
                     <div class="card-header bg-primary">
                         <h5 class="mb-0 text-white">User Management</h5>

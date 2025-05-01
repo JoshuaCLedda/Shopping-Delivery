@@ -40,7 +40,7 @@
             <span>
               <i class="bx bx-receipt"></i>
             </span>
-            <span class="hide-menu">Pending Orders</span>
+            <span class="hide-menu">Placed Orders</span>
           </a>
         </li>
 

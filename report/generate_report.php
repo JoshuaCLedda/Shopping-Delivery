@@ -1,33 +1,42 @@
 <?php
 include "../admin/Main.php";
 $conn = new Index;
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-
 
 require '../assets/vendor/autoload.php';
-
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
-$options = new Options();
-$options->set('isHtml5ParserEnabled', true);
-$options->set('isPhpEnabled', true);
-$dompdf = new Dompdf($options);
+session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-ob_start();
-include 'report_data.php';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $reportType = $_POST['report_type'] ?? '';
+    $startDate = $_POST['start_date'] ?? '';
+    $endDate = $_POST['end_date'] ?? '';
 
-$html = ob_get_clean();
+    // Only PDF is allowed, no need to check format
+    if (!$reportType || !$startDate || !$endDate) {
+        die("Missing required fields.");
+    }
 
+    $options = new Options();
+    $options->set('isHtml5ParserEnabled', true);
+    $options->set('isPhpEnabled', true);
 
-$dompdf->loadHtml($html);
+    $dompdf = new Dompdf($options);
 
-// $dompdf->setPaper('A4', 'portrait');
+    // Load HTML content from a separate file
+    ob_start();
+    include 'report_data.php'; // Make sure this generates HTML correctly using the $_POST values
+    $html = ob_get_clean();
 
-$dompdf->setPaper('legal', 'portrait'); // Set paper size to legal
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('legal', 'portrait');
+    $dompdf->render();
 
-$dompdf->render();
-
-$dompdf->stream('document.pdf', ['Attachment' => false]);
+    $dompdf->stream("{$reportType}_report.pdf", ['Attachment' => false]);
+    exit;
+} else {
+    echo "Invalid request.";
+}

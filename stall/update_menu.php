@@ -79,7 +79,7 @@ if (isset($_POST['dishedId'])) {
             </a>
         </div>
 
-        <?php include '../layouts/alert.php'; ?>
+        <?php include '../layouts/sweetalert.php'; ?>
 
 
         <div class="row justify-content-center">

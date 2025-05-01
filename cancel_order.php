@@ -16,7 +16,7 @@ if (isset($_GET['order_id'])) {
     
     if (mysqli_num_rows($check_query) > 0) {
         // Update the order status to 'Order_Canceled'
-        $update_query = mysqli_query($db, "UPDATE transaction SET status = 'Order_Canceled' WHERE id = '$order_id'");
+        $update_query = mysqli_query($db, "UPDATE transaction SET status = 'order_cancelled' WHERE id = '$order_id'");
 
         // Check if the update was successful
         if ($update_query) {

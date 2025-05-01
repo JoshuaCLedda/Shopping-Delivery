@@ -72,7 +72,7 @@ while ($row = mysqli_fetch_object($result)) {
             </a>
         </div>
 
-        <?php include '../layouts/alert.php'; ?>
+        <?php include '../layouts/sweetalert.php'; ?>
 
 
         <div class="row justify-content-center">

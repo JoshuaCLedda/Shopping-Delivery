@@ -26,5 +26,5 @@ if (mysqli_query($index->con, $query)) {
     $_SESSION['message'] = ['type' => 'danger', 'message' => 'Failed to update order.'];
 }
 
-header("Location: received_orders.php");
+header("Location: delivered_orders.php");
 exit();

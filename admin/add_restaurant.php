@@ -92,7 +92,7 @@ if (isset($_POST['submit'])) {
 
 
 
-                    <?php include 'layouts/alert.php' ?>
+                    <?php include 'layouts/sweetalert.php' ?>
 
                     <form action="add_restaurant.php" method="post" enctype="multipart/form-data">
                         <div class="form-body">
