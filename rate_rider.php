@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php include 'layouts/sweetalert.php'; ?>
 
             <form action="" method="POST">
-            <input type="text" name="transaction_id" value="<?= $transaction_id ?>">
+            <input type="hidden" name="transaction_id" value="<?= $transaction_id ?>">
 
                 <div class="mb-3">
                     <label for="rider" class="form-label">

@@ -130,7 +130,7 @@ if (empty($_SESSION['user_id'])) {
 
                                         <?php elseif ($status === 'order_delivered') : ?>
                                            <a href="rate_rider.php?rider_id=<?= $rider_id ?>&transaction_id=<?= $id ?>" 
-   class="btn btn-outline-success btn-sm">Rate Rider</a>
+                                            class="btn btn-outline-success btn-sm">Rate Rider</a>
 
                                             <a href="rate_stall.php?restaurant_id=<?php echo $rs_id; ?>"
                                                 class="btn btn-outline-primary btn-sm">Rate Stall</a>
