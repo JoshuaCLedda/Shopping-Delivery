@@ -1,7 +1,6 @@
 <?php
 session_start();
 ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 include("../connection/connect.php");
@@ -31,6 +30,11 @@ if (isset($_POST['submit'])) {
         $address = mysqli_real_escape_string($db, $_POST['address']);
         $security_questions = mysqli_real_escape_string($db, $_POST['security_questions']);
         $answer = mysqli_real_escape_string($db, $_POST['answer']);
+
+        $role = mysqli_real_escape_string($db, $_POST['role']);
+        $restaurant_id = mysqli_real_escape_string($db, $_POST['restaurant_id']);
+        $vehicle_type = mysqli_real_escape_string($db, $_POST['vehicle_type']);
+        
 
         $check_username = mysqli_query($db, "SELECT username FROM users WHERE username = '$username'");
         $check_email = mysqli_query($db, "SELECT email FROM users WHERE email = '$email'");
@@ -64,8 +68,8 @@ if (isset($_POST['submit'])) {
             $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
             // Insert user details into the database
-            $mql = "INSERT INTO users(username, f_name, l_name, email, phone, password, address, security_questions, answer) 
-                    VALUES('$username', '$firstname', '$lastname', '$email', '$phone', '$hashed_password', '$address', '$security_questions', '$answer')";
+            $mql = "INSERT INTO users(restaurant_id, vehicle_type, username, f_name, l_name, email, phone, password, address, role, security_questions, answer) 
+                    VALUES('$restaurant_id', '$vehicle_type', '$username', '$firstname', '$lastname', '$email', '$phone', '$hashed_password', '$address', '$role', '$security_questions', '$answer')";
 
             if (mysqli_query($db, $mql)) {
                 $_SESSION['message'] = ['type' => 'success', 'message' => 'Registration successful!'];
@@ -120,7 +124,7 @@ if (isset($_POST['submit'])) {
 
                         <div class="widget-body">
 
-                            <form action="add_user" method="POST">
+                            <form action="" method="POST">
                                 <div class="row">
                                     <div class="form-group col-sm-12">
                                         <label for="exampleInputEmail1">User-Name</label>
@@ -163,6 +167,51 @@ if (isset($_POST['submit'])) {
                                         <span id="password-error" class="text-danger small"></span>
                                     </div>
 
+
+
+                                    <div class="form-group col-md-6">
+                                        <label for="role">Role</label>
+                                        <select class="form-control" name="role" id="role">
+                                            <option value="0">User</option>
+                                            <option value="1">Admin</option>
+                                            <option value="2">Rider</option>
+                                            <option value="3">Stall</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Stall Selection (Shown only when role = Stall) -->
+                                    <div class="col-md-6" id="stallSection" style="display: none;">
+                                        <div class="form-group">
+                                            <label class="control-label">Select Stall</label>
+                                            <select name="restaurant_id" id="stallSelect" class="form-control custom-select" disabled>
+                                                <option value="">--Select Stall--</option>
+                                                <?php
+                                                $ssql = "SELECT * FROM restaurant";
+                                                $res = mysqli_query($db, $ssql);
+                                                while ($row = mysqli_fetch_array($res)) {
+                                                    echo '<option value="' . $row['rs_id'] . '">' . $row['title'] . '</option>';
+                                                }
+                                                ?>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6" id="vehicleSection" style="display: none;">
+                                        <div class="form-group">
+                                            <label class="control-label">Vehicle Type</label>
+                                            <select name="vehicle_type" id="vehicleSelect" class="form-control custom-select" disabled>
+                                                <option value="">--Select Vehicle Type--</option>
+                                                <?php
+                                                $ssql = "SELECT * FROM vehicles";
+                                                $res = mysqli_query($db, $ssql);
+                                                while ($row = mysqli_fetch_array($res)) {
+                                                    echo '<option value="' . $row['id'] . '">' . $row['type'] . '</option>';
+                                                }
+                                                ?>
+                                            </select>
+                                        </div>
+                                    </div>
+
                                     <div class="form-group col-sm-12">
                                         <label for="exampleTextarea">Delivery Address</label>
                                         <textarea class="form-control" id="exampleTextarea" name="address" rows="3"></textarea>
@@ -201,7 +250,33 @@ if (isset($_POST['submit'])) {
 </div>
 
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const roleSelect = document.getElementById('role');
+        const stallSection = document.getElementById('stallSection');
+        const vehicleSection = document.getElementById('vehicleSection');
+        const stallSelect = document.getElementById('stallSelect');
+        const vehicleSelect = document.getElementById('vehicleSelect');
 
+        roleSelect.addEventListener('change', function() {
+            const role = this.value;
+
+            // Reset all
+            stallSection.style.display = 'none';
+            stallSelect.disabled = true;
+            vehicleSection.style.display = 'none';
+            vehicleSelect.disabled = true;
+
+            if (role === '3') { // Stall
+                stallSection.style.display = 'block';
+                stallSelect.disabled = false;
+            } else if (role === '2') { // Rider
+                vehicleSection.style.display = 'block';
+                vehicleSelect.disabled = false;
+            }
+        });
+    });
+</script>
 <script>
     function togglePassword(inputId, iconSpan) {
         const input = document.getElementById(inputId);

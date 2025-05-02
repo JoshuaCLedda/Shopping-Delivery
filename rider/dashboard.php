@@ -32,6 +32,38 @@ if (isset($_POST['submit'])) {
     exit();
 }
 
+
+// income for riders
+// Calculate current month and year
+$currentYear = date("Y");
+$currentMonth = date("m");
+
+// Total income this month
+$monthlyIncomeQuery = mysqli_query(
+    $index->con,
+    "SELECT SUM(amount) AS total_month 
+        FROM rider_income 
+        WHERE rider_id = '$user_id' 
+        AND MONTH(earned_at) = '$currentMonth' 
+        AND YEAR(earned_at) = '$currentYear'
+"
+);
+$monthlyIncomeData = mysqli_fetch_assoc($monthlyIncomeQuery);
+$totalMonthIncome = $monthlyIncomeData['total_month'] ? number_format($monthlyIncomeData['total_month'], 2) : "0.00";
+
+// Total income this year
+$yearlyIncomeQuery = mysqli_query(
+    $index->con,
+    "SELECT SUM(amount) AS total_year 
+        FROM rider_income 
+        WHERE rider_id = '$user_id' 
+        AND YEAR(earned_at) = '$currentYear'
+"
+);
+$yearlyIncomeData = mysqli_fetch_assoc($yearlyIncomeQuery);
+$totalYearIncome = $yearlyIncomeData['total_year'] ? number_format($yearlyIncomeData['total_year'], 2) : "0.00";
+
+
 ?>
 
 <?php include '../admin/layouts/header.php' ?>
@@ -134,9 +166,6 @@ if (isset($_POST['submit'])) {
                 </div>
             </div>
 
-
-
-            <!-- Rider Rating -->
             <div class="col-xx-6 col-md-6">
                 <div class="card info-card shadow-sm border-0 rounded-4">
                     <div class="card-body">
@@ -162,14 +191,42 @@ if (isset($_POST['submit'])) {
                 </div>
             </div>
 
+            <div class="col-xx-6 col-md-6">
+                <div class="card info-card shadow-sm border-0 rounded-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <i class='bx bx-wallet text-success display-5 me-3'></i>
+                                <div>
+                                    <h6 class="mb-1 fw-semibold">Total Income This Month</h6>
+                                    <small class="text-muted">From delivered orders</small>
+                                </div>
+                            </div>
+                            <h1 class="fw-bold text-success mb-0">₱<?= $totalMonthIncome ?></h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xx-6 col-md-6">
+                <div class="card info-card shadow-sm border-0 rounded-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <i class='bx bx-calendar text-info display-5 me-3'></i>
+                                <div>
+                                    <h6 class="mb-1 fw-semibold">Total Income This Year</h6>
+                                    <small class="text-muted">From delivered orders</small>
+                                </div>
+                            </div>
+                            <h1 class="fw-bold text-info mb-0">₱<?= $totalYearIncome ?></h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
 
-
-
-
-
-
-            <div class="col-lg-6 d-flex align-items-stretch">
+            <div class="col-lg-12 d-flex align-items-stretch">
                 <div class="card w-100">
                     <div class="card-body p-4">
                         <h5 class="card-title fw-semibold mb-4">Recent Rider Ratings</h5>
@@ -201,7 +258,7 @@ if (isset($_POST['submit'])) {
         ");
 
                                     while ($row = mysqli_fetch_assoc($result)) {
-                                        ?>
+                                    ?>
                                         <tr>
                                             <td class="border-bottom-0">
                                                 <h6 class="fw-semibold mb-0">
@@ -219,7 +276,7 @@ if (isset($_POST['submit'])) {
                                                 </h6>
                                             </td>
                                         </tr>
-                                        <?php
+                                    <?php
                                     }
                                     ?>
 

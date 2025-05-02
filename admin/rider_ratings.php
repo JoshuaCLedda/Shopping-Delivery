@@ -6,12 +6,9 @@ $index = new Index;
 
 ?>
 
-
-
 <?php include 'layouts/header.php' ?>
 <?php include 'layouts/sidebar.php' ?>
 <?php include 'layouts/navbar.php' ?>
-
 
 <div id="main">
     <div class="main-container">
@@ -52,32 +49,31 @@ $index = new Index;
                                             <th>Manage</th>
                                         </tr>
                                     </thead>
-                                
                                     <tbody>
-    <?php
-    $result = $index->getRidersRatings();
-    while ($row = mysqli_fetch_array($result)):
-    ?>
-        <tr>
-            <td><?= htmlspecialchars($row['rider_name']) ?></td>
-            <td><?= htmlspecialchars($row['f_name'] . ' ' . $row['l_name']) ?></td>
-            <td><i class="bx bxs-star text-warning"></i> <?= htmlspecialchars($row['rating']) ?></td>
-            <td><?= date('F j, Y', strtotime($row['created_at'])) ?></td>
-          
-            <td>
-                <button type="button" 
-                        class="btn btn-sm btn-success viewRiderRatingBtn" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#riderModal"
-                        data-rider="<?= htmlspecialchars($row['rider_name']) ?>"
-                        data-name="<?= htmlspecialchars($row['f_name'] . ' ' . $row['l_name']) ?>"
-                        data-rating="<?= htmlspecialchars($row['rating']) ?>"
-                        data-comment="<?= htmlspecialchars($row['complaint']) ?>">
-                    View
-                </button>
-            </td>
-        </tr>
-    <?php endwhile; ?>
+                                <?php
+                                $result = $index->getRidersRatings();
+                                while ($row = mysqli_fetch_array($result)):
+                                ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($row['rider_name']) ?></td>
+                                        <td><?= htmlspecialchars($row['f_name'] . ' ' . $row['l_name']) ?></td>
+                                        <td><i class="bx bxs-star text-warning"></i> <?= htmlspecialchars($row['rating']) ?></td>
+                                        <td><?= date('F j, Y', strtotime($row['created_at'])) ?></td>
+                                      
+                                        <td>
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-success viewRiderRatingBtn" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#riderModal"
+                                                    data-rider="<?= htmlspecialchars($row['rider_name']) ?>"
+                                                    data-name="<?= htmlspecialchars($row['f_name'] . ' ' . $row['l_name']) ?>"
+                                                    data-rating="<?= htmlspecialchars($row['rating']) ?>"
+                                                    data-comment="<?= htmlspecialchars($row['complaint']) ?>">
+                                                View
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php endwhile; ?>
 </tbody>
 
 <!-- Rider Rating Modal -->

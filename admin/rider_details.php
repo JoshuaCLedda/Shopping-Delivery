@@ -52,79 +52,72 @@ session_start();
                   </thead>
                   <tbody>
                     <?php
-                    $sql = "SELECT * FROM users
-                    WHERE role = 2
-                    ORDER BY created_at DESC";
+                    $sql = "SELECT * FROM users WHERE role = 2 ORDER BY created_at DESC";
                     $query = mysqli_query($db, $sql);
 
                     if (!mysqli_num_rows($query) > 0):
                       echo '<tr><td colspan="6" class="text-center">No Rider Found</td></tr>';
                     else:
-                      while ($row = mysqli_fetch_array($query)):
-                        $statusText = $row['status'] === 'active' ? 'Active' : 'Inactive';
-                        $statusClass = $row['status'] === 'active' ? 'success' : 'danger';
-                        ?>
+                      while ($row = mysqli_fetch_array($query)) {
+                        if ($row['status'] === 'active') {
+                          $statusText = 'Active';
+                          $statusClass = 'success';
+                        } elseif ($row['status'] === 'inactive') {
+                          $statusText = 'Inactive';
+                          $statusClass = 'danger';
+                        } elseif ($row['status'] === 'banned') {
+                          $statusText = 'Banned';
+                          $statusClass = 'warning';
+                        } else {
+                          $statusText = 'Unknown';
+                          $statusClass = 'secondary';
+                        }
+                    ?>
                         <tr>
                           <td><?= htmlspecialchars($row['l_name']) ?></td>
                           <td><?= htmlspecialchars($row['f_name']) ?></td>
                           <td><?= htmlspecialchars($row['phone']) ?></td>
                           <td>
                             <?php if (!empty($row['orcr'])): ?>
-                              <a href="uploads/<?= htmlspecialchars($row['orcr']) ?>" target="_blank"
-                                class="btn btn-sm btn-primary rounded-pill px-3">
+                              <a href="uploads/<?= htmlspecialchars($row['orcr']) ?>" target="_blank" class="btn btn-sm btn-primary rounded-pill px-3">
                                 View ORCR
                               </a>
                             <?php else: ?>
                               <span class="badge bg-secondary rounded-pill px-3">No ORCR</span>
                             <?php endif; ?>
                           </td>
-
-
-
                           <td>
                             <span class="badge bg-<?= $statusClass ?> rounded-pill"><?= $statusText ?></span>
                           </td>
-
                           <td>
                             <div class="d-flex align-items-center gap-2">
-
-                              <!-- Manage Dropdown -->
                               <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-warning dropdown-toggle"
-                                  data-bs-toggle="dropdown" aria-expanded="false">
+                                <button type="button" class="btn btn-sm btn-warning dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                   Manage
                                 </button>
                                 <ul class="dropdown-menu">
                                   <?php if ($row['status'] !== 'active'): ?>
-                                    <li><a class="dropdown-item"
-                                        href="update_rider_status.php?u_id=<?= $row['u_id'] ?>&status=active">Approve</a></li>
+                                    <li><a class="dropdown-item" href="update_rider_status.php?u_id=<?= $row['u_id'] ?>&status=active">Approve</a></li>
                                   <?php endif; ?>
                                   <?php if ($row['status'] !== 'inactive'): ?>
-                                    <li><a class="dropdown-item"
-                                        href="update_rider_status.php?u_id=<?= $row['u_id'] ?>&status=inactive">Disapprove</a>
-                                    </li>
+                                    <li><a class="dropdown-item" href="update_rider_status.php?u_id=<?= $row['u_id'] ?>&status=inactive">Disapprove</a></li>
                                   <?php endif; ?>
                                 </ul>
                               </div>
-
-                              <!-- View Ratings Button -->
                               <a href="riders_rating.php?u_id=<?= $row['u_id'] ?>" class="btn btn-sm btn-secondary">
                                 <i class='bx bx-star'></i>
                               </a>
-
-                              <!-- Edit Button -->
                               <a href="update_rider.php?u_id=<?= $row['u_id'] ?>" class="btn btn-sm btn-info">
                                 <i class="bx bx-edit"></i>
                               </a>
-
                             </div>
                           </td>
-
                         </tr>
-                        <?php
-                      endwhile;
+                    <?php
+                      } // end while
                     endif;
                     ?>
+
                   </tbody>
                 </table>
               </div>

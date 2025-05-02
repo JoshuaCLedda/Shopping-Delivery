@@ -26,7 +26,7 @@
           <span class="hide-menu">Main</span>
         </li>
 
-
+      <!-- Commented for the meantime
         <li class="sidebar-item">
           <a class="sidebar-link" href="all_orders.php" aria-expanded="false">
             <span>
@@ -34,7 +34,7 @@
             </span>
             <span class="hide-menu">Orders</span>
           </a>
-        </li>
+        </li> -->
 
         <li class="sidebar-item">
           <a class="sidebar-link" href="pending_orders.php" aria-expanded="false">

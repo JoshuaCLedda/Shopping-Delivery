@@ -13,7 +13,6 @@ if (isset($_GET['u_id'])) {
     $status = $index->getRiderStatus($u_id); // Call the function to get the rider's status
 }
 
-
 if (isset($_POST['submit'])) {
     $u_id = intval($_POST['u_id']);
 
@@ -122,9 +121,6 @@ if (isset($_POST['submit'])) {
                                 </div>
                             </div>
                         <?php endif; ?>
-
-
-
                         <div>
                             <hr>
 
@@ -135,7 +131,7 @@ if (isset($_POST['submit'])) {
                             <!-- Trigger Button -->
                             <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
                                 data-bs-target="#terminateModal" <?php if ($status === 'banned')
-                                    echo 'disabled'; ?>>
+                                                                        echo 'disabled'; ?>>
                                 <i class="bx bx-trash"></i>
                                 <?php echo $status === 'banned' ? 'Rider already terminated' : 'Terminate Rider'; ?>
                             </button>
@@ -191,7 +187,7 @@ if (isset($_POST['submit'])) {
 
                 if (mysqli_num_rows($result) > 0):
                     while ($row = mysqli_fetch_array($result)) {
-                        ?>
+                ?>
                         <div class="col-md-6 col-lg-4 mb-4">
                             <div class="card shadow-sm rounded-4">
                                 <div class="card-body">
@@ -204,7 +200,7 @@ if (isset($_POST['submit'])) {
                                                 <i class='bx bxs-star text-warning'></i>
                                             <?php else: ?>
                                                 <i class='bx bx-star text-muted'></i>
-                                            <?php endif;
+                                        <?php endif;
                                         endfor;
                                         ?>
                                     </div>
@@ -226,12 +222,12 @@ if (isset($_POST['submit'])) {
                                 </div>
                             </div>
                         </div>
-                        <?php
+                    <?php
                     }
                 else:
                     ?>
 
-                    <?php
+                <?php
                 endif;
                 ?>
 

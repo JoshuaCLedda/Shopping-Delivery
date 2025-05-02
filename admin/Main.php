@@ -225,16 +225,16 @@ class Index
         return $row; // ['f_name' => ..., 'l_name' => ...]
     }
 
-    public function addRiderRating($rider_id, $rider_name, $rating, $complaint)
+    public function addRiderRating($rider_id, $rider_name, $rating, $complaint, $transaction_id)
     {
         // Escape inputs to prevent SQL injection
         $rider_id = mysqli_real_escape_string($this->con, $rider_id);
         $rating = mysqli_real_escape_string($this->con, $rating);
-        $rider_name = mysqli_real_escape_string($this->con, $rider_name);
         $complaint = mysqli_real_escape_string($this->con, $complaint);
+        $transaction_id = mysqli_real_escape_string($this->con, $transaction_id);
 
-        $sql = "INSERT INTO rating_rider (rider_id, rider_name, rating, complaint)
-                VALUES ('$rider_id', '$rider_name', '$rating', '$complaint')";
+        $sql = "INSERT INTO rating_rider (rider_id, transaction_id, rider_name, rating, complaint)
+                VALUES ('$rider_id', '$transaction_id', '$rider_name', '$rating', '$complaint')";
 
         return mysqli_query($this->con, $sql);
     }

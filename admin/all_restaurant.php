@@ -43,13 +43,12 @@ session_start();
                         </div>
 
                         <div class="card-body">
-                            <a href="delete_users.php?user_del=' . $rows['u_id'] . '" c <div class="table-responsive">
                                 <table class="table datatable table-striped table-hover" id="datatable">
                                     <thead>
                                         <tr>
                                             <th>Category</th>
                                             <th>Name</th>
-                                            <th>Email</th>
+                                            <th>Total Profit</th>
                                             <th>Phone</th>
                                             <th>Status</th>
                                             <th>Date Created</th>
@@ -60,8 +59,16 @@ session_start();
 
                                     <tbody>
                                         <?php
-                                        $sql = "SELECT * FROM restaurant ORDER BY rs_id DESC";
-                                        $query = mysqli_query($db, $sql);
+                                       $sql = "SELECT r.*, 
+                                              IFNULL(SUM(CAST(t.total_price AS DECIMAL(10,2))), 0) AS total_profit
+                                       FROM restaurant r
+                                       LEFT JOIN transaction t ON r.rs_id = t.rs_id AND t.status = 'order_delivered'
+                                       GROUP BY r.rs_id
+                                       ORDER BY total_profit DESC
+                                   ";
+                                   
+                                   $query = mysqli_query($db, $sql);
+                                   
                                         ?>
 
                                         <?php if (!mysqli_num_rows($query) > 0): ?>
@@ -97,18 +104,20 @@ session_start();
                                                 <tr>
                                                     <td><?= $row['c_name'] ?></td>
                                                     <td><?= $rows['title'] ?></td>
-                                                    <td><?= $rows['email'] ?></td>
+                                                    <td>₱<?= number_format($rows['total_profit'], 2) ?></td>
+
                                                     <td><?= $rows['phone'] ?></td>
                                                     <td>
                                                         <span class="badge <?= $badgeClass ?>"><?= $statusText ?></span>
                                                     </td>
                                                     <td><?= date("F j, Y", strtotime($rows['date'])) ?></td>
                                                     <td>
-                                                        <a href="delete_restaurant.php?res_del=<?= $rows['rs_id'] ?>"
+                                                        <!-- remove for the meantime -->
+                                                        <!-- <a href="delete_restaurant.php?res_del=<?= $rows['rs_id'] ?>"
                                                             class="btn btn-sm btn-danger"
                                                             onclick="return confirm('Are you sure you want to delete this restaurant?');">
                                                             <i class="bx bx-trash"></i>
-                                                        </a>
+                                                        </a> -->
 
                                                         <a href="update_restaurant.php?res_upd=<?= $rows['rs_id'] ?>"
                                                             class="btn btn-sm btn-info ms-2">

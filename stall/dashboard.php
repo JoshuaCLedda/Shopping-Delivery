@@ -160,7 +160,7 @@ if (isset($_SESSION['user_id'])) {
                                 <h1 class="fw-bold text-warning mb-0">
                                     <?php
                                     $query = mysqli_query($index->con, "SELECT AVG(rating) AS avg_rating FROM
-                    restaurant_ratings WHERE restaurant_user_id = '$user_id'");
+                                    restaurant_ratings WHERE restaurant_user_id = '$user_id'");
                                     $data = mysqli_fetch_assoc($query);
                                     $avgRating = $data['avg_rating'] ? round($data['avg_rating'], 1) : 0;
                                     echo $avgRating . " ★";
@@ -192,14 +192,12 @@ if (isset($_SESSION['user_id'])) {
                                     $month = date('M');
 
                                     $query = mysqli_query($index->con, "
-    SELECT SUM(transaction.total_price) AS total_earning 
-    FROM transaction 
-    WHERE transaction.rs_id = '{$user['restaurant_id']}'
-    AND transaction.status = 'order_delivered' 
-    AND YEAR(transaction.order_date) = '$month'
-");
-
-
+                                        SELECT SUM(transaction.total_price) AS total_earning 
+                                        FROM transaction 
+                                        WHERE transaction.rs_id = '{$user['restaurant_id']}'
+                                        AND transaction.status = 'order_delivered' 
+                                        AND YEAR(transaction.order_date) = '$month'
+                                        ");
                                     // user_id
                                     $data = mysqli_fetch_assoc($query);
                                     $totalEarnings = $data['total_earning'] ? number_format($data['total_earning'], 2) : "0.00";
@@ -211,7 +209,6 @@ if (isset($_SESSION['user_id'])) {
                     </div>
                 </div>
 
-
                 <div class="col-xxl-6 col-md-6">
                     <div class="card info-card shadow-sm border-0 rounded-4">
                         <div class="card-body">
@@ -219,23 +216,24 @@ if (isset($_SESSION['user_id'])) {
                                 <div class="d-flex align-items-center">
                                     <i class='bx bx-wallet text-primary display-5 me-3'></i>
                                     <div>
-                                        <h6 class="mb-1 fw-semibold">Total Earnings This Year</h6>
+                                        <h6 class="mb-1 fw-semibold">Total Earnings This Year
+                                        <?php echo $user['restaurant_id']; ?>
+
+                                        </h6>
                                         <small class="text-muted">Income from completed orders</small>
                                     </div>
                                 </div>
                                 <h1 class="fw-bold text-primary mb-0">
                                     <?php
                                     $year = date('Y');
-
                                     $query = mysqli_query($index->con, "
-                        SELECT SUM(transaction.total_price) AS total_earning 
+                                    SELECT SUM(transaction.total_price) AS total_earning 
                                     FROM transaction 
-                                    WHERE transaction.rs_id = '{$user['restaurant_id']}'
+                                    WHERE transaction.rs_id = '" . $user['restaurant_id'] . "'
                                     AND transaction.status = 'order_delivered' 
                                     AND YEAR(transaction.order_date) = '$year'
                                 ");
-
-
+                                
                                     // user_id
                                     $data = mysqli_fetch_assoc($query);
                                     $totalEarnings = $data['total_earning'] ? number_format($data['total_earning'], 2) : "0.00";
@@ -249,8 +247,7 @@ if (isset($_SESSION['user_id'])) {
             </div>
 
             <div class="row">
-
-                <div class="col-md-6 mb-3">
+                <div class="col-md-12 mb-3">
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-body">
                             <h5 class="card-title fw-semibold mb-4">Earnings</h5>
@@ -269,7 +266,7 @@ if (isset($_SESSION['user_id'])) {
                 </div>
 
 
-                <div class="col-lg-6 d-flex align-items-stretch">
+                <div class="col-lg-12 d-flex align-items-stretch">
                     <div class="card w-100">
                         <div class="card-body p-4">
                             <h5 class="card-title fw-semibold mb-4">Recent Orders</h5>

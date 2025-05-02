@@ -21,7 +21,14 @@ $query = "
 ";
 
 if (mysqli_query($index->con, $query)) {
-    $_SESSION['message'] = ['type' => 'success', 'message' => 'Order marked as delivered.'];
+    // Insert income record
+    $incomeQuery = "
+        INSERT INTO rider_income (rider_id, transaction_id, amount) 
+        VALUES ($rider_id, $transacID, 40.00)
+    ";
+    mysqli_query($index->con, $incomeQuery);
+
+    $_SESSION['message'] = ['type' => 'success', 'message' => 'Order marked as delivered and rider income recorded.'];
 } else {
     $_SESSION['message'] = ['type' => 'danger', 'message' => 'Failed to update order.'];
 }

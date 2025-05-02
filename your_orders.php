@@ -66,8 +66,6 @@ if (empty($_SESSION['user_id'])) {
                             $rider_id = $row['rider_id'];
                             $rs_id = $row['rs_id'];
                             $order_date = $row['order_date'];
-
-
                             // Status Pill
                             $badgeClass = 'bg-warning text-dark';
                             $statusText = ucwords(str_replace('_', ' ', strtolower($status)));
@@ -131,8 +129,9 @@ if (empty($_SESSION['user_id'])) {
                                                 class="btn btn-danger btn-sm">Cancel Order</a>
 
                                         <?php elseif ($status === 'order_delivered') : ?>
-                                            <a href="rate_rider.php?rider_id=<?php echo $rider_id; ?>"
-                                                class="btn btn-outline-success btn-sm">Rate Rider</a>
+                                           <a href="rate_rider.php?rider_id=<?= $rider_id ?>&transaction_id=<?= $id ?>" 
+   class="btn btn-outline-success btn-sm">Rate Rider</a>
+
                                             <a href="rate_stall.php?restaurant_id=<?php echo $rs_id; ?>"
                                                 class="btn btn-outline-primary btn-sm">Rate Stall</a>
                                         <?php endif; ?>

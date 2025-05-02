@@ -6,6 +6,12 @@ $index = new Index;
 
 $rider_name = ''; 
 
+$transaction_id = 0;
+
+if (isset($_GET['transaction_id'])) {
+    $transaction_id = intval($_GET['transaction_id']);
+}
+
 if (isset($_GET['rider_id'])) {
     $rider_id = $_GET['rider_id'];
 
@@ -22,9 +28,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $rider_name = $_POST['rider_name'];
     $rating     = $_POST['rating'];
     $complaint  = $_POST['complaint'];
+    $transaction_id  = $_POST['transaction_id'];
+
 
     // Call the method to insert rating
-    $result = $index->addRiderRating($rider_id, $rider_name,  $rating, $complaint);
+    $result = $index->addRiderRating($rider_id, $rider_name, $rating, $complaint, $transaction_id);
 
     if ($result) {
         $_SESSION['message'] = ['type' => 'success', 'message' => 'Rating submitted successfully!'];
@@ -32,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['message'] = ['type' => 'danger', 'message' => 'Rating submission failed! Please try again.'];
     }
 
-    header("Location: rate_rider.php?rider_id=" . urlencode($rider_id));
+    header("Location: your_orders.php");
     exit();
 }
 
@@ -82,11 +90,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="card-body">
             <h3 class="text-center mb-4">
                 <i class='bx bx-star text-warning'></i> Rate Your Rider
+            
             </h3>
 
             <?php include 'layouts/sweetalert.php'; ?>
 
             <form action="" method="POST">
+            <input type="text" name="transaction_id" value="<?= $transaction_id ?>">
+
                 <div class="mb-3">
                     <label for="rider" class="form-label">
                         <i class='bx bx-user'></i> Rider:

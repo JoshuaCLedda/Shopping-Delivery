@@ -26,6 +26,19 @@
           <span class="hide-menu">Orders</span>
         </li>
 
+        
+
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="menus.php" aria-expanded="false">
+            <span>
+              <i class="bx bx-bowl-hot"></i>
+            </span>
+            <span class="hide-menu">Food Menus</span>
+          </a>
+        </li>
+
+
+<!-- Commented for the meantime
         <li class="sidebar-item">
           <a class="sidebar-link" href="orders.php" aria-expanded="false">
             <span>
@@ -33,7 +46,7 @@
             </span>
             <span class="hide-menu">All Orders</span>
           </a>
-        </li>
+        </li> -->
 
         <li class="sidebar-item">
           <a class="sidebar-link" href="placed_orders.php" aria-expanded="false">
@@ -71,17 +84,6 @@
           </a>
         </li>
 
-
-
-
-        <li class="sidebar-item">
-          <a class="sidebar-link" href="menus.php" aria-expanded="false">
-            <span>
-              <i class="bx bx-bowl-hot"></i>
-            </span>
-            <span class="hide-menu">Menus</span>
-          </a>
-        </li>
 
 
 

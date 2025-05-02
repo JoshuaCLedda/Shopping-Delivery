@@ -1,14 +1,14 @@
 <?php
+session_start();
 include("../connection/connect.php");
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-
 if (isset($_POST['submit'])) {
     // Form validation
     if (empty($_POST['d_name']) || empty($_POST['about']) || empty($_POST['price']) || empty($_POST['res_name'])) {
-        $error = showAlert('danger', 'All fields must be filled!');
+        $_SESSION['message'] = ['type' => 'danger', 'message' => 'All fields must be filled!'];
     } else {
         // File upload handling
         $file = $_FILES['file'];
@@ -18,38 +18,35 @@ if (isset($_POST['submit'])) {
 
         // Validate file extension and size
         if (!in_array($fileExt, ['jpg', 'png', 'gif'])) {
-            $error = showAlert('danger', 'Invalid file extension! Only jpg, png, and gif are accepted.');
+            $_SESSION['message'] = ['type' => 'danger', 'message' => 'Invalid file extension! Only jpg, png, and gif are accepted.'];
         } elseif ($file['size'] >= 1000000) {
-            $error = showAlert('danger', 'Max image size is 1024kb! Try a different image.');
+            $_SESSION['message'] = ['type' => 'danger', 'message' => 'Max image size is 1024kb! Try a different image.'];
         } else {
-            // Sanitize input
-            $d_name = mysqli_real_escape_string($db, $_POST['d_name']);
-            $about = mysqli_real_escape_string($db, $_POST['about']);
-            $price = mysqli_real_escape_string($db, $_POST['price']);
-            $res_name = mysqli_real_escape_string($db, $_POST['res_name']);
+            // Move the uploaded file
+            if (move_uploaded_file($file['tmp_name'], $filePath)) {
+                // Sanitize input
+                $d_name = mysqli_real_escape_string($db, $_POST['d_name']);
+                $about = mysqli_real_escape_string($db, $_POST['about']);
+                $price = mysqli_real_escape_string($db, $_POST['price']);
+                $res_name = mysqli_real_escape_string($db, $_POST['res_name']);
 
-            // Insert dish data into the database
-            $sql = "INSERT INTO dishes (rs_id, title, slogan, price, img) VALUES ('$res_name', '$d_name', '$about', '$price', '$fileName')";
-            if (mysqli_query($db, $sql)) {
-                move_uploaded_file($file['tmp_name'], $filePath);
-                $success = showAlert('success', 'New dish added successfully.');
+                // Insert into DB
+                $sql = "INSERT INTO dishes (rs_id, title, slogan, price, img) VALUES ('$res_name', '$d_name', '$about', '$price', '$fileName')";
+                $result = mysqli_query($db, $sql);
+
+                if ($result) {
+                    $_SESSION['message'] = ['type' => 'success', 'message' => 'Dish added successfully!'];
+                } else {
+                    $_SESSION['message'] = ['type' => 'danger', 'message' => 'Failed to add dish. Please try again.'];
+                }
             } else {
-                $error = showAlert('danger', 'Failed to add dish.');
+                $_SESSION['message'] = ['type' => 'danger', 'message' => 'Failed to upload image.'];
             }
         }
     }
 }
-
-// Function to generate alert messages
-function showAlert($type, $message) {
-    return "<div class='alert alert-$type alert-dismissible fade show'>
-                <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
-                    <span aria-hidden='true'>&times;</span>
-                </button>
-                <strong>$message</strong>
-            </div>";
-}
 ?>
+
 
 <?php include '../admin/layouts/header.php'; ?>
 <?php include '../layouts/stall/sidebar.php'; ?>

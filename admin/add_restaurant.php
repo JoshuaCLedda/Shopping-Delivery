@@ -1,8 +1,5 @@
 <?php
 session_start();
-error_reporting(E_ALL);
-ini_set('display_errors', 1);  // Ensure errors are displayed
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 include "Main.php";
 $index = new Index;
@@ -34,7 +31,7 @@ if (isset($_POST['submit'])) {
         $o_days,
         $image,
         $address,
-        $c_id,
+        $c_id
 
     );
 
@@ -178,11 +175,14 @@ if (isset($_POST['submit'])) {
                                 </div>
 
                                 <div class="col-md-6 mb-3">
-                                    <div class="form-group">
-                                        <label class="control-label">Image</label>
-                                        <input type="file" name="image" class="form-control">
-                                    </div>
-                                </div>
+    <div class="form-group">
+        <label class="control-label">
+            Image <span class="text-warning text-sm">jpg, jpeg, png</span>
+        </label>
+        <input type="file" name="image" class="form-control" accept="image/png, image/jpeg" required>
+    </div>
+</div>
+
 
 
 

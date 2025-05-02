@@ -6,9 +6,7 @@ error_reporting(0);
 // login security
 if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
   $role = $_SESSION["role"];
-  $redirectUrl = ($role == 1) ? "admin/dashboard.php" :
-                 (($role == 2) ? "rider/index.php" :
-                 (($role == 3) ? "stall/index.php" : "index.php"));
+  $redirectUrl = ($role == 1) ? "admin/dashboard.php" : (($role == 2) ? "rider/index.php" : (($role == 3) ? "stall/index.php" : "index.php"));
   header("Location: $redirectUrl");
   exit();
 }
@@ -33,7 +31,6 @@ if (isset($_SESSION['user_id'])) {
   exit();
 }
 
-// Login logic
 if (isset($_POST['submit'])) {
   $username = trim($_POST['username']);
   $password = trim($_POST['password']);
@@ -46,6 +43,13 @@ if (isset($_POST['submit'])) {
     $row = $result->fetch_assoc();
 
     if ($row) {
+      // Check if user is banned
+      if ($row['status'] === 'banned') {
+        $_SESSION['message'] = ['type' => 'danger', 'message' => 'Your account has been banned.'];
+        header("Location: login.php");
+        exit();
+      }
+
       $dbPassword = $row['password'];
       $isValid = false;
 
@@ -59,6 +63,8 @@ if (isset($_POST['submit'])) {
         $_SESSION["user_id"] = $row['u_id'];
         $_SESSION["role"] = $row['role'];
         $_SESSION["restaurant_id"] = $row['restaurant_id'];
+
+        $_SESSION['message'] = ['type' => 'success', 'message' => 'Welcome'];
 
         switch ($row['role']) {
           case 0:
@@ -79,15 +85,22 @@ if (isset($_POST['submit'])) {
         }
         exit();
       } else {
-        $message = "Invalid username or password!";
+        $_SESSION['message'] = ['type' => 'danger', 'message' => 'Invalid username or password.'];
+        header("Location: login.php");
+        exit();
       }
     } else {
-      $message = "Account not found!";
+      $_SESSION['message'] = ['type' => 'danger', 'message' => 'User not found.'];
+      header("Location: login.php");
+      exit();
     }
   } else {
-    $message = "Please enter both username and password!";
+    $_SESSION['message'] = ['type' => 'danger', 'message' => 'Please enter both username and password.'];
+    header("Location: login.php");
+    exit();
   }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -159,7 +172,7 @@ if (isset($_POST['submit'])) {
     <div class="card login-card p-4 shadow-lg">
       <div class="text-center mb-4">
         <h4 class="fw-bold text-dark">
-          <i class='bx bx-log-in-circle me-2'></i>Login to your accountds
+          <i class='bx bx-log-in-circle me-2'></i>Login 
         </h4>
         <?php if (isset($message)): ?>
           <div class="alert alert-danger py-1 mt-2 mb-0" role="alert" style="font-size: 0.9rem;">
@@ -167,6 +180,8 @@ if (isset($_POST['submit'])) {
           </div>
         <?php endif; ?>
       </div>
+
+      <?php include 'layouts/sweetalert.php' ?>
 
       <form action="" method="post">
         <!-- Username with Icon -->
