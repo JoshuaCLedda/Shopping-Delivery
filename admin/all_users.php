@@ -2,7 +2,10 @@
 session_start();
 include("../connection/connect.php");
 error_reporting(0);
-
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
+    header("Location: ../login.php");
+    exit();
+}
 ?>
 <?php include 'layouts/header.php' ?>
 <?php include 'layouts/sidebar.php' ?>
@@ -46,7 +49,6 @@ error_reporting(0);
                                         <tr>
                                             <th>Username</th>
                                             <th>Name</th>
-
                                             <th>Email</th>
                                             <th>Role</th>
                                             <th>Phone</th>
@@ -56,7 +58,7 @@ error_reporting(0);
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $sql = "SELECT * FROM users ORDER BY u_id DESC";
+                                        $sql = "SELECT * FROM users ORDER BY created_at DESC";
                                         $query = mysqli_query($db, $sql);
                                         ?>
 
@@ -77,10 +79,10 @@ error_reporting(0);
                                                         $roleText = 'Rider';
                                                         $badgeClass = 'badge bg-warning text-dark rounded-pill';
                                                         break;
-                                                        case 3:
-                                                            $roleText = 'Stall';
-                                                            $badgeClass = 'badge bg-success text-dark rounded-pill';
-                                                            break;
+                                                    case 3:
+                                                        $roleText = 'Stall';
+                                                        $badgeClass = 'badge bg-success text-dark rounded-pill';
+                                                        break;
                                                     case 0:
                                                         $roleText = 'User';
                                                         $badgeClass = 'badge bg-info text-dark rounded-pill';

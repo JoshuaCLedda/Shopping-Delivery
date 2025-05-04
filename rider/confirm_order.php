@@ -6,6 +6,11 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 include "../admin/Main.php";
 $index = new Index;
 
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 2) {
+    header("Location: ../login.php");
+    exit();
+}
+
 
 $transacId = $_GET['order_upd'];
 

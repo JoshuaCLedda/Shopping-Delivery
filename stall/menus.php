@@ -3,6 +3,12 @@ session_start();
 include("../connection/connect.php");
 error_reporting(0);
 session_start();
+
+
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 3) {
+    header("Location: ../login.php");
+    exit();
+}
 ?>
 <?php include '../admin/layouts/header.php' ?>
 <?php include '../layouts/stall/sidebar.php' ?>

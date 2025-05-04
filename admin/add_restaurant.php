@@ -3,7 +3,10 @@ session_start();
 
 include "Main.php";
 $index = new Index;
-
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
+    header("Location: ../login.php");
+    exit();
+}
 // backend
 if (isset($_POST['submit'])) {
     // Collect form data

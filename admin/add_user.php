@@ -2,7 +2,10 @@
 session_start();
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
-
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
+    header("Location: ../login.php");
+    exit();
+}
 include("../connection/connect.php");
 
 if (isset($_POST['submit'])) {
@@ -32,9 +35,11 @@ if (isset($_POST['submit'])) {
         $answer = mysqli_real_escape_string($db, $_POST['answer']);
 
         $role = mysqli_real_escape_string($db, $_POST['role']);
-        $restaurant_id = mysqli_real_escape_string($db, $_POST['restaurant_id']);
-        $vehicle_type = mysqli_real_escape_string($db, $_POST['vehicle_type']);
-        
+        //Additional hidden 2 
+        $restaurant_id = isset($_POST['restaurant_id']) && $_POST['restaurant_id'] !== '' ? intval($_POST['restaurant_id']) : 0;
+        $vehicle_type = isset($_POST['vehicle_type']) && $_POST['vehicle_type'] !== '' ? intval($_POST['vehicle_type']) : 0;
+
+
 
         $check_username = mysqli_query($db, "SELECT username FROM users WHERE username = '$username'");
         $check_email = mysqli_query($db, "SELECT email FROM users WHERE email = '$email'");
@@ -82,9 +87,7 @@ if (isset($_POST['submit'])) {
         }
     }
 }
-
 ?>
-
 <?php include 'layouts/header.php' ?>
 <?php include 'layouts/sidebar.php' ?>
 <?php include 'layouts/navbar.php' ?>

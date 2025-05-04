@@ -2,7 +2,10 @@
 session_start();
 include "../admin/Main.php"; 
 
-$index = new Index;
+$index = new Index;if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 2) {
+    header("Location: ../login.php");
+    exit();
+}
 
 if (!isset($_SESSION['user_id']) || !isset($_GET['order_upd'])) {
     $_SESSION['message'] = ['type' => 'danger', 'message' => 'Unauthorized access or missing transaction ID.'];

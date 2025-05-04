@@ -7,6 +7,12 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 include("../connection/connect.php");
 
+
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 3) {
+    header("Location: ../login.php");
+    exit();
+}
+
 $stall_id = $_SESSION['user_id'];
 $stmt = $db->prepare("
   SELECT 

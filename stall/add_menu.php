@@ -5,6 +5,11 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 3) {
+    header("Location: ../login.php");
+    exit();
+}
+
 if (isset($_POST['submit'])) {
     // Form validation
     if (empty($_POST['d_name']) || empty($_POST['about']) || empty($_POST['price']) || empty($_POST['res_name'])) {

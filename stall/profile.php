@@ -5,6 +5,11 @@ ini_set('display_errors', 1); // Ensure errors are displayed
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 3) {
+    header("Location: ../login.php");
+    exit();
+}
+
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
 

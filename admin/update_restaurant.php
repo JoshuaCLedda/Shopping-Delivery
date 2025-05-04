@@ -10,6 +10,11 @@ if (isset($_GET['res_upd'])) {
     $_SESSION['rs_id'] = $_GET['res_upd'];
 }
 
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
+    header("Location: ../login.php");
+    exit();
+}
+
 $rs_id = $_SESSION['rs_id'] ?? null;
 // backend
 if (isset($_POST['submit'])) {

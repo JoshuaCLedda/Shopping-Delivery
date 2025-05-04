@@ -4,6 +4,13 @@ error_reporting(E_ALL);
 include "../admin/Main.php";
 $index = new Index;
 
+
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 3) {
+    header("Location: ../login.php");
+    exit();
+}
+
+
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
 

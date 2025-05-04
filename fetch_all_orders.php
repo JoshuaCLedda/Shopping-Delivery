@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                   LEFT JOIN users_orders
                   ON users_orders.transaction_id = transaction.id
                   WHERE transaction.u_id = ? AND users_orders.transaction_id = ?";
-                  
+
         $stmt = mysqli_prepare($db, $query);
         mysqli_stmt_bind_param($stmt, "ii", $user_id, $transaction_id);
         mysqli_stmt_execute($stmt);
@@ -32,4 +32,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 mysqli_close($db);
-?>

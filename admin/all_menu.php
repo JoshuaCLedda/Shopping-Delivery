@@ -6,7 +6,10 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 include "Main.php";
 $index = new Index;
-
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
+    header("Location: ../login.php");
+    exit();
+}
 ?>
 
 <?php include 'layouts/header.php' ?>

@@ -3,6 +3,10 @@ include("../connection/connect.php");
 error_reporting(0);
 session_start();
 
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 3) {
+    header("Location: ../login.php");
+    exit();
+}
 // Pagination setup
 $limit = 10; // Records per page
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;

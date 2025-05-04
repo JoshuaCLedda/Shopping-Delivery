@@ -4,6 +4,11 @@ error_reporting(E_ALL);
 include "Main.php";
 $index = new Index;
 
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
+    header("Location: ../login.php");
+    exit();
+}
+
 // View Orders
 $result = $index->viewOrderDetails($_GET['id']);
 while ($row = mysqli_fetch_object($result)) {

@@ -3,6 +3,11 @@ session_start();
 include("connection/connect.php");
 error_reporting(0);
 
+if (!isset($_SESSION['user_id']) ) {
+    header("Location: login.php");
+    exit();
+}
+
 if (empty($_SESSION['user_id'])) {
     header('location:login.php');
     exit();

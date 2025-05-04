@@ -3,7 +3,10 @@ session_start();
 error_reporting(E_ALL);
 include "../admin/Main.php";
 $index = new Index;
-
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 2) {
+    header("Location: ../login.php");
+    exit();
+}
 // get the id from the rider
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];

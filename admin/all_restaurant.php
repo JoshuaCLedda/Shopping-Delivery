@@ -2,7 +2,10 @@
 include("../connection/connect.php");
 error_reporting(0);
 session_start();
-
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
+    header("Location: ../login.php");
+    exit();
+}
 ?>
 
 <?php include 'layouts/header.php' ?>

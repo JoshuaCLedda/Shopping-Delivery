@@ -3,6 +3,12 @@ include("../connection/connect.php");
 error_reporting(E_ALL);
 session_start();
 
+
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 3) {
+    header("Location: ../login.php");
+    exit();
+}
+
 if (isset($_GET['trans_id'])) {
     $trans_id = mysqli_real_escape_string($db, $_GET['trans_id']);
 

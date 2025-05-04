@@ -2,7 +2,10 @@
 include("../connection/connect.php");
 error_reporting(0);
 session_start();
-
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
+    header("Location: ../login.php");
+    exit();
+}
 
 if (isset($_POST['submit'])) {
     if (empty($_POST['d_name']) || empty($_POST['about']) || $_POST['price'] == '' || $_POST['res_name'] == '') {

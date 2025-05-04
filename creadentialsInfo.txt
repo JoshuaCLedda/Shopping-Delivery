@@ -1,0 +1,15 @@
+Admin
+username: admin
+password: Pa$$w0rd!
+----------------------
+Rider
+username: rider
+password: Pa$$w0rd!
+----------------------
+Stall
+username: stall
+password: Pa$$w0rd!
+----------------------
+User
+username: user
+password: Pa$$w0rd!
