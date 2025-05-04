@@ -47,7 +47,7 @@ if (isset($_POST['submit'])) {
         $_SESSION['message'] = ['type' => 'danger', 'message' => 'Failed to add item to cart.'];
     }
     
-    header("Location: dishes.php?res_id=" . $_GET['res_id']);
+    header("Location: stall_menus.php?res_id=" . $_GET['res_id']);
     exit();
     
     

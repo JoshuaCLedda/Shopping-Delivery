@@ -53,7 +53,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 3) {
                                 <table class="table datatable table-striped table-hover" id="datatable">
                                     <thead>
                                         <tr>
-                                            <th>Stall</th>
                                             <th>Dish</th>
                                             <th>Available Quantity</th>
                                             <th>Price</th>
@@ -94,9 +93,25 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 3) {
                                                 ?>
 
                                                 <tr>
-                                                    <td><?= htmlspecialchars($fetch['stall']) ?></td>
                                                     <td><?= htmlspecialchars($rows['title']) ?></td>
-                                                    <td><?= htmlspecialchars($rows['available_quantity']) ?></td>
+
+
+                                                    <td>
+    <?php
+    $qty = (int) $rows['available_quantity'];
+    $badgeClass = 'bg-success'; // Default: green
+
+    if ($qty < 10) {
+        $badgeClass = 'bg-danger'; // red
+    } elseif ($qty < 20) {
+        $badgeClass = 'bg-warning text-dark'; // yellow
+    }
+    ?>
+    <span class="badge <?= $badgeClass ?>"><?= htmlspecialchars($qty) ?></span>
+</td>
+
+
+
                                                     <td>₱<?= htmlspecialchars($rows['price']) ?></td>
                                                     <td>
                                                         <div class="ratio ratio-4x3" style="max-width: 100px;">

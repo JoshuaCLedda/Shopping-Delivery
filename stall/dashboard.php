@@ -224,8 +224,6 @@ if (isset($_SESSION['user_id'])) {
                                     <i class='bx bx-wallet text-primary display-5 me-3'></i>
                                     <div>
                                         <h6 class="mb-1 fw-semibold">Total Earnings This Year
-                                        <?php echo $user['restaurant_id']; ?>
-
                                         </h6>
                                         <small class="text-muted">Income from completed orders</small>
                                     </div>

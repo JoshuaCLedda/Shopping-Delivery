@@ -96,15 +96,8 @@ if (isset($_SESSION['user_id'])) {
     <div class="container py-5">
         <div class="col-lg-10 mx-auto cart-wrapper">
 
-            <?php if (isset($_SESSION['message'])): ?>
-                <div class="alert alert-<?php echo $_SESSION['message']['type']; ?> alert-dismissible fade show" role="alert">
-                    <i class="fa-solid fa-circle-check"></i>
-                    <?php echo $_SESSION['message']['message']; ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <?php unset($_SESSION['message']); ?>
-            <?php endif; ?>
-
+        
+        
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h3 class="fw-bold"><i class="fa-solid fa-cart-shopping me-2"></i>My Cart</h3>
                 <a href="#" id="deleteSelectedBtn" class="btn btn-outline-danger btn-sm">

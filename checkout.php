@@ -3,6 +3,13 @@ session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);  // Ensure errors are displayed
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'assets/vendor/phpmailer/phpmailer/src/PHPMailer.php';
+require 'assets/vendor/phpmailer/phpmailer/src/SMTP.php';
+require 'assets/vendor/phpmailer/phpmailer/src/Exception.php';
 // include_once 'product-action.php'; 
 // $cartId = $_GET['cartId'];
 if (isset($_SESSION['user_id'])) {
@@ -101,22 +108,30 @@ if (isset($_POST['submit'])) {
             $address
 
         );
+
         if ($transaction_id) {
             $all_success = true;
-
             foreach ($selectedCarts as $cartId) {
                 $cartResult = mysqli_query(
                     $index->con,
-                    "SELECT carts.*, (dishes.price * carts.quantity) AS dishTotal
-                    FROM carts
-                    LEFT JOIN dishes ON carts.dishes_id = dishes.d_id
-                    WHERE carts.id = '$cartId'"
+                    "SELECT carts.*, (dishes.price * carts.quantity) AS dishTotal, dishes.available_quantity
+                     FROM carts
+                     LEFT JOIN dishes ON carts.dishes_id = dishes.d_id
+                     WHERE carts.id = '$cartId'"
                 );
 
                 if ($cartRow = mysqli_fetch_assoc($cartResult)) {
                     $quantity     = $cartRow['quantity'];
                     $dishesId     = $cartRow['dishes_id'];
                     $dishTotal    = $cartRow['dishTotal'];
+                    $availableQty = $cartRow['available_quantity'];
+
+                    // Optional: Check if there's enough stock
+                    if ($availableQty < $quantity) {
+                        // Not enough stock, handle error
+                        $all_success = false;
+                        continue;
+                    }
 
                     $insertOrderItem = mysqli_query(
                         $index->con,
@@ -125,7 +140,15 @@ if (isset($_POST['submit'])) {
                     );
 
                     if ($insertOrderItem) {
-                        // Delete the cart item since it was successfully added to order_items
+                        // 1. Deduct quantity from dishes.available_quantity
+                        mysqli_query(
+                            $index->con,
+                            "UPDATE dishes 
+                             SET available_quantity = available_quantity - $quantity 
+                             WHERE d_id = '$dishesId'"
+                        );
+
+                        // 2. Delete the cart item
                         mysqli_query($index->con, "DELETE FROM carts WHERE id = '$cartId'");
                     } else {
                         $all_success = false;
@@ -133,8 +156,74 @@ if (isset($_POST['submit'])) {
                 }
             }
 
+            // email parts
             if ($all_success) {
                 $_SESSION['message'] = ['type' => 'success', 'message' => 'All orders placed successfully!'];
+
+                // ✅ Send confirmation email
+                require 'assets/vendor/autoload.php'; // Composer autoload
+
+
+                $mail = new PHPMailer(true);
+
+                try {
+                    $mail->isSMTP();
+                    $mail->Host       = 'smtp.gmail.com';
+                    $mail->SMTPAuth   = true;
+                    $mail->Username   = 'kirararararara09@gmail.com';        // Your Gmail
+                    $mail->Password   = 'cytr leyz qwbg zooh';               // App password
+                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                    $mail->Port       = 465;
+
+                    $mail->setFrom('kirararararara09@gmail.com', 'Your Store');
+                    $mail->addAddress($user['email'], 'Customer');           // Assuming $user['email'] is fetched earlier
+
+                    // html body
+                    $mail->isHTML(true);
+                    $mail->Subject = 'Your Order Has Been Placed – #' . $transaction_id;
+                    $mail->Body = "
+                    <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;'>
+                        <h2 style='color: #2E86C1; text-align: center;'>🎉 Order Confirmation</h2>
+                        <p style='font-size: 16px;'>Hello,</p>
+                        <p style='font-size: 16px;'>Thank you for shopping with us! We're happy to confirm your order has been placed successfully.</p>
+
+                        <table style='width: 100%; margin-top: 20px; border-collapse: collapse;'>
+                            <tr>
+                                <td style='padding: 8px; font-weight: bold;'>🆔 Transaction ID:</td>
+                                <td style='padding: 8px;'>#{$transaction_id}</td>
+                            </tr>
+                            <tr>
+                                <td style='padding: 8px; font-weight: bold;'>💰 Total Amount:</td>
+                                <td style='padding: 8px;'>₱{$total_price}</td>
+                            </tr>
+                        </table>
+
+                        <p style='margin-top: 20px; font-size: 15px;'>We’ve received your order and will begin processing it shortly. You’ll receive another update when your order is ready to be delivered.</p>
+                        
+                        <p style='margin-top: 30px; font-size: 14px; color: #777; text-align: center;'>If you have any questions, just reply to this email. We're here to help!</p>
+                        <hr style='margin: 20px 0; border: none; border-top: 1px solid #ccc;'>
+                        <p style='text-align: center; font-size: 14px; color: #aaa;'>© " . date('Y') . " Your Store. All rights reserved.</p>
+                    </div>
+                ";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    $mail->AltBody = "Your order #{$transaction_id} has been placed. Total: ₱{$total_price}.";
+                    $mail->send();
+                } catch (Exception $e) {
+                    error_log("Email could not be sent. Mailer Error: {$mail->ErrorInfo}");
+                }
             } else {
                 $_SESSION['message'] = ['type' => 'danger', 'message' => 'Some items failed to be placed.'];
             }
@@ -383,7 +472,7 @@ if (isset($_POST['submit'])) {
 
 
 
-<?php include 'layouts/sweetalert.php'; ?>
+        <?php include 'layouts/sweetalert.php'; ?>
 
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

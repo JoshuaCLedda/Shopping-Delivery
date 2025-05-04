@@ -20,9 +20,11 @@ if (isset($_GET['menu_upd'])) {
 $dishesiD = $_SESSION['dishedId'] ?? null;
 
 // backend
-if (isset($_POST['dishedId'])) {
-    $dishes_Id= $_FILES['dishesId'];
+if (isset($_POST['submit'])) {  
+    $dishes_Id = $_POST['dishes_id'];
     $title = $_POST['title'];
+    $status = $_POST['status'];
+
     $slogan = $_POST['slogan'];
     $price = $_POST['price'];
     $available_quantity = $_POST['available_quantity'];
@@ -34,6 +36,7 @@ if (isset($_POST['dishedId'])) {
     $result = $index->updateMenu(
         $dishes_Id,
         $title,
+        $status,
         $slogan,
         $price,
         $available_quantity,
@@ -108,8 +111,7 @@ if (isset($_POST['dishedId'])) {
                                     $rest = mysqli_query($index->con, $qml);
                                     $row = mysqli_fetch_array($rest);
                                     ?>
-
-                                <input type="hidden" name="dishes_id" value="<?= htmlspecialchars($row['d_id']) ?>">
+<input type="hidden" name="dishes_id" value="<?= htmlspecialchars($row['d_id']) ?>">
 
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
@@ -181,7 +183,7 @@ if (isset($_POST['dishedId'])) {
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Select Stall</label>
-                                                <select name="rs_id" class="form-control custom-select"
+                                                <select readonly name="rs_id" class="form-control custom-select"
                                                     data-placeholder="Choose a Category" tabindex="1">
                                                     <option value="">--Select Category--</option>
                                                     <?php

@@ -1,6 +1,6 @@
 <?php
 error_reporting(E_ALL);
-ini_set('display_errors', 1); 
+ini_set('display_errors', 1);
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 class Index
@@ -102,7 +102,7 @@ class Index
         $image,
         $address,
         $c_id
-        
+
     ) {
         // Escape variables
         $res_name = mysqli_real_escape_string($this->con, $res_name);
@@ -199,17 +199,17 @@ class Index
         // Escape variables
         $rider_id = mysqli_real_escape_string($this->con, $rider_id);
         $transaction_id = mysqli_real_escape_string($this->con, $transaction_id);
-    
+
         // Update transaction with rider_id and status
         $sql = "UPDATE transaction 
                 SET rider_id = '$rider_id',
                     status = 'order_received',
                     updated_at = NOW()
                 WHERE id = '$transaction_id'";
-    
+
         return mysqli_query($this->con, $sql);
     }
-    
+
 
     public function getRiderById($id)
     {
@@ -646,15 +646,17 @@ class Index
 
         return $result;
     }
+
     public function updateMenu(
         $dishes_Id,
         $title,
+        $status,
         $slogan,
         $price,
         $available_quantity,
         $dish_category_id,
         $rs_id,
-        $image = null
+        $image
     ) {
         // Escape variables properly
         $title = mysqli_real_escape_string($this->con, $title);
@@ -666,12 +668,15 @@ class Index
 
         // Start building the SQL
         $sql = "UPDATE dishes SET 
-                    title = '$title',
-                    slogan = '$slogan',
-                    price = '$price',
-                    available_quantity = '$available_quantity',
-                    dish_category_id = '$dish_category_id',
-                    rs_id = '$rs_id'";
+        title = '$title',
+        slogan = '$slogan',
+        price = '$price',
+        status = '$status',
+        available_quantity = '$available_quantity',
+        dish_category_id = '$dish_category_id',
+        rs_id = '$rs_id'";
+    
+    
 
         // Handle image upload if a new image is uploaded
         if (!empty($image) && !empty($image['name'])) {
@@ -695,7 +700,7 @@ class Index
         }
 
         // Add the WHERE clause at the end
-        $sql .= " WHERE disheiSId = '$dishes_Id'";
+        $sql .= " WHERE dishes.d_id = '$dishes_Id'";
 
         // Execute and return
         return mysqli_query($this->con, $sql);
@@ -886,11 +891,11 @@ class Index
         $user_id = mysqli_real_escape_string($this->con, $user_id);
         $d_id = mysqli_real_escape_string($this->con, $dishes_id);
         $quantity = mysqli_real_escape_string($this->con, $quantity);
-    
+
         // Check if the dish is already in the user's cart
         $checkSql = "SELECT * FROM carts WHERE user_id = '$user_id' AND dishes_id = '$d_id'";
         $checkResult = mysqli_query($this->con, $checkSql);
-    
+
         if (mysqli_num_rows($checkResult) > 0) {
             // If the dish is already in the cart, update the quantity
             $updateSql = "UPDATE carts SET quantity = quantity + '$quantity' WHERE user_id = '$user_id' AND dishes_id = '$d_id'";
@@ -901,11 +906,11 @@ class Index
             return mysqli_query($this->con, $insertSql);
         }
     }
-    
+
     public function getUserCart($user_id)
     {
         $user_id = mysqli_real_escape_string($this->con, $user_id);
-    
+
         $sql = "SELECT 
                     carts.id AS cartId,
                     carts.quantity,
@@ -918,15 +923,15 @@ class Index
                 LEFT JOIN restaurant ON restaurant.rs_id = dishes.rs_id
                 WHERE carts.user_id = '$user_id'
                 ORDER BY restaurant.title";
-    
+
         $result = mysqli_query($this->con, $sql);
         if (!$result) {
             die('Query failed: ' . mysqli_error($this->con));
         }
-    
+
         return $result;
     }
-    
+
 
     public function viewCheckOutDetails($cartId)
     {
@@ -941,13 +946,13 @@ class Index
         LEFT JOIN dishes ON dishes.d_id = carts.dishes_id
         LEFT JOIN restaurant ON restaurant.rs_id = dishes.rs_id
         WHERE carts.id = '$cartId'";
-    
+
         $result = mysqli_query($this->con, $sql);
-    
+
         if (!$result) {
             die('Query failed: ' . mysqli_error($this->con));
         }
-    
+
         return $result;
     }
 
@@ -967,10 +972,10 @@ class Index
         $total_price   = mysqli_real_escape_string($this->con, $total_price);
         $userAddress   = mysqli_real_escape_string($this->con, $userAddress);
         $address   = mysqli_real_escape_string($this->con, $address);
-    
+
         $order_date = date("Y-m-d H:i:s");
         $payment_status = ($mod == "GCash" && $gcash_proof) ? "Pending" : "Paid";
-    
+
         $sql = "INSERT INTO transaction (
                     u_id, total_price, address, order_date, status, payment_status, payment_method, gcash_proof
                 ) 
@@ -978,14 +983,14 @@ class Index
                     '$user_id', '$total_price', '$address', '$order_date', 'place_order',
                     '$payment_status', '$mod', '$gcash_proof'
                 )";
-    
+
         if (mysqli_query($this->con, $sql)) {
             return mysqli_insert_id($this->con);
         } else {
             return false;
         }
     }
-    
+
     public function viewOrderItems($transacId)
     {
         $transacId = mysqli_real_escape_string($this->con, $transacId); // security: prevent SQL injection
@@ -997,41 +1002,39 @@ class Index
                 FROM order_items
                 LEFT JOIN dishes ON dishes.d_id = order_items.dishes_id
                 WHERE order_items.transaction_id = '$transacId'";
-    
+
         $result = mysqli_query($this->con, $sql);
-    
+
         if (!$result) {
             die('Query failed: ' . mysqli_error($this->con));
         }
-    
+
         return $result;
     }
-    
+
     public function deleteCartItem($cartId)
-{
-    $cartId = mysqli_real_escape_string($this->con, $cartId);
-    $sql = "DELETE FROM carts WHERE id = '$cartId'";
-    return mysqli_query($this->con, $sql);
-}
-
-    
-public function getActiveUsers()
-{
-    // Correct SQL query
-    $sql = "SELECT * FROM users";
-
-    // Execute the query
-    $result = mysqli_query($this->con, $sql);
-
-    // Check if the query was successful
-    if (!$result) {
-        // If the query failed, show the error message and stop
-        die('Query failed: ' . mysqli_error($this->con));
+    {
+        $cartId = mysqli_real_escape_string($this->con, $cartId);
+        $sql = "DELETE FROM carts WHERE id = '$cartId'";
+        return mysqli_query($this->con, $sql);
     }
 
-    // Return the result
-    return $result;
-}
 
-    
+    public function getActiveUsers()
+    {
+        // Correct SQL query
+        $sql = "SELECT * FROM users";
+
+        // Execute the query
+        $result = mysqli_query($this->con, $sql);
+
+        // Check if the query was successful
+        if (!$result) {
+            // If the query failed, show the error message and stop
+            die('Query failed: ' . mysqli_error($this->con));
+        }
+
+        // Return the result
+        return $result;
+    }
 }

@@ -104,7 +104,7 @@
 
 
         <li class="sidebar-item">
-          <a class="sidebar-link" href="logout.php" aria-expanded="false">
+          <a class="sidebar-link" href="../logout.php" aria-expanded="false">
             <span>
               <i class="bx bx-log-out"></i>
             </span>
