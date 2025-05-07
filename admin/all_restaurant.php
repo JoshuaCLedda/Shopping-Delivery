@@ -21,7 +21,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
                     <ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item"><a href="#">Admin</a></li>
                         <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Rider Details</li>
+                        <li class="breadcrumb-item active" aria-current="page">Stalls</li>
                     </ol>
                 </nav>
             </div>

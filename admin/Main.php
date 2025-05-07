@@ -1037,4 +1037,20 @@ class Index
         // Return the result
         return $result;
     }
+    public function getActiveRestaurant()
+    {
+        $sql = "SELECT * FROM restaurant";
+
+    
+        $result = mysqli_query($this->con, $sql);
+    
+        if (!$result) {
+            die('Query failed: ' . mysqli_error($this->con));
+        }
+    
+        return $result;
+    }
+    
+
+
 }

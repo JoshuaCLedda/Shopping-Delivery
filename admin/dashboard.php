@@ -9,7 +9,61 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
     header("Location: ../login.php");
     exit();
 }
-  
+
+
+// filtering for the cards 
+$filter = $_GET['filter'] ?? 'monthly';
+$selectedRestaurant = $_GET['restaurant'] ?? '';
+
+
+$filter = $_GET['filter'] ?? 'weekly';
+$restaurantId = $_GET['restaurant'] ?? '';
+
+$endDate = date('Y-m-d 23:59:59');
+$startDate = '';
+
+$conditions = "status = 'order_delivered' AND YEAR(order_date) = YEAR(CURDATE())";
+
+if (!empty($restaurantId)) {
+    $conditions .= " AND rs_id = '$restaurantId'";
+}
+
+switch ($filter) {
+    case 'weekly':
+        $start = date('Y-m-d 00:00:00', strtotime('monday this week'));
+        $end = date('Y-m-d 23:59:59', strtotime('sunday this week'));
+        $conditions .= " AND order_date BETWEEN '$start' AND '$end'";
+        break;
+    case 'quarterly':
+        $month = date('n');
+        $quarterStartMonth = floor(($month - 1) / 3) * 3 + 1;
+        $start = date('Y') . '-' . str_pad($quarterStartMonth, 2, '0', STR_PAD_LEFT) . '-01 00:00:00';
+        $end = date('Y-m-t 23:59:59');
+        $conditions .= " AND order_date BETWEEN '$start' AND '$end'";
+        break;
+        // Monthly is default; no extra filtering needed beyond the current year
+}
+
+
+
+
+
+
+
+
+
+$startDate = '';
+$endDate = date('Y-m-d'); // today
+
+if ($filter == 'monthly') {
+    $startDate = date('Y-m-01'); // first day of current month
+} elseif ($filter == 'quarterly') {
+    $currentMonth = date('n');
+    $currentQuarterStart = floor(($currentMonth - 1) / 3) * 3 + 1;
+    $startDate = date('Y') . '-' . str_pad($currentQuarterStart, 2, '0', STR_PAD_LEFT) . '-01';
+}
+
+
 ?>
 <?php include 'layouts/header.php' ?>
 <?php include 'layouts/sidebar.php' ?>
@@ -18,8 +72,49 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
 <div id="main">
     <div class="main-container">
 
+    <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb" class="rounded-3 mb-4">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+
 
         <div class="col-lg-12">
+
+            <div class="row">
+
+                <div class="col-md-6 mb-4">
+                    <label for="filter" class="form-label">Select Filter:</label>
+                    <select id="filter" onchange="changeFilter()" class="form-select">
+                        <option value="monthly" <?= (isset($_GET['filter']) && $_GET['filter'] == 'monthly') ? 'selected' : '' ?>>Monthly</option>
+                        <option value="quarterly" <?= (isset($_GET['filter']) && $_GET['filter'] == 'quarterly') ? 'selected' : '' ?>>Quarterly</option>
+                    </select>
+
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <label for="restaurant" class="form-label">Select Stall:</label>
+                    <select id="restaurant" class="form-select" onchange="applyFilters()">
+                        <option value="">All Stalls</option>
+                        <?php
+                        $result = $index->getActiveRestaurant();
+                        while ($row = mysqli_fetch_array($result)) {
+                            $selected = $selectedRestaurant == $row['rs_id'] ? 'selected' : '';
+                            echo "<option value=\"{$row['rs_id']}\" $selected>{$row['title']}</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+
+
+            </div>
+
 
 
             <div class="row g-4">
@@ -39,8 +134,12 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
                                 <h1 class="fw-bold text-primary mb-0">
                                     <?php
                                     $sql = "SELECT * FROM restaurant";
+                                    if ($startDate) {
+                                        $sql .= " WHERE date BETWEEN '$startDate' AND '$endDate'";
+                                    }
                                     $result = mysqli_query($index->con, $sql);
                                     echo mysqli_num_rows($result);
+
                                     ?>
                                 </h1>
                             </div>
@@ -62,9 +161,13 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
                                 </div>
                                 <h1 class="fw-bold text-success mb-0">
                                     <?php
-                                    $sql = "SELECT * FROM dishes";
+                                    $sql = "SELECT * FROM dishes WHERE created_at BETWEEN '$startDate' AND '$endDate'";
+                                    if (!empty($restaurantId)) {
+                                        $sql .= " AND rs_id = '$restaurantId'";
+                                    }
                                     $result = mysqli_query($index->con, $sql);
                                     echo mysqli_num_rows($result);
+
                                     ?>
                                 </h1>
                             </div>
@@ -86,9 +189,13 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
                                 </div>
                                 <h1 class="fw-bold text-warning mb-0">
                                     <?php
-                                    $sql = "SELECT * FROM users_orders";
+                                    $sql = "SELECT * FROM transaction WHERE order_date BETWEEN '$startDate' AND '$endDate'";
+                                    if (!empty($restaurantId)) {
+                                        $sql .= " AND rs_id = '$restaurantId'";
+                                    }
                                     $result = mysqli_query($index->con, $sql);
                                     echo mysqli_num_rows($result);
+
                                     ?>
                                 </h1>
                             </div>
@@ -110,9 +217,10 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
                                 </div>
                                 <h1 class="fw-bold text-secondary mb-0">
                                     <?php
-                                    $sql = "SELECT * FROM res_category";
+                                    $sql = "SELECT * FROM res_category"; // Usually static, no date filtering
                                     $result = mysqli_query($index->con, $sql);
                                     echo mysqli_num_rows($result);
+
                                     ?>
                                 </h1>
                             </div>
@@ -130,15 +238,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-body">
                             <h5 class="card-title fw-semibold mb-4">Earnings</h5>
-                            <div class="mb-4">
-                                <label for="filter" class="form-label">Select Filter:</label>
-                                <select id="filter" onchange="changeFilter()" class="form-select">
-                                    <option value="monthly" <?php if (isset($_GET['filter']) && $_GET['filter'] == 'monthly')
-                                                                echo 'selected'; ?>>Monthly</option>
-                                    <option value="quarterly" <?php if (isset($_GET['filter']) && $_GET['filter'] == 'quarterly')
-                                                                    echo 'selected'; ?>>Quarterly</option>
-                                </select>
-                            </div>
+
                             <canvas id="earningsChart"></canvas>
                         </div>
                     </div>
@@ -169,7 +269,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
                                         </tr>
                                     </thead>
                                     <tbody>
-
                                         <?php
                                         $result = $index->getRecentTransactions();
                                         while ($row = mysqli_fetch_array($result)) {
@@ -240,48 +339,43 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
     </div>
 
     <?php
-
     $stall_id = $_SESSION['user_id'];
 
-    // Get monthly earnings (₱) for the entire year
+
     $query = "SELECT 
     MONTH(order_date) AS month_number,
     MONTHNAME(order_date) AS month_name,
     SUM(total_price) AS total_earnings
     FROM transaction
-    WHERE status = 'order_delivered'
-    AND YEAR(order_date) = YEAR(CURDATE())
+    WHERE $conditions
     GROUP BY month_number
     ORDER BY month_number
     ";
-
     $stmt = $index->con->prepare($query);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    $earnings = array_fill(1, 12, 0); // Initialize all months with 0 earnings
+    $earnings = array_fill(1, 12, 0);
 
     while ($row = $result->fetch_assoc()) {
         $earnings[(int)$row['month_number']] = (float)$row['total_earnings'];
     }
 
     $chartData = json_encode(array_values($earnings), JSON_NUMERIC_CHECK);
+
     ?>
-
-
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // Data from PHP
-        let chartData = <?php echo $chartData; ?>;
 
-        // Month labels
+
+
+    <!-- for charts -->
+    <script>
+        let chartData = <?php echo $chartData; ?>;
         const monthLabels = [
             'January', 'February', 'March', 'April', 'May', 'June',
             'July', 'August', 'September', 'October', 'November', 'December'
         ];
 
-        // Create Chart.js Line or Bar Chart
         const ctx = document.getElementById('earningsChart').getContext('2d');
         const earningsChart = new Chart(ctx, {
             type: 'bar', // You can change to 'line' if you prefer
@@ -318,9 +412,13 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
             window.location.href = "?filter=" + selectedFilter;
         }
     </script>
-
-
-
+    <script>
+        function applyFilters() {
+            const filter = document.getElementById('filter').value;
+            const restaurant = document.getElementById('restaurant').value;
+            window.location.href = `?filter=${filter}&restaurant=${restaurant}`;
+        }
+    </script>
 </div>
 </div>
 </div>
