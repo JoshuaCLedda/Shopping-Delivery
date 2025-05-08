@@ -8,7 +8,7 @@ CREATE TABLE `activity_log` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `activity_log` VALUES("1","36","Logged in","Successful login from IP address ::1","2025-05-08 11:02:16",NULL);
 INSERT INTO `activity_log` VALUES("2","36","Added new restaurant","New restaurant added with name: Coffe Restau","2025-05-08 11:13:23",NULL);
@@ -16,6 +16,21 @@ INSERT INTO `activity_log` VALUES("3","36","Updated category","Updated category 
 INSERT INTO `activity_log` VALUES("4","36","Updated category","Updated category with ID: 1, Name: Snack, Status: 1","2025-05-08 11:23:12",NULL);
 INSERT INTO `activity_log` VALUES("5","40","User Registration","New user \'fyzov\' registered with email \'noqyc@mailinator.com\'.","2025-05-08 11:26:07",NULL);
 INSERT INTO `activity_log` VALUES("6","26","Updated rider application status","Updated rider application status for rider ID 26 to \"inactive\"","2025-05-08 11:26:51",NULL);
+INSERT INTO `activity_log` VALUES("7","19","Logged in","Successful login from IP address ::1","2025-05-08 11:32:51",NULL);
+INSERT INTO `activity_log` VALUES("8","19","Deleted Cart Item","Cart item with ID 15 was deleted.","2025-05-08 11:49:13",NULL);
+INSERT INTO `activity_log` VALUES("9","19","Deleted Cart Item","Cart item with ID 16 was deleted.","2025-05-08 11:51:35",NULL);
+INSERT INTO `activity_log` VALUES("10","19","Deleted Cart Item","Cart item with ID 17 was deleted.","2025-05-08 11:52:25",NULL);
+INSERT INTO `activity_log` VALUES("11","19","Checked out order","User ID 19 placed an order (Transaction ID: 111) with total ₱80.00","2025-05-08 11:53:16",NULL);
+INSERT INTO `activity_log` VALUES("12","19","Rated rider","Rated rider Reiss Mia (ID: 19) with a rating of 3 for transaction ID 97","2025-05-08 11:54:26",NULL);
+INSERT INTO `activity_log` VALUES("13","19","Rated rider","Rated rider Reiss Mia (ID: 19) with a rating of 4 for transaction ID 97","2025-05-08 11:54:45",NULL);
+INSERT INTO `activity_log` VALUES("14","19","Rated restaurant","Rated restaurant \"Restraurant 2\" (ID: 16) with a rating of 3. Complaint: ","2025-05-08 13:11:18",NULL);
+INSERT INTO `activity_log` VALUES("15","36","Logged in","Successful login from IP address ::1","2025-05-08 13:12:52",NULL);
+INSERT INTO `activity_log` VALUES("16","36","Updated menu item","Updated dish with ID: 1, Title: Kwek-Kwek","2025-05-08 13:20:13",NULL);
+INSERT INTO `activity_log` VALUES("17","36","Updated menu item","Updated dish with ID: 7, Title: Desiree Harrell","2025-05-08 14:01:52",NULL);
+INSERT INTO `activity_log` VALUES("18","36","Updated menu item","Updated dish with ID: 7, Title: Desiree Harrell","2025-05-08 14:02:00",NULL);
+INSERT INTO `activity_log` VALUES("19","36","Updated menu item","Updated dish with ID: 8, Title: Desiree Harrell","2025-05-08 14:02:15",NULL);
+INSERT INTO `activity_log` VALUES("20","36","Updated menu item","Updated dish with ID: 9, Title: Desiree Harrell","2025-05-08 14:02:32",NULL);
+INSERT INTO `activity_log` VALUES("21","36","Updated menu item","Updated dish with ID: 1, Title: Kwek-Kwek","2025-05-08 14:02:41",NULL);
 
 
 
@@ -41,7 +56,7 @@ CREATE TABLE `carts` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4;
 
 
 
@@ -76,12 +91,12 @@ CREATE TABLE `dishes` (
   PRIMARY KEY (`d_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO `dishes` VALUES("1","16","1","Kwek-Kwek","29","3 pcs","20.00",NULL,"0","2025-05-08 10:51:08");
+INSERT INTO `dishes` VALUES("1","17","1","Kwek-Kwek","29","3 pcs","20.00","1746684161_3.jpg","0","2025-05-08 10:51:08");
 INSERT INTO `dishes` VALUES("2","17","4","Spaghetti","8","1 order","30.00","1746362943_3.jpeg","1","2025-05-08 10:51:08");
-INSERT INTO `dishes` VALUES("3","17","5","Pansit PalabokDASDAS","13","1 order","30.00","1746362931_7.jpeg","1","2025-05-08 10:51:08");
-INSERT INTO `dishes` VALUES("7","16","1","Desiree Harrell","15","Est corrupti eius ","661.00","test.jpg","0","2025-05-08 10:51:08");
-INSERT INTO `dishes` VALUES("8","17","5","Desiree Harrell","14","Est corrupti eius ","661.00","67fb8c77c646b.png","0","2025-05-08 10:51:08");
-INSERT INTO `dishes` VALUES("9","17","4","Desiree Harrell","30","Est corrupti eius ","661.00",NULL,"0","2025-05-08 10:51:08");
+INSERT INTO `dishes` VALUES("3","17","5","Pansit PalabokDASDAS","12","1 order","30.00","1746362931_7.jpeg","1","2025-05-08 10:51:08");
+INSERT INTO `dishes` VALUES("7","16","1","Desiree Harrell","15","Est corrupti eius ","661.00","1746684120_5.jpg","0","2025-05-08 10:51:08");
+INSERT INTO `dishes` VALUES("8","17","5","Desiree Harrell","14","Est corrupti eius ","661.00","1746684135_6.jpg","0","2025-05-08 10:51:08");
+INSERT INTO `dishes` VALUES("9","17","4","Desiree Harrell","30","Est corrupti eius ","661.00","1746684152_11.jpg","0","2025-05-08 10:51:08");
 
 
 
@@ -94,7 +109,7 @@ CREATE TABLE `order_items` (
   `updated_at` datetime NOT NULL DEFAULT current_timestamp(),
   `created_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `order_items` VALUES("1","txn_6805f0969c2c2","1","3","60","2025-04-21 15:15:34",NULL);
 INSERT INTO `order_items` VALUES("2","txn_6805f0969c2c2","2","1","30","2025-04-21 15:15:34",NULL);
@@ -120,6 +135,7 @@ INSERT INTO `order_items` VALUES("24","107","2","1","30","2025-05-04 17:50:31",N
 INSERT INTO `order_items` VALUES("25","108","2","2","60","2025-05-04 17:59:48",NULL);
 INSERT INTO `order_items` VALUES("26","109","3","1","30","2025-05-04 18:16:01",NULL);
 INSERT INTO `order_items` VALUES("27","110","1","1","20","2025-05-04 18:19:52",NULL);
+INSERT INTO `order_items` VALUES("28","111","3","1","30","2025-05-08 11:53:16",NULL);
 
 
 
@@ -133,7 +149,7 @@ CREATE TABLE `rating_rider` (
   `complaint` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `rating_rider` VALUES("1","19","0","8","Andreigh Lee Dolormente","1","werdtfuyguhi","2025-03-17 13:51:42");
 INSERT INTO `rating_rider` VALUES("3","19","0",NULL,"Maxine Wilkins","1","","2025-03-24 15:33:18");
@@ -145,6 +161,8 @@ INSERT INTO `rating_rider` VALUES("15","0","0",NULL,"Maxine Wilkins","0","","202
 INSERT INTO `rating_rider` VALUES("16","0","0",NULL,"Andreigh Lee Dolormente","0","Sed sit laborum enim","2025-04-10 09:04:37");
 INSERT INTO `rating_rider` VALUES("20","19",NULL,NULL,"Reiss Mia","3","","2025-05-02 15:01:03");
 INSERT INTO `rating_rider` VALUES("21","19",NULL,"97","Reiss Mia","1","dsadsa","2025-05-02 16:08:46");
+INSERT INTO `rating_rider` VALUES("22","19",NULL,"97","Reiss Mia","3","Test","2025-05-08 11:54:26");
+INSERT INTO `rating_rider` VALUES("23","19",NULL,"97","Reiss Mia","4","Trest","2025-05-08 11:54:45");
 
 
 
@@ -210,6 +228,7 @@ INSERT INTO `restaurant` VALUES("26","1","Coffe Restau","pibu@mailinator.com","+
 CREATE TABLE `restaurant_ratings` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
+  `transaction_id` int(11) DEFAULT NULL,
   `restaurant_user_id` int(11) NOT NULL,
   `order_id` int(11) DEFAULT NULL,
   `restaurant_id` int(11) NOT NULL,
@@ -218,9 +237,10 @@ CREATE TABLE `restaurant_ratings` (
   `complaint` varchar(200) NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO `restaurant_ratings` VALUES("1","7","0",NULL,"17","Quon Massey","2","Illo enim tempore o","2025-04-10 09:27:08");
+INSERT INTO `restaurant_ratings` VALUES("1","7",NULL,"0",NULL,"17","Quon Massey","2","Illo enim tempore o","2025-04-10 09:27:08");
+INSERT INTO `restaurant_ratings` VALUES("2","19","97","0",NULL,"16","Restraurant 2","3","","2025-05-08 13:11:18");
 
 
 
@@ -272,7 +292,7 @@ CREATE TABLE `transaction` (
   PRIMARY KEY (`id`),
   KEY `u_id` (`u_id`),
   KEY `rs_id` (`rs_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=111 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=112 DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `transaction` VALUES("97","19","19","Tenetur voluptas eum","60.00","2025-05-08 13:42:40",NULL,"order_delivered","Paid",NULL,"16",NULL,NULL,"COD","",NULL,"2025-05-02 14:04:24");
 INSERT INTO `transaction` VALUES("98","19",NULL,"Sapilang Bacnotan","80.00","2025-05-07 14:02:18",NULL,"order_received","Paid",NULL,"16",NULL,NULL,"COD","",NULL,NULL);
@@ -288,6 +308,7 @@ INSERT INTO `transaction` VALUES("107","38",NULL,"Sapilang","60.00","2025-05-04 
 INSERT INTO `transaction` VALUES("108","38",NULL,"Sapilang","90.00","2025-05-04 11:59:48",NULL,"place_order","Paid",NULL,NULL,NULL,NULL,"COD","",NULL,NULL);
 INSERT INTO `transaction` VALUES("109","38",NULL,"Facilis odit quo imp","60.00","2025-05-04 12:16:01",NULL,"place_order","Paid",NULL,NULL,NULL,NULL,"COD","",NULL,NULL);
 INSERT INTO `transaction` VALUES("110","38",NULL,"Sapilang","50.00","2025-05-04 12:19:52",NULL,"place_order","Paid",NULL,NULL,NULL,NULL,"COD","",NULL,NULL);
+INSERT INTO `transaction` VALUES("111","19",NULL,"Sapilang","80.00","2025-05-08 05:53:16",NULL,"place_order","Paid",NULL,NULL,NULL,NULL,"COD","",NULL,NULL);
 
 
 

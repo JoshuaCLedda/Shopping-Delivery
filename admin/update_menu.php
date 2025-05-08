@@ -20,7 +20,7 @@ if (isset($_GET['menu_upd'])) {
 $dishesiD = $_SESSION['dishedId'] ?? null;
 
 // backend
-if (isset($_POST['submit'])) {  
+if (isset($_POST['submit'])) {
     $dishes_Id = $_POST['dishes_id'];
     $title = $_POST['title'];
     $status = $_POST['status'];
@@ -105,15 +105,15 @@ if (isset($_POST['submit'])) {
                         <div class="widget-body">
                             <form action='' method='POST' enctype="multipart/form-data">
                                 <div class="form-body">
-                           
 
-                           <?php
+
+                                    <?php
                                     $qml = "SELECT * FROM dishes WHERE d_id ='$_GET[menu_upd]'";
                                     $rest = mysqli_query($index->con, $qml);
                                     $row = mysqli_fetch_array($rest);
                                     ?>
 
-<input type="hidden" name="dishes_id" value="<?= htmlspecialchars($row['d_id']) ?>">
+                                    <input type="hidden" name="dishes_id" value="<?= htmlspecialchars($row['d_id']) ?>">
 
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
@@ -148,7 +148,7 @@ if (isset($_POST['submit'])) {
                                                 <label class="control-label">Availble Quantity</label>
                                                 <input type="text" name="available_quantity"
                                                     value="<?php echo htmlspecialchars($row['available_quantity']); ?>"
-                                                    class="form-control" >
+                                                    class="form-control">
                                             </div>
                                         </div>
 
@@ -183,12 +183,12 @@ if (isset($_POST['submit'])) {
 
 
                                         <div class="form-group col-sm-6 mb-3">
-                                        <label class="control-label">Status</label>
-                                        <select name="status" class="form-control">
-                                            <option value="0" <?= ($row['status'] == '0') ? 'selected' : ''; ?>>Active</option>
-                                            <option value="1" <?= ($row['status'] == '1') ? 'selected' : ''; ?>>Inactive</option>
-                                        </select>
-                                    </div>
+                                            <label class="control-label">Status</label>
+                                            <select name="status" class="form-control">
+                                                <option value="0" <?= ($row['status'] == '0') ? 'selected' : ''; ?>>Active</option>
+                                                <option value="1" <?= ($row['status'] == '1') ? 'selected' : ''; ?>>Inactive</option>
+                                            </select>
+                                        </div>
 
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -226,16 +226,23 @@ if (isset($_POST['submit'])) {
                                                     <img src="Res_img/<?= htmlspecialchars($row['img']) ?>"
                                                         alt="Restaurant Image" class="img-fluid"
                                                         style="max-width: 100px; max-height: 100px;">
-                                                    <button type="button" class="btn btn-sm btn-danger" id="deleteImageBtn"
-                                                        data-rs-id="<?= $rs_id ?>">
+
+
+                                                    <a href="delete_menu_image.php?menu_img=<?= $dishesiD ?>" class="btn btn-sm btn-danger">
+
                                                         <i class="bx bx-trash"></i>
-                                                    </button>
+
+                                                    </a>
+
+
+                                                    </a>
+
                                                 </div>
                                             <?php else: ?>
                                                 <div class="mt-2 text-muted">
                                                     <label class="control-label">Menu Image</label>
                                                     <input type="file" name="image" class="form-control">
-<p class="text-muted">Uploading a new image will replace the old one.</p>
+                                                    <p class="text-muted">Uploading a new image will replace the old one.</p>
 
                                                     <p class="text-danger my-3">No Image Data</p>
                                                 </div>

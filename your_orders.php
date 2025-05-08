@@ -22,7 +22,9 @@ if (empty($_SESSION['user_id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Orders</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
+    
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+<style>
         .order-card {
             background: #f8f9fa;
             border-radius: 20px;
@@ -167,8 +169,13 @@ if (empty($_SESSION['user_id'])) {
                     <?php
                         }
                     } else {
-                        echo '<div class="text-center text-muted py-5">You have no orders placed yet.</div>';
+                        echo '
+                        <div class="text-center py-5 bg-light border rounded shadow-sm">
+                            <img src="assets/images/icons/order-1.svg" alt="No Orders" class="mb-4" style="width: 200px;">
+                            <h5 class="text-secondary">You have no orders placed yet.</h5>
+                        </div>';
                     }
+                    
                     ?>
 
                 </div>

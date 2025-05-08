@@ -15,14 +15,16 @@ while ($row = mysqli_fetch_object($result)) {
     $transacId     = $row->transacId ?? 'N/A';
     $first_name    = $row->f_name ?? 'No Data';
     $last_name     = $row->l_name ?? '';
+    $orderAddress     = $row->orderAddress ?? '';
     $total_price   = $row->total_price ?? '₱0.00';
-    $restaurant    = $row->title ?? 'No Data';
+    $restaurant    = $row->restaurant ?? 'No Data';
     $order_status  = $row->status ?? 'Unknown';
     $order_date    = !empty($row->order_date) ? date("F j, Y, g:i A", strtotime($row->order_date)) : 'No Date';
     $dishesOrder  = $row->dishesOrder ?? 'Unknown';
     $dishesOrderFormatted = implode("\n", array_map('trim', explode(',', $dishesOrder)));
     $payMethod  = $row->payMethod ?? 'Unknown';
     $total_quantity  = $row->total_quantity ?? 'Unknown';
+
 
 
 
@@ -100,8 +102,6 @@ while ($row = mysqli_fetch_object($result)) {
                                             value="<?= htmlspecialchars($first_name . ' ' . $last_name) ?>" disabled>
                                     </div>
 
-
-
                                     <div class="form-group col-sm-6 mb-3">
                                         <label for="stallName">Stall</label>
                                         <input class="form-control" type="text" id="stallName" value="<?= htmlspecialchars($restaurant) ?>" disabled>
@@ -116,12 +116,6 @@ while ($row = mysqli_fetch_object($result)) {
                                         <input class="form-control" type="text" id="orderTotal" value="₱ <?= htmlspecialchars(number_format((float) $total_price, 2)) ?>" disabled>
                                     </div>
 
-
-                                    <div class="form-group col-sm-6 mb-3">
-                                        <label for="orderTotal">Total Quantity</label>
-                                        <input class="form-control" type="text" id="orderTotal"
-                                            value="<?= htmlspecialchars($total_quantity) ?>" disabled>
-                                    </div>
 
 
                                     <div class="form-group col-sm-6 mb-3">
@@ -148,7 +142,7 @@ while ($row = mysqli_fetch_object($result)) {
 
                                     <div class="form-group col-sm-6 mb-3">
                                         <label for="deliveryAddress">Delivery Address</label>
-                                        <textarea class="form-control" id="deliveryAddress" name="delivery_address" rows="3" disabled><?= htmlspecialchars($row->address ?? 'No Address') ?></textarea>
+                                        <textarea class="form-control" id="deliveryAddress" name="delivery_address" rows="3" disabled><?= htmlspecialchars($orderAddress) ?></textarea>
                                     </div>
 
                                     <div class="col-12">

@@ -6,7 +6,7 @@ session_start();
 ?>
 
 <?php include "layouts/header.php"; ?>
-<?php include "layouts/navbar.php"; ?>
+<?php include 'layouts/navbar.php'; ?>
 
 
 
@@ -18,7 +18,6 @@ session_start();
 
             <div class="banner-form">
                 <form class="form-inline">
-
                 </form>
             </div>
             <div class="steps">
@@ -69,42 +68,69 @@ session_start();
             <p class="lead text-muted">Easiest way to order your favourite food among these top 6 dishes</p>
         </div>
 
-        <!-- Restaurant Cards -->
         <div class="row g-4">
             <?php
+            date_default_timezone_set('Asia/Manila'); // Set your timezone accordingly
+            $current_time = date('H:i'); // Current time in 24-hour format (e.g. 13:30)
+
             $query_res = mysqli_query($db, "SELECT * FROM restaurant WHERE status = 0");
             while ($r = mysqli_fetch_array($query_res)):
+                $restaurantId = htmlspecialchars($r['rs_id']);
+                $restaurantTitle = htmlspecialchars($r['title']);
+                $restaurantImage = htmlspecialchars($r['image']);
+                $restaurantAddress = htmlspecialchars($r['address']);
+                $o_hr = htmlspecialchars($r['o_hr']);
+                $c_hr = htmlspecialchars($r['c_hr']);
+
+                // Convert opening and closing hours to 24-hour format
+                $open_time = date('H:i', strtotime($o_hr));
+                $close_time = date('H:i', strtotime($c_hr));
+
+                // Check if current time is within operating hours
+                $is_open = ($current_time >= $open_time && $current_time <= $close_time);
             ?>
                 <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 shadow-sm border-0">
-                        <!-- Image -->
-                        <div style="background-image: url('admin/<?= htmlspecialchars($r['image']) ?>');
-                                    background-size: cover;
-                                    background-position: center;
-                                    height: 200px;
-                                    border-top-left-radius: .375rem;
-                                    border-top-right-radius: .375rem;">
-                        </div>
+                    <div class="card shadow-sm h-100 border-0 position-relative">
+                        <?php if ($is_open): ?>
+                            <a href="dishes.php?res_id=<?= $restaurantId ?>" class="text-decoration-none text-dark">
+                            <?php else: ?>
+                                <div class="text-decoration-none text-muted" style="cursor: not-allowed;">
+                                <?php endif; ?>
 
-                        <!-- Content -->
-                        <div class="card-body">
-                            <h5 class="card-title mb-1">
-                                <a href="dishes.php?res_id=<?= htmlspecialchars($r['rs_id']) ?>" class="text-decoration-none text-dark fw-semibold">
-                                    <?= htmlspecialchars($r['title']) ?>
-                                </a>
-                            </h5>
-                            <p class="text-muted mb-2 small">
-                                <?= !empty($r['address']) ? htmlspecialchars($r['address']) : 'Address Not Available' ?>
-                            </p>
-                            <p class="text-uppercase text-secondary small mb-3">
-                              Open From:  <?= htmlspecialchars($r['o_hr']) ?> - <?= htmlspecialchars($r['c_hr']) ?>
-                            </p>
-                            <a href="dishes.php?res_id=<?= htmlspecialchars($r['rs_id']) ?>" class="btn btn-outline-primary btn-sm w-100">View Stall</a>
-                        </div>
+                                <div class="card-img-top"
+                                    style="background-image: url('admin/<?= $restaurantImage ?>');
+                                background-size: cover;
+                                background-position: center;
+                                height: 160px;
+                                border-top-left-radius: .5rem;
+                                border-top-right-radius: .5rem;
+                                opacity: <?= $is_open ? '1' : '0.6' ?>;">
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title mb-1"><?= $restaurantTitle ?></h5>
+                                    <p class="card-text text-muted small mb-1">
+                                        <i class='bx bx-map-pin'></i>
+                                        <?= !empty($restaurantAddress) ? $restaurantAddress : '<em>No Address</em>' ?>
+                                    </p>
+                                    <p class="card-text text-uppercase text-secondary small">
+                                        <i class='bx bx-time'></i> <?= $o_hr ?> - <?= $c_hr ?>
+                                    </p>
+                                    <?php if (!$is_open): ?>
+                                        <span class="badge bg-danger">Store Closed</span>
+                                    <?php endif; ?>
+                                </div>
+
+                                <?php if ($is_open): ?>
+                            </a>
+                        <?php else: ?>
                     </div>
+                <?php endif; ?>
                 </div>
-            <?php endwhile; ?>
         </div>
+    <?php endwhile; ?>
+    </div>
+
+
     </div>
 </section>
 
@@ -177,17 +203,17 @@ session_start();
 
         <!-- Header -->
         <div class="row align-items-center mb-4">
-            <div class="col-sm-6">
-                <h4 class="fw-bold mb-0">
-                    <i class='bx bxs-star'></i> Featured Stalls
-                </h4>
+            <div class="text-center mb-4">
+                <h2 class="fw-bold">Featured Stalls</h2>
+                <p class="lead text-muted">Here are the stalls recomendation</p>
             </div>
-            <div class="col-sm-6 text-sm-end">
+            <!-- Commented for the meantime -->
+            <!-- <div class="col-sm-6 text-sm-end">
                 <ul class="list-inline mb-0">
                     <li class="list-inline-item">
                         <a href="#" class="btn btn-outline-primary btn-sm active" data-filter="*">All</a>
                     </li>
-                    <?php
+                    ?php
                     $res = mysqli_query($db, "SELECT * FROM res_category");
                     while ($row = mysqli_fetch_array($res)) {
                         echo '<li class="list-inline-item">
@@ -196,12 +222,15 @@ session_start();
                     }
                     ?>
                 </ul>
-            </div>
+            </div> -->
         </div>
 
         <!-- Restaurant Cards -->
         <div class="row g-4">
             <?php
+            date_default_timezone_set('Asia/Manila'); // Adjust to your timezone
+            $current_time = date('H:i');
+
             $ress = mysqli_query($db, "SELECT * FROM restaurant");
             while ($rows = mysqli_fetch_array($ress)) {
                 $query = mysqli_query($db, "SELECT * FROM res_category WHERE c_id = '" . $rows['c_id'] . "'");
@@ -214,26 +243,53 @@ session_start();
                 $restaurantImage = htmlspecialchars($rows['image']);
                 $o_hr = htmlspecialchars($rows['o_hr']);
                 $c_hr = htmlspecialchars($rows['c_hr']);
+
+                // Convert to 24-hour format
+                $open_time = date('H:i', strtotime($o_hr));
+                $close_time = date('H:i', strtotime($c_hr));
+                $is_open = ($current_time >= $open_time && $current_time <= $close_time);
             ?>
                 <div class="col-md-6 col-lg-4 <?= $categoryClass ?>">
-                    <div class="card shadow-sm h-100 border-0">
-                        <a href="dishes.php?res_id=<?= $restaurantId ?>" class="text-decoration-none text-dark">
-                            <div class="card-img-top" style="background-image: url('admin/<?= $restaurantImage ?>'); background-size: cover; background-position: center; height: 150px; border-top-left-radius: .5rem; border-top-right-radius: .5rem;"></div>
-                            <div class="card-body">
-                                <h5 class="card-title mb-1"><?= $restaurantTitle ?></h5>
-                                <p class="card-text text-muted small mb-1">
-                                    <i class='bx bx-map-pin'></i>
-                                    <?= !empty($restaurantAddress) ? $restaurantAddress : '<em>No Address</em>' ?>
-                                </p>
-                                <p class="card-text text-uppercase text-secondary small">
-                                    <i class='bx bx-time'></i> <?= $o_hr ?> - <?= $c_hr ?>
-                                </p>
-                            </div>
-                        </a>
+                    <div class="card shadow-sm h-100 border-0 position-relative">
+                        <?php if ($is_open): ?>
+                            <a href="dishes.php?res_id=<?= $restaurantId ?>" class="text-decoration-none text-dark">
+                            <?php else: ?>
+                                <div class="text-decoration-none text-muted" style="cursor: not-allowed;">
+                                <?php endif; ?>
+
+                                <div class="card-img-top"
+                                    style="background-image: url('admin/<?= $restaurantImage ?>');
+                                background-size: cover;
+                                background-position: center;
+                                height: 150px;
+                                border-top-left-radius: .5rem;
+                                border-top-right-radius: .5rem;
+                                opacity: <?= $is_open ? '1' : '0.6' ?>;">
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title mb-1"><?= $restaurantTitle ?></h5>
+                                    <p class="card-text text-muted small mb-1">
+                                        <i class='bx bx-map-pin'></i>
+                                        <?= !empty($restaurantAddress) ? $restaurantAddress : '<em>No Address</em>' ?>
+                                    </p>
+                                    <p class="card-text text-uppercase text-secondary small">
+                                        <i class='bx bx-time'></i> <?= $o_hr ?> - <?= $c_hr ?>
+                                    </p>
+                                    <?php if (!$is_open): ?>
+                                        <span class="badge bg-danger">Store Closed</span>
+                                    <?php endif; ?>
+                                </div>
+
+                                <?php if ($is_open): ?>
+                            </a>
+                        <?php else: ?>
                     </div>
+                <?php endif; ?>
                 </div>
-            <?php } ?>
         </div>
+    <?php } ?>
+    </div>
+
     </div>
 </section>
 

@@ -334,29 +334,29 @@ class Index
         $complaint = mysqli_real_escape_string($this->con, $complaint);
         $user_id = mysqli_real_escape_string($this->con, $user_id);
         $transaction_id = mysqli_real_escape_string($this->con, $transaction_id);
-    
+
         // Insert into restaurant_rating table
         $sql = "INSERT INTO restaurant_ratings (user_id, transaction_id, restaurant_id, stall_name, rating, complaint) 
                 VALUES ('$user_id', '$transaction_id',  '$restaurant_id', '$stall_name', '$rating', '$complaint')";
-    
+
         $result = mysqli_query($this->con, $sql);
-    
+
         if ($result) {
             // Log the activity (rating a restaurant)
             $activity = 'Rated restaurant';
             $details = 'Rated restaurant "' . $stall_name . '" (ID: ' . $restaurant_id . ') with a rating of ' . $rating . '. Complaint: ' . $complaint;
-    
+
             // Insert log into activity_log table
             $logStmt = $this->con->prepare("INSERT INTO activity_log (user_id, activity, details) VALUES (?, ?, ?)");
             $logStmt->bind_param("iss", $user_id, $activity, $details);
             $logStmt->execute();
-    
+
             return true; // Rating added and log created
         } else {
             return false; // Rating not added
         }
     }
-    
+
 
     public function getStallRatings()
     {
@@ -490,7 +490,7 @@ class Index
                 FROM transaction
                 LEFT JOIN users ON users.u_id = transaction.u_id
                 LEFT JOIN restaurant ON restaurant.rs_id = transaction.rs_id
-                WHERE transaction.status = 'order_placed'
+                WHERE transaction.status = 'place_order'
                 ORDER BY transaction.order_date DESC";
 
         $result = mysqli_query($this->con, $sql);
@@ -505,13 +505,13 @@ class Index
     {
         $sql = "SELECT 
         transaction.id AS transacId,
-        transaction.address,
+        transaction.address AS orderAddress,
         users.f_name, 
         users.l_name, 
         transaction.total_price,
         transaction.status,
         transaction.order_date,
-        restaurant.title as Restaurant,
+        restaurant.title as restaurant,
         transaction.payment_method AS payMethod,
         transaction.total_quantity,
         restaurant.rs_id AS restaurantId
@@ -549,28 +549,28 @@ class Index
         // Escape variables to prevent SQL injection
         $id = mysqli_real_escape_string($this->con, $id);
         $status = mysqli_real_escape_string($this->con, $status);
-    
+
         // Update the status of the rider
         $sql = "UPDATE users SET status = '$status' WHERE u_id = '$id'";
-    
+
         $result = mysqli_query($this->con, $sql);
-    
+
         if ($result) {
             // Log the activity (updating rider status)
             $activity = 'Updated rider application status';
             $details = 'Updated rider application status for rider ID ' . $id . ' to "' . $status . '"';
-    
+
             // Insert log into activity_log table
             $logStmt = $this->con->prepare("INSERT INTO activity_log (user_id, activity, details) VALUES (?, ?, ?)");
             $logStmt->bind_param("iss", $id, $activity, $details); // Log the admin user, activity, and details
             $logStmt->execute();
-    
+
             return true; // Rider application status updated and log created
         } else {
             return false; // Update failed
         }
     }
-    
+
 
     public function getRiderRatings($u_id)
     {
@@ -616,29 +616,29 @@ class Index
     {
         // Escape the user ID to prevent SQL injection
         $u_id = mysqli_real_escape_string($this->con, $u_id);
-    
+
         // Set the rider's status to 'banned' (terminate status)
         $sql = "UPDATE users SET status = 'banned' WHERE u_id = $u_id";
-    
+
         $result = mysqli_query($this->con, $sql);
-    
+
         if (!$result) {
             error_log("Terminate Error: " . mysqli_error($this->con));
             return false;  // Return false if the query fails
         }
-    
+
         // Log the activity if the update was successful
         $activity = 'Terminated rider account';
         $details = 'Terminated rider account with user ID ' . $u_id;
-    
+
         // Insert log into activity_log table
         $logStmt = $this->con->prepare("INSERT INTO activity_log (user_id, activity, details) VALUES (?, ?, ?)");
         $logStmt->bind_param("iss", $u_id, $activity, $details); // Log the admin user, activity, and details
         $logStmt->execute();
-    
+
         return true;  // Return true if the update was successful and log created
     }
-    
+
 
     public function getRiderStatus($u_id)
     {
@@ -708,7 +708,7 @@ class Index
         $o_days = mysqli_real_escape_string($this->con, $o_days);
         $c_name = mysqli_real_escape_string($this->con, $c_name);
         $address = mysqli_real_escape_string($this->con, $address);
-    
+
         // Prepare base query
         $sql = "UPDATE restaurant SET 
                     title = '$res_name',
@@ -720,19 +720,19 @@ class Index
                     o_days = '$o_days',
                     address = '$address',
                     c_id = '$c_name'";
-    
+
         // If image is uploaded, handle it
         if (!empty($image['name'])) {
             $imageName = basename($image['name']);
             $imageTmp = $image['tmp_name'];
             $imageFolder = "Res_img/";
-    
+
             if (!is_dir($imageFolder)) {
                 mkdir($imageFolder, 0777, true);
             }
-    
+
             $targetPath = $imageFolder . time() . "_" . $imageName;
-    
+
             if (move_uploaded_file($imageTmp, $targetPath)) {
                 $imagePathForDB = mysqli_real_escape_string($this->con, $targetPath);
                 $sql .= ", image = '$imagePathForDB'";
@@ -740,31 +740,31 @@ class Index
                 return false; // Image upload failed
             }
         }
-    
+
         // Finish query
         $sql .= " WHERE rs_id = '$rs_id'";
-    
+
         // Execute the update query
         $result = mysqli_query($this->con, $sql);
-    
+
         if ($result) {
             // Log the activity
             $activity = 'Updated restaurant details';
             $details = "Updated restaurant with ID: $rs_id, Name: $res_name";
-    
+
             // Insert log into activity_log table
             $logStmt = $this->con->prepare("INSERT INTO activity_log (user_id, activity, details) VALUES (?, ?, ?)");
             // Assuming the user performing the action has a session variable `user_id`
             $user_id = $_SESSION['user_id'];  // This can be set based on your session handling
             $logStmt->bind_param("iss", $user_id, $activity, $details); // Log the user, activity, and details
             $logStmt->execute();
-            
+
             return true;
         } else {
             return false;  // Return false if the update failed
         }
     }
-    
+
 
     public function getAllMenu()
     {
@@ -803,7 +803,7 @@ class Index
         $available_quantity = mysqli_real_escape_string($this->con, $available_quantity);
         $dish_category_id = mysqli_real_escape_string($this->con, $dish_category_id);
         $rs_id = mysqli_real_escape_string($this->con, $rs_id);
-    
+
         // Start building the SQL
         $sql = "UPDATE dishes SET 
         title = '$title',
@@ -813,20 +813,20 @@ class Index
         available_quantity = '$available_quantity',
         dish_category_id = '$dish_category_id',
         rs_id = '$rs_id'";
-    
+
         // Handle image upload if a new image is uploaded
         if (!empty($image) && !empty($image['name'])) {
             $imageName = basename($image['name']);
             $imageTmp = $image['tmp_name'];
             $imageFolder = "Res_img/";
-    
+
             if (!is_dir($imageFolder)) {
                 mkdir($imageFolder, 0777, true);
             }
-    
+
             $newImageName = time() . "_" . $imageName; // Unique file name
             $targetPath = $imageFolder . $newImageName;
-    
+
             if (move_uploaded_file($imageTmp, $targetPath)) {
                 $imagePathForDB = mysqli_real_escape_string($this->con, $newImageName);
                 $sql .= ", img = '$imagePathForDB'"; // Append img only if upload succeeded
@@ -834,31 +834,31 @@ class Index
                 return false; // Image upload failed
             }
         }
-    
+
         // Add the WHERE clause at the end
         $sql .= " WHERE dishes.d_id = '$dishes_Id'";
-    
+
         // Execute the update query
         $result = mysqli_query($this->con, $sql);
-    
+
         if ($result) {
             // Log the activity
             $activity = 'Updated menu item';
             $details = "Updated dish with ID: $dishes_Id, Title: $title";
-    
+
             // Insert log into activity_log table
             $logStmt = $this->con->prepare("INSERT INTO activity_log (user_id, activity, details) VALUES (?, ?, ?)");
             // Assuming the user performing the action has a session variable `user_id`
             $user_id = $_SESSION['user_id'];  // This can be set based on your session handling
             $logStmt->bind_param("iss", $user_id, $activity, $details); // Log the user, activity, and details
             $logStmt->execute();
-            
+
             return true;
         } else {
             return false;  // Return false if the update failed
         }
     }
-    
+
 
 
     // category
@@ -881,42 +881,42 @@ class Index
         $c_id = mysqli_real_escape_string($this->con, $c_id);
         $c_name = mysqli_real_escape_string($this->con, $c_name);
         $status = mysqli_real_escape_string($this->con, $status);
-    
+
         // Prepare SQL query for updating the category
         $sql = "UPDATE res_category SET c_name = '$c_name', status = '$status' WHERE c_id = '$c_id'";
-    
+
         // Execute the update query
         $result = mysqli_query($this->con, $sql);
-    
+
         if ($result) {
             // Log the activity
             $activity = 'Updated category';
             $details = "Updated category with ID: $c_id, Name: $c_name, Status: $status";
-    
+
             // Insert log into activity_log table
             $logStmt = $this->con->prepare("INSERT INTO activity_log (user_id, activity, details) VALUES (?, ?, ?)");
             // Assuming the user performing the action has a session variable `user_id`
             $user_id = $_SESSION['user_id'];  // This can be set based on your session handling
             $logStmt->bind_param("iss", $user_id, $activity, $details); // Log the user, activity, and details
             $logStmt->execute();
-            
+
             return true;
         } else {
             return false;  // Return false if the update failed
         }
     }
-    
+
     // Updated Profile
     public function updateProfile($user_id, $f_name, $l_name, $username, $email, $address, $password = null)
     {
         $user_id = intval($user_id); // to be safe
-    
+
         $f_name = mysqli_real_escape_string($this->con, $f_name);
         $l_name = mysqli_real_escape_string($this->con, $l_name);
         $username = mysqli_real_escape_string($this->con, $username);
         $email = mysqli_real_escape_string($this->con, $email);
         $address = mysqli_real_escape_string($this->con, $address);
-    
+
         // If password is provided, hash it
         if ($password) {
             $password = mysqli_real_escape_string($this->con, $password);
@@ -928,33 +928,33 @@ class Index
                       SET f_name='$f_name', l_name='$l_name', username='$username', email='$email', address='$address' 
                       WHERE u_id='$user_id'";
         }
-    
+
         // Execute the update query
         $result = mysqli_query($this->con, $query);
-    
+
         if ($result) {
             // Log the activity
             $activity = 'Updated user profile';
             $details = "User profile updated for user ID: $user_id, Name: $f_name $l_name, Username: $username, Email: $email";
-    
+
             // Insert log into activity_log table
             $logStmt = $this->con->prepare("INSERT INTO activity_log (user_id, activity, details) VALUES (?, ?, ?)");
             // Assuming the user performing the action has a session variable `user_id`
             $logged_in_user_id = $_SESSION['user_id'];  // Get the user who is logged in
             $logStmt->bind_param("iss", $logged_in_user_id, $activity, $details); // Log the user, activity, and details
             $logStmt->execute();
-    
+
             return true; // Return true if the update was successful
         } else {
             return false; // Return false if the update failed
         }
     }
-    
+
 
     public function updateUser($u_id, $f_name, $l_name, $username, $phone, $email, $address, $role, $password = null)
     {
         $user_id = intval($u_id); // to be safe
-    
+
         $f_name = mysqli_real_escape_string($this->con, $f_name);
         $l_name = mysqli_real_escape_string($this->con, $l_name);
         $username = mysqli_real_escape_string($this->con, $username);
@@ -962,7 +962,7 @@ class Index
         $address = mysqli_real_escape_string($this->con, $address);
         $phone = mysqli_real_escape_string($this->con, $phone);
         $role = mysqli_real_escape_string($this->con, $role);
-    
+
         // Determine the query based on whether the password is provided
         if ($password) {
             $password = mysqli_real_escape_string($this->con, $password);
@@ -978,28 +978,28 @@ class Index
                       address='$address' 
                       WHERE u_id='$user_id'";
         }
-    
+
         // Execute the update query
         $result = mysqli_query($this->con, $query);
-    
+
         if ($result) {
             // Log the activity
             $activity = 'Updated user information';
             $details = "User information updated for user ID: $user_id, Name: $f_name $l_name, Username: $username, Email: $email";
-    
+
             // Insert log into activity_log table
             $logStmt = $this->con->prepare("INSERT INTO activity_log (user_id, activity, details) VALUES (?, ?, ?)");
             // Assuming the user performing the action has a session variable `user_id`
             $logged_in_user_id = $_SESSION['user_id'];  // Get the user who is logged in
             $logStmt->bind_param("iss", $logged_in_user_id, $activity, $details); // Log the user, activity, and details
             $logStmt->execute();
-    
+
             return true; // Return true if the update was successful
         } else {
             return false; // Return false if the update failed
         }
     }
-    
+
 
 
     public function ridersReceivedOrder($user_id)
@@ -1129,7 +1129,9 @@ class Index
                     carts.quantity * dishes.price AS totalPrice,
                     dishes.title AS dishName,
                     dishes.rs_id,
-                    restaurant.title AS restaurantName
+                    restaurant.title AS restaurantName,
+                    restaurant.o_hr,  -- Operating hour (open)
+                    restaurant.c_hr   -- Closing hour
                 FROM carts
                 LEFT JOIN dishes ON dishes.d_id = carts.dishes_id
                 LEFT JOIN restaurant ON restaurant.rs_id = dishes.rs_id
@@ -1143,6 +1145,7 @@ class Index
 
         return $result;
     }
+
 
 
     public function viewCheckOutDetails($cartId)
@@ -1184,10 +1187,10 @@ class Index
         $total_price   = mysqli_real_escape_string($this->con, $total_price);
         $userAddress   = mysqli_real_escape_string($this->con, $userAddress);
         $address       = mysqli_real_escape_string($this->con, $address);
-    
+
         $order_date = date("Y-m-d H:i:s");
         $payment_status = ($mod == "GCash" && $gcash_proof) ? "Pending" : "Paid";
-    
+
         $sql = "INSERT INTO transaction (
                     u_id, total_price, address, order_date, status, payment_status, payment_method, gcash_proof
                 ) 
@@ -1195,24 +1198,24 @@ class Index
                     '$user_id', '$total_price', '$address', '$order_date', 'place_order',
                     '$payment_status', '$mod', '$gcash_proof'
                 )";
-    
+
         if (mysqli_query($this->con, $sql)) {
             $transaction_id = mysqli_insert_id($this->con);
-    
+
             // Log the activity after successful checkout
             $activity = "Checked out order";
             $details = "User ID $user_id placed an order (Transaction ID: $transaction_id) with total ₱$total_price";
-    
+
             $logStmt = $this->con->prepare("INSERT INTO activity_log (user_id, activity, details) VALUES (?, ?, ?)");
             $logStmt->bind_param("iss", $user_id, $activity, $details);
             $logStmt->execute();
-    
+
             return $transaction_id;
         } else {
             return false;
         }
     }
-    
+
     public function viewOrderItems($transacId)
     {
         $transacId = mysqli_real_escape_string($this->con, $transacId); // security: prevent SQL injection
@@ -1236,23 +1239,23 @@ class Index
 
     public function deleteCartItem($cartId)
     {
-    
+
         $cartId = mysqli_real_escape_string($this->con, $cartId);
         $result = mysqli_query($this->con, "DELETE FROM carts WHERE id = '$cartId'");
-    
+
         if ($result && isset($_SESSION['user_id'])) {
             $user_id = $_SESSION['user_id'];
             $activity = "Deleted Cart Item";
             $details = "Cart item with ID $cartId was deleted.";
-    
+
             $logStmt = $this->con->prepare("INSERT INTO activity_log (user_id, activity, details) VALUES (?, ?, ?)");
             $logStmt->bind_param("iss", $user_id, $activity, $details);
             $logStmt->execute();
         }
-    
+
         return $result;
     }
-    
+
 
 
     public function getActiveUsers()
@@ -1297,13 +1300,38 @@ class Index
                 FROM activity_log
                 LEFT JOIN users ON users.u_id = activity_log.user_id
                 ORDER BY activity_log.created_at DESC";
-    
+
         $result = mysqli_query($this->con, $sql);
         if (!$result) {
             die('Query failed: ' . mysqli_error($this->con));
         }
-    
+
         return $result;
     }
-    
+
+    public function getDeliveredOrders()
+    {
+        // Corrected SQL query
+        $sql = "SELECT 
+                    transaction.id AS transacId,
+                    users.f_name, 
+                    users.l_name, 
+                    transaction.total_price,
+                    transaction.status,
+                    transaction.order_date,
+                    restaurant.title
+                FROM transaction
+                LEFT JOIN users ON users.u_id = transaction.u_id
+                LEFT JOIN restaurant ON restaurant.rs_id = transaction.rs_id
+                WHERE transaction.status = 'order_delivered'
+                ORDER BY transaction.order_date DESC";
+
+        $result = mysqli_query($this->con, $sql);
+
+        if (!$result) {
+            die('Query failed:   ' . mysqli_error($this->con));
+        }
+
+        return $result;
+    }
 }

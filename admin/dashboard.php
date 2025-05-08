@@ -61,6 +61,7 @@ if ($filter == 'monthly') {
 <?php include 'layouts/header.php' ?>
 <?php include 'layouts/sidebar.php' ?>
 <?php include 'layouts/navbar.php' ?>
+<?php include 'layouts/sweetalert.php' ?>
 
 <div id="main">
     <div class="main-container">
@@ -75,7 +76,6 @@ if ($filter == 'monthly') {
                 </nav>
             </div>
         </div>
-
 
 
         <div class="col-lg-12">

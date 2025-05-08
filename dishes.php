@@ -46,11 +46,9 @@ if (isset($_POST['submit'])) {
     } else {
         $_SESSION['message'] = ['type' => 'danger', 'message' => 'Failed to add item to cart.'];
     }
-    
+
     header("Location: stall_menus.php?res_id=" . $_GET['res_id']);
     exit();
-    
-    
 }
 
 
@@ -59,37 +57,32 @@ if (isset($_POST['submit'])) {
 <?php include 'layouts/header.php'; ?>
 <?php include 'layouts/navbar.php'; ?>
 
-
-<div class="page-wrapper">
-    <div class="bg-light py-3 border-bottom">
-        <div class="container">
-            <div class="row text-center">
-
-                <div class="col-md-4 mb-2">
-                    <div class="p-2 rounded <?= !isset($_GET['res_id']) ? 'bg-primary text-white' : '' ?>">
-                        <span class="fw-bold me-2">1</span>
-                        <a href="restaurants.php" class="text-decoration-none <?= !isset($_GET['res_id']) ? 'text-white' : 'text-dark' ?>">Choose Stall</a>
-                    </div>
+<div class="top-links 
+bg-light border-bottom">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-12 col-sm-4 mb-2 mb-sm-0">
+                <div class="link-item active">
+                    <i class='bx bx-store-alt fs-3 mb-1'></i> <!-- Icon for Choose Stall -->
+                    <a href="#" class="d-block text-decoration-none text-dark">Choose Stall</a>
                 </div>
-
-                <div class="col-md-4 mb-2">
-                    <div class="p-2 rounded bg-primary text-white">
-                        <span class="fw-bold me-2">2</span>
-                        <a href="dishes.php?res_id=<?= $_GET['res_id'] ?>" class="text-decoration-none text-white">Pick Your Favorite Food</a>
-                    </div>
+            </div>
+            <div class="col-12 col-sm-4 mb-2 mb-sm-0 ">
+                <div class="link-item">
+                    <i class='bx bx-food-menu fs-3 mb-1 text-primary'></i> <!-- Icon for Pick Your Favorite Food -->
+                    <a href="#" class="d-block text-decoration-none text-dark">Pick Your Favorite Food</a>
                 </div>
-
-                <div class="col-md-4 mb-2">
-                    <div class="p-2 rounded <?= !isset($_GET['order']) ? 'text-dark' : 'bg-primary text-white' ?>">
-                        <span class="fw-bold me-2">3</span>
-                        <a href="#" class="text-decoration-none <?= !isset($_GET['order']) ? 'text-dark' : 'text-white' ?>">Order and Pay</a>
-                    </div>
+            </div>
+            <div class="col-12 col-sm-4">
+                <div class="link-item">
+                    <i class='bx bx-cart fs-3 mb-1'></i> <!-- Icon for Order and Pay -->
+                    <a href="#" class="d-block text-decoration-none text-dark">Order and Pay</a>
                 </div>
-
             </div>
         </div>
     </div>
 </div>
+
 
 
 
@@ -129,131 +122,100 @@ if (isset($_POST['submit'])) {
                         <span class="product-name" style="text-transform: uppercase; color: #333"> Open From:
                             <?= htmlspecialchars($rows['o_hr']) ?> - <?= htmlspecialchars($rows['c_hr']) ?>
                         </span>
-                    </div
-                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-</section>
-
-
-<div class="container m-t-30">
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="menu-widget" id="2">
-                <div class="widget-heading d-flex justify-content-between align-items-center">
-                    <h3 class="widget-title text-dark mb-0">Available Menu</h3>
-                    <a class="btn btn-link" data-bs-toggle="collapse" href="#popular2" role="button" aria-expanded="true" aria-controls="popular2">
-                        <i class="fa fa-angle-down"></i>
-                    </a>
-                </div>
-
-                <div class="collapse show" id="popular2">
-                    <?php
-                    $stmt = $index->con->prepare("SELECT * FROM dishes WHERE status = 1 AND rs_id = ?");
-                    $stmt->bind_param("i", $_GET['res_id']);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-
-                    if ($result->num_rows > 0) {
-                        while ($product = $result->fetch_assoc()) {
-                    ?>
-
-
-                            <div class="food-item py-4 border-bottom">
-                                <form method="POST" action="">
-                                    <div class="row align-items-center">
-                                        <!-- Image -->
-                                        <div class="col-12 col-sm-3 col-lg-2 mb-3 mb-sm-0">
-                                            <div class="rest-logo">
-                                                <a class="restaurant-logo d-block" href="#">
-
-
-                                                    <div class="ratio ratio-4x3 rounded shadow-sm" style="width: 100%; max-width: 120px;">
-                                                        <?php
-                                                        $imagePath = "admin/Res_img/dishes/" . htmlspecialchars($product['img']);
-                                                        if (!empty($product['img']) && file_exists($imagePath)) {
-                                                        ?>
-                                                            <img
-                                                                src="<?= $imagePath ?>"
-                                                                alt="Dish Image"
-                                                                class="img-fluid w-100 h-100 object-fit-cover rounded"
-                                                                style="border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" />
-                                                        <?php } else { ?>
-                                                            <div class="d-flex align-items-center justify-content-center bg-light text-muted w-100 h-100"
-                                                                style="border-radius: 12px; font-size: 13px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                                                                <i class="fa fa-image me-2"></i> No Image
-                                                            </div>
-                                                        <?php } ?>
-                                                    </div>
-
-                                                </a>
-                                            </div>
-                                        </div>
-
-                                        <!-- Dish Info -->
-                                        <div class="col-12 col-sm-6 col-lg-7">
-                                            <div class="rest-descr">
-                                                <h5 class="mb-1 fw-semibold text-dark"><?= htmlspecialchars($product['title']) ?></h5>
-                                                <p class="text-muted small mb-0"><?= htmlspecialchars($product['slogan']) ?></p>
-                                            </div>
-                                        </div>
-
-                                        <!-- Price + Quantity + Button -->
-                                        <div class="col-12 col-sm-3 col-lg-3 text-sm-end">
-                                            <div class="item-cart-info d-flex flex-column align-items-start align-items-sm-end">
-                                                <span class="price mb-2 fw-bold text-success fs-5">₱<?= htmlspecialchars($product['price']) ?></span>
-
-                                                <input
-                                                    class="form-control form-control-sm mb-2"
-                                                    type="number"
-                                                    name="quantity"
-                                                    value="1"
-                                                    min="1"
-                                                    style="width: 150px;" />
-
-                                                <!-- Hidden fields -->
-                                                <input type="hidden" name="dishes_id" value="<?= htmlspecialchars($product['d_id']) ?>">
-                                                <input type="hidden" name="user_id" value="<?= htmlspecialchars($_SESSION['user_id']) ?>">
-
-                                                <input
-                                                    type="submit"
-                                                    name="submit"
-                                                    class="btn btn-sm btn-primary"
-                                                    value="Add to Cart" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-
-
-
-
-                        <?php
-                        }
-                    } else {
-                        ?>
-                        <div class="py-5 text-center">
-                            <p class="text-muted fs-5">No dishes available at the moment.</p>
-                        </div>
-                    <?php
-                    }
-                    ?>
-                </div>
-
-
-
-
-
             </div>
         </div>
     </div>
+</section>
 
 
+<section class="featured-dishes py-5 bg-light">
+    <div class="container">
 
-</div>
+        <!-- Header -->
+        <div class="row align-items-center mb-4">
+            <div class="text-center mb-4">
+                <h2 class="fw-bold">Available Dishes</h2>
+                <p class="lead text-muted">Browse the dishes available at the restaurant</p>
+            </div>
+        </div>
+
+        <!-- Dish Cards -->
+        <div class="row g-4">
+            <?php
+            $stmt = $index->con->prepare("SELECT * FROM dishes WHERE status = 1 AND rs_id = ?");
+            $stmt->bind_param("i", $_GET['res_id']);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows > 0) {
+                while ($product = $result->fetch_assoc()) {
+                    $dishId = htmlspecialchars($product['d_id']);
+                    $dishTitle = htmlspecialchars($product['title']);
+                    $dishSlogan = htmlspecialchars($product['slogan']);
+                    $dishPrice = htmlspecialchars($product['price']);
+                    $dishImage = htmlspecialchars($product['img']);
+            ?>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                        <div class="card shadow-sm h-100 border-0 position-relative dish-card">
+                            <div class="card-img-top"
+                                style="background-image: url('admin/Res_img/<?= $dishImage ?>');
+                                    background-size: cover;
+                                    background-position: center;
+                                    height: 150px;
+                                    border-top-left-radius: .5rem;
+                                    border-top-right-radius: .5rem;">
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title mb-1"><?= $dishTitle ?></h5>
+                                <p class="card-text text-muted small mb-1"><?= $dishSlogan ?></p>
+                                <p class="card-text text-success fw-bold fs-5">₱<?= $dishPrice ?></p>
+
+                                <form method="POST" action="">
+                                    <div class="d-flex align-items-center">
+                                        <input class="form-control form-control-sm me-2" type="number" name="quantity" value="1" min="1" style="width: 100px;">
+                                        <input type="hidden" name="dishes_id" value="<?= $dishId ?>">
+                                        <input type="hidden" name="user_id" value="<?= htmlspecialchars($_SESSION['user_id']) ?>">
+                                        <button type="submit" name="submit" class="btn btn-sm btn-primary">Add to Cart</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                <?php
+                }
+            } else {
+                ?>
+                <div class="py-5 text-center bg-light border rounded shadow-sm col-12">
+                    <img src="assets/images/icons/cancel.svg" alt="No Dishes" class="mb-4" style="width: 200px;">
+                    <h5 class="text-secondary">No dishes available at the moment sorry.</h5>
+                </div>
+            <?php
+            }
+            ?>
+        </div>
+
+    </div>
+</section>
+
+<style>
+    .card {
+        max-width: 90%;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .dish-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .card-body {
+        transition: transform 0.3s ease;
+    }
+
+    .dish-card:hover .card-body {
+        transform: scale(1.05);
+    }
+</style>
 
 <?php include 'layouts/sweetalert.php'; ?>
 

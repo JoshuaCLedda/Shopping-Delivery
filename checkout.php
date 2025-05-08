@@ -249,6 +249,8 @@ if (isset($_POST['submit'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://kit.fontawesome.com/yourfontawesomekit.js" crossorigin="anonymous"></script> <!-- Add your FA Kit -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
     <style>
         .cart-card {
             background: #f8f9fa;
@@ -283,35 +285,32 @@ if (isset($_POST['submit'])) {
     <?php include 'layouts/navbar.php'; ?>
 
     <body class="bg-light">
-        <div class="bg-light py-3 border-bottom">
-            <div class="container">
-                <div class="row text-center">
-                    <!-- Step 1 -->
-                    <div class="col-md-4 mb-2">
-                        <div class="p-2 rounded text-dark">
-                            <span class="fw-bold me-2">1</span>
-                            <a href="restaurants.php" class="text-decoration-none text-dark">Choose Stall</a>
-                        </div>
-                    </div>
-
-                    <!-- Step 2 -->
-                    <div class="col-md-4 mb-2">
-                        <div class="p-2 rounded text-dark">
-                            <span class="fw-bold me-2">2</span>
-                            <a href="dishes.php" class="text-decoration-none text-dark">Pick Your Favorite Food</a>
-                        </div>
-                    </div>
-
-                    <!-- Step 3 (Active) -->
-                    <div class="col-md-4 mb-2">
-                        <div class="p-2 rounded bg-primary text-white">
-                            <span class="fw-bold me-2">3</span>
-                            <a href="#" class="text-decoration-none text-white">Order and Pay</a>
-                        </div>
-                    </div>
+    <div class="top-links mt-2
+bg-light border-bottom">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-12 col-sm-4 mb-2 mb-sm-0">
+                <div class="link-item active">
+                    <i class='bx bx-store-alt fs-3 mb-1'></i> <!-- Icon for Choose Stall -->
+                    <a href="#" class="d-block text-decoration-none text-dark">Choose Stall</a>
+                </div>
+            </div>
+            <div class="col-12 col-sm-4 mb-2 mb-sm-0 ">
+                <div class="link-item">
+                    <i class='bx bx-food-menu fs-3 mb-1 '></i> <!-- Icon for Pick Your Favorite Food -->
+                    <a href="#" class="d-block text-decoration-none text-dark">Pick Your Favorite Food</a>
+                </div>
+            </div>
+            <div class="col-12 col-sm-4">
+                <div class="link-item">
+                    <i class='bx bx-cart fs-3 mb-1 text-primary'></i> <!-- Icon for Order and Pay -->
+                    <a href="#" class="d-block text-decoration-none text-dark">Order and Pay</a>
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
 
 
 

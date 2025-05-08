@@ -41,7 +41,7 @@
             <span>
               <i class='bx bx-time-five'></i>
             </span>
-            <span class="hide-menu">Pending Orders</span>
+            <span class="hide-menu">Placed Orders</span>
           </a>
         </li>
 
@@ -53,6 +53,16 @@
             <span class="hide-menu">In Process Orders</span>
           </a>
         </li>
+
+        
+        <li class="sidebar-item">
+  <a class="sidebar-link" href="delivered_orders.php" aria-expanded="false">
+    <span>
+    <i class="bx bx-check-circle"></i>
+    </span>
+    <span class="hide-menu">Delivered Orders</span>
+  </a>
+</li>
 
 
         <li class="sidebar-item">
