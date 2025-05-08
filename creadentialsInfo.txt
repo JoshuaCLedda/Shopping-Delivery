@@ -1,3 +1,5 @@
+CREDENTIALS
+
 Admin
 username: admin
 password: Pa$$w0rd!
@@ -13,3 +15,48 @@ password: Pa$$w0rd!
 User
 username: user
 password: Pa$$w0rd!
+
+
+
+🛒 Order Lifecycle Process Guide
+✅ 1. Customer Places Order
+Action: Customer checks out items from the cart.
+
+System Status:
+status = placed_order
+
+Responsibility: System logs the new order, notifies the restaurant.
+
+🍽️ 2. Restaurant Accepts Order
+Action: Restaurant reviews and accepts the incoming order.
+
+System Status remains:
+status = placed_order
+
+Responsibility: Restaurant starts preparing the food.
+
+Note: You may choose to add an intermediate status like order_accepted for clarity.
+
+🏍️ 3. Rider Picks Up Food
+Action: A rider arrives at the restaurant and picks up the food.
+
+System Status:
+status = order_received
+
+Responsibility: Rider now holds responsibility for delivery. System may send notifications to the customer.
+
+📦 4. Rider Delivers to Customer
+Action: Rider successfully delivers the order to the customer.
+
+System Status:
+status = order_delivered
+
+Responsibility: Order is completed. Payment and ratings can now be processed.
+
+❌ (Optional) Customer Cancels Order
+Action: Customer cancels the order before it is accepted or picked up.
+
+System Status:
+status = order_cancel
+
+Responsibility: System stops order processing. Restaurant and rider are notified.
