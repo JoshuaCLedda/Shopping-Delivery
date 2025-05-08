@@ -4,38 +4,41 @@ include "Main.php";
 $db = new Index;
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
-    header("Location: ../login.php");
-    exit();
-}
+
 $con = $db->con;
 
 if (isset($_POST['backup'])) {
     $tables = array();
     $sql = "SHOW TABLES";
     $result = mysqli_query($con, $sql);
+    
+    // Collect all table names
     while ($row = mysqli_fetch_row($result)) {
         $tables[] = $row[0];
     }
 
     $sqlScript = "";
     foreach ($tables as $table) {
-        $query = "SHOW CREATE TABLE $table";
+        // Get the CREATE TABLE statement
+        $query = "SHOW CREATE TABLE `$table`";
         $result = mysqli_query($con, $query);
         $row = mysqli_fetch_row($result);
-        $sqlScript .= "\n\n" . $row[1] . ";\n\n";
+        $sqlScript .= "\n\n" . $row[1] . ";\n\n"; // Add table structure
 
-        $query = "SELECT * FROM $table";
+        // Get all table data
+        $query = "SELECT * FROM `$table`";
         $result = mysqli_query($con, $query);
         $columnCount = mysqli_num_fields($result);
 
+        // Loop through each row in the table and generate INSERT statements
         while ($row = mysqli_fetch_row($result)) {
-            $sqlScript .= "INSERT INTO $table VALUES(";
+            $sqlScript .= "INSERT INTO `$table` VALUES(";
             for ($j = 0; $j < $columnCount; $j++) {
                 if (isset($row[$j])) {
+                    // Escape the string to prevent SQL injection and special char issues
                     $sqlScript .= '"' . mysqli_real_escape_string($con, $row[$j]) . '"';
                 } else {
-                    $sqlScript .= '""';
+                    $sqlScript .= 'NULL'; // Use NULL for empty cells, instead of empty quotes
                 }
                 if ($j < ($columnCount - 1)) {
                     $sqlScript .= ',';
@@ -46,24 +49,28 @@ if (isset($_POST['backup'])) {
         $sqlScript .= "\n";
     }
 
+    // Ensure the directory exists before saving the backup
+    $backup_dir = __DIR__ . '/backup/file/';
+    if (!is_dir($backup_dir)) {
+        mkdir($backup_dir, 0755, true); // Create the directory if it doesn't exist
+    }
+
+    // Save the SQL script to a file
+    $backup_file_name = $backup_dir . '_backup_.sql';
     if (!empty($sqlScript)) {
-        $backup_file_name = __DIR__ . 'backup/file/backup_' . date('Y-m-d_H-i-s') . '.sql'; // Save to /file folder
-
-        // Ensure the 'file' directory exists
-        if (!is_dir(__DIR__ . 'backup/file')) {
-            mkdir(__DIR__ . 'backup/file', 0755, true);
-        }
-
         file_put_contents($backup_file_name, $sqlScript);
         $_SESSION['message'] = ['type' => 'success', 'message' => 'Backup saved to file folder successfully.'];
     }
 }
 
+
+
 if (isset($_POST['restore'])) {
     $sql = '';
     $error = '';
 
-    if (file_exists(__DIR__ . 'backup/file/_backup_.sql')) {
+    // Corrected file path to match the one used in backup
+    if (file_exists(__DIR__ . '/backup/file/_backup_.sql')) {
         mysqli_query($con, 'SET foreign_key_checks = 0');
 
         // Drop all tables
@@ -75,7 +82,7 @@ if (isset($_POST['restore'])) {
         mysqli_query($con, 'SET foreign_key_checks = 1');
 
         // Restore the backup
-        $lines = file(__DIR__ . 'backup/file/_backup_.sql');
+        $lines = file(__DIR__ . '/backup/file/_backup_.sql'); // Corrected path here
         foreach ($lines as $line) {
             if (substr($line, 0, 2) == '--' || trim($line) == '') {
                 continue;
@@ -91,15 +98,20 @@ if (isset($_POST['restore'])) {
         }
 
         if ($error) {
+            $_SESSION['message'] = ['type' => 'success', 'message' => 'Error during restoration:.'];
             $message1 = "Error during restoration: " . $error;
         } else {
-            $message1 = "Database restored successfully";
+            $_SESSION['message'] = ['type' => 'success', 'message' => 'Successfully Restore Database:.'];
+
         }
     } else {
-        $messageRed = "No backup file found for restoration.";
+        $_SESSION['message'] = ['type' => 'success', 'message' => 'No file found, Please Try Again.'];
+
     }
 }
+
 ?>
+
 
 <?php include 'layouts/header.php' ?>
     <?php include 'layouts/sidebar.php' ?>
@@ -154,7 +166,7 @@ if (isset($_POST['restore'])) {
                                             <?php include '../layouts/sweetalert.php' ?>
 
                                             <h5 class="card-title">Restore</h5>
-                                            <form method="POST" class="mt-3">
+                                            <form action="" method="POST" class="mt-3">
                                                 <p>
                                                     Restoring your database is essential for system recovery and maintaining data integrity. In the event of unexpected issues or data loss, a recent backup allows you to restore your system to a known, stable state.
                                                 </p>

@@ -35,7 +35,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 3) {
         </div>
         <!-- fix alrt here in backend -->
 
-        <php include '../admin/layouts/alert.' ?>
+        <?php include '../admin/layouts/sweetalert.' ?>
 
         <div class="row">
             <div class="col-12">
@@ -136,11 +136,11 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 3) {
                                                         <span class="badge <?= $badgeClass ?>"><?= $statusText ?></span>
                                                     </td>
                                                     <td>
-                                                        <a href="delete_menu.php?menu_del=<?= htmlspecialchars($rows['d_id']) ?>"
+                                                        <!-- <a href="delete_menu.php?menu_del=<?= htmlspecialchars($rows['d_id']) ?>"
                                                             onclick="return confirm('Are you sure you want to delete this menu?');"
                                                             class="btn btn-sm btn-danger">
                                                             <i class="bx bx-trash"></i>
-                                                        </a>
+                                                        </a> -->
 
                                                         <a href="update_menu.php?menu_upd=<?= $rows['d_id'] ?>"
                                                             class="btn btn-sm btn-info">

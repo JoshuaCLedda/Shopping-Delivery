@@ -94,6 +94,7 @@ if (!$query) {
                                                         break;
                                                     case 'Order_Canceled':
                                                     case 'Order_Cancelled':
+                                                    case 'order_cancelled':
                                                         $statusText = 'Cancelled';
                                                         $badgeClass = 'bg-danger';
                                                         break;

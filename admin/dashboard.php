@@ -10,7 +10,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
     exit();
 }
 
-
 // filtering for the cards 
 $filter = $_GET['filter'] ?? 'monthly';
 $selectedRestaurant = $_GET['restaurant'] ?? '';
@@ -43,12 +42,6 @@ switch ($filter) {
         break;
         // Monthly is default; no extra filtering needed beyond the current year
 }
-
-
-
-
-
-
 
 
 
@@ -147,6 +140,30 @@ if ($filter == 'monthly') {
                     </div>
                 </div>
 
+                <div class="col-xxl-6 col-md-6">
+                    <div class="card info-card shadow-sm border-0 rounded-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <i class='bx bx-category text-secondary display-5 me-3'></i>
+                                    <div>
+                                        <h6 class="mb-1 fw-semibold">Restro Categories</h6>
+                                        <small class="text-muted">Food Categories</small>
+                                    </div>
+                                </div>
+                                <h1 class="fw-bold text-secondary mb-0">
+                                    <?php
+                                    $sql = "SELECT * FROM res_category"; // Usually static, no date filtering
+                                    $result = mysqli_query($index->con, $sql);
+                                    echo mysqli_num_rows($result);
+
+                                    ?>
+                                </h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Dishes -->
                 <div class="col-xxl-6 col-md-6">
                     <div class="card info-card shadow-sm border-0 rounded-4">
@@ -204,29 +221,7 @@ if ($filter == 'monthly') {
                 </div>
 
                 <!-- Restro Categories -->
-                <div class="col-xxl-6 col-md-6">
-                    <div class="card info-card shadow-sm border-0 rounded-4">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="d-flex align-items-center">
-                                    <i class='bx bx-category text-secondary display-5 me-3'></i>
-                                    <div>
-                                        <h6 class="mb-1 fw-semibold">Restro Categories</h6>
-                                        <small class="text-muted">Food Categories</small>
-                                    </div>
-                                </div>
-                                <h1 class="fw-bold text-secondary mb-0">
-                                    <?php
-                                    $sql = "SELECT * FROM res_category"; // Usually static, no date filtering
-                                    $result = mysqli_query($index->con, $sql);
-                                    echo mysqli_num_rows($result);
-
-                                    ?>
-                                </h1>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+              
 
 
                 <!-- end row -->
@@ -255,7 +250,7 @@ if ($filter == 'monthly') {
                                     <thead class="text-dark fs-4">
                                         <tr>
                                             <th class="border-bottom-0">
-                                                <h6 class="fw-semibold mb-0">ID</h6>
+                                                <h6 class="fw-semibold mb-0">Transaction ID</h6>
                                             </th>
                                             <th class="border-bottom-0">
                                                 <h6 class="fw-semibold mb-0">Customer</h6>

@@ -131,7 +131,7 @@ if (!$query) {
                                                             <select name="status"
                                                                 class="form-select form-select-sm d-inline w-auto">
                                                                 <option value="place_order" <?= $rowStatus == 'place_order' ? 'selected' : '' ?>>Placed</option>
-                                                                <option value="order_confirmation" <?= $rowStatus == 'order_confirmation' ? 'selected' : '' ?>> Confirmed</option>
+                                                                <option value="in_process" <?= $rowStatus == 'in_process' ? 'selected' : '' ?>> Confirmed</option>
                                                                 <option value="cancelled" <?= in_array($rowStatus, ['order_canceled', 'order_cancelled', 'cancelled']) ? 'selected' : '' ?>>Cancelled</option>
                                                             </select>
 

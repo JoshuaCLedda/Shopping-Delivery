@@ -33,60 +33,51 @@ if (isset($_POST['submit'])) {
         $address = mysqli_real_escape_string($db, $_POST['address']);
         $security_questions = mysqli_real_escape_string($db, $_POST['security_questions']);
         $answer = mysqli_real_escape_string($db, $_POST['answer']);
-
         $role = mysqli_real_escape_string($db, $_POST['role']);
-        //Additional hidden 2 
         $restaurant_id = isset($_POST['restaurant_id']) && $_POST['restaurant_id'] !== '' ? intval($_POST['restaurant_id']) : 0;
         $vehicle_type = isset($_POST['vehicle_type']) && $_POST['vehicle_type'] !== '' ? intval($_POST['vehicle_type']) : 0;
-
-
 
         $check_username = mysqli_query($db, "SELECT username FROM users WHERE username = '$username'");
         $check_email = mysqli_query($db, "SELECT email FROM users WHERE email = '$email'");
 
         if ($password !== $cpassword) {
             $_SESSION['message'] = ['type' => 'danger', 'message' => 'Passwords do not match!'];
-            header("Location: " . $_SERVER['PHP_SELF']); // Redirect back to the same page
-            exit();
         } elseif (strlen($password) < 6) {
             $_SESSION['message'] = ['type' => 'danger', 'message' => 'Password must be at least 6 characters!'];
-            header("Location: " . $_SERVER['PHP_SELF']); // Redirect back to the same page
-            exit();
         } elseif (strlen($phone) < 10) {
             $_SESSION['message'] = ['type' => 'danger', 'message' => 'Invalid phone number!'];
-            header("Location: " . $_SERVER['PHP_SELF']); // Redirect back to the same page
-            exit();
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $_SESSION['message'] = ['type' => 'danger', 'message' => 'Invalid email address!'];
-            header("Location: " . $_SERVER['PHP_SELF']); // Redirect back to the same page
-            exit();
         } elseif (mysqli_num_rows($check_username) > 0) {
             $_SESSION['message'] = ['type' => 'danger', 'message' => 'Username already exists!'];
-            header("Location: " . $_SERVER['PHP_SELF']); // Redirect back to the same page
-            exit();
         } elseif (mysqli_num_rows($check_email) > 0) {
             $_SESSION['message'] = ['type' => 'danger', 'message' => 'Email already exists!'];
-            header("Location: " . $_SERVER['PHP_SELF']); // Redirect back to the same page
-            exit();
         } else {
-            // Secure password hashing using bcrypt
             $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
-            // Insert user details into the database
             $mql = "INSERT INTO users(restaurant_id, vehicle_type, username, f_name, l_name, email, phone, password, address, role, security_questions, answer) 
                     VALUES('$restaurant_id', '$vehicle_type', '$username', '$firstname', '$lastname', '$email', '$phone', '$hashed_password', '$address', '$role', '$security_questions', '$answer')";
 
             if (mysqli_query($db, $mql)) {
-                $_SESSION['message'] = ['type' => 'success', 'message' => 'Registration successful!'];
+                $user_id = mysqli_insert_id($db);
+
+                $activity = "User Registration";
+                $details = "New user '$username' registered with email '$email'.";
+
+                $logStmt = $db->prepare("INSERT INTO activity_log (user_id, activity, details) VALUES (?, ?, ?)");
+                $logStmt->bind_param("iss", $user_id, $activity, $details);
+                $logStmt->execute();
+
             } else {
                 $_SESSION['message'] = ['type' => 'danger', 'message' => 'Registration failed! Please try again.'];
             }
-
-            header("Location: " . $_SERVER['PHP_SELF']); // Redirect back to the same page
-            exit();
         }
+
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit();
     }
 }
+
 ?>
 <?php include 'layouts/header.php' ?>
 <?php include 'layouts/sidebar.php' ?>

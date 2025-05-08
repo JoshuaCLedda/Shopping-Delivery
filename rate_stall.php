@@ -6,7 +6,9 @@ $index = new Index;
 
 
 $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
-
+if (isset($_GET['transaction_id'])) {
+    $transaction_id = intval($_GET['transaction_id']);
+}
 
 $stall_name = ''; 
 
@@ -25,10 +27,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $restaurant_id  = trim($_POST['restaurant_id']);
     $rating         = trim($_POST['rating']);
     $complaint      = trim($_POST['complaint']);
+    $transaction_id  = $_POST['transaction_id'];
+
 
     if ($user_id && $restaurant_id && $rating && $stall_name) {
         // Call the method to insert rating
-        $result = $index->addRestaurantRating($stall_name, $restaurant_id, $rating, $complaint, $user_id);
+        $result = $index->addRestaurantRating($stall_name, $restaurant_id, $rating, $complaint, $user_id, $transaction_id);
 
         if ($result) {
             $_SESSION['message'] = ['type' => 'success', 'message' => 'Restaurant rating submitted successfully!'];
@@ -95,6 +99,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php include 'layouts/sweetalert.php'; ?>
 
             <form action="" method="POST">
+            <input type="hidden" name="transaction_id" value="<?= $transaction_id ?>">
+
                 <div class="mb-3">
                     <label for="stall" class="form-label">
                         <i class='bx bx-restaurant'></i> Restaurant:

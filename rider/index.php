@@ -153,7 +153,7 @@ if (isset($_POST['submit'])) {
                                                 </form>
 
 
-                                                    <a href="confirm_user_order.php?order_upd=<?= htmlspecialchars($row['transacID'] ?? '') ?>"
+                                                    <a href="confirm_order.php?order_upd=<?= htmlspecialchars($row['transacID'] ?? '') ?>"
                                                         class="btn btn-sm btn-info ms-2">
                                                         <i class="bx bx-edit"></i>
                                                     </a>

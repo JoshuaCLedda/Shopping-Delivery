@@ -1,7 +1,8 @@
 <?php
-include("../connection/connect.php");
-error_reporting(0);
 session_start();
+error_reporting(E_ALL);
+include "Main.php";
+$index = new Index;
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
     header("Location: ../login.php");
     exit();
@@ -36,77 +37,19 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>John Doe</td>
-                                            <td>Login</td>
-                                            <td>User logged into the system</td>
-                                            <td>April 17, 2025, 9:00 AM</td>
-
-                                        </tr>
-                                        <tr>
-                                            <td>Jane Smith</td>
-                                            <td>Update Profile</td>
-                                            <td>Updated profile picture</td>
-                                            <td>April 17, 2025, 9:15 AM</td>
-
-                                        </tr>
-                                        <tr>
-                                            <td>Mike Johnson</td>
-                                            <td>Logout</td>
-                                            <td>User logged out</td>
-                                            <td>April 17, 2025, 10:00 AM</td>
-
-                                        </tr>
-                                        <tr>
-                                            <td>Emily Davis</td>
-                                            <td>Order Placed</td>
-                                            <td>Placed an order #4321</td>
-                                            <td>April 17, 2025, 10:30 AM</td>
-
-                                        </tr>
-                                        <tr>
-                                            <td>Chris Brown</td>
-                                            <td>Password Change</td>
-                                            <td>Changed account password</td>
-                                            <td>April 17, 2025, 11:00 AM</td>
-
-                                        </tr>
-                                        <tr>
-                                            <td>Olivia Wilson</td>
-                                            <td>Added Stall</td>
-                                            <td>Added a new stall "Sweet Treats"</td>
-                                            <td>April 17, 2025, 11:30 AM</td>
-
-                                        </tr>
-                                        <tr>
-                                            <td>Daniel Martinez</td>
-                                            <td>Delete Order</td>
-                                            <td>Deleted order #4319</td>
-                                            <td>April 17, 2025, 12:00 PM</td>
-
-                                        </tr>
-                                        <tr>
-                                            <td>Sophia Anderson</td>
-                                            <td>Rating Submitted</td>
-                                            <td>Submitted a 5-star rating for "Burger King"</td>
-                                            <td>April 17, 2025, 12:30 PM</td>
-
-                                        </tr>
-                                        <tr>
-                                            <td>Matthew Thomas</td>
-                                            <td>Complaint Filed</td>
-                                            <td>Filed a complaint against rider #324</td>
-                                            <td>April 17, 2025, 1:00 PM</td>
-
-                                        </tr>
-                                        <tr>
-                                            <td>Ava Taylor</td>
-                                            <td>Login</td>
-                                            <td>User logged into the system</td>
-                                            <td>April 17, 2025, 1:30 PM</td>
-
-                                        </tr>
+                                        <?php
+                                        $result = $index->getActivityLog();
+                                        while ($row = mysqli_fetch_array($result)):
+                                        ?>
+                                            <tr>
+                                                <td><?= htmlspecialchars($row['user_name']) ?></td>
+                                                <td><?= htmlspecialchars($row['activity']) ?></td>
+                                                <td><?= htmlspecialchars($row['details']) ?></td>
+                                                <td><?= date('F j, Y h:i A', strtotime($row['created_at'])) ?></td>
+                                            </tr>
+                                        <?php endwhile; ?>
                                     </tbody>
+
 
                                 </table>
                             </div>

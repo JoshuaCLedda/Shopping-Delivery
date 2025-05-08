@@ -38,6 +38,33 @@ if (isset($_SESSION['user_id'])) {
     header("Location: ../login.php");
     exit();
 }
+
+// for tables
+$filter = isset($_GET['filter']) ? $_GET['filter'] : 'monthly'; // Default to monthly
+$conditions = ''; // Initialize conditions for SQL queries
+
+// Apply filter conditions
+switch ($filter) {
+    case 'weekly':
+        $start = date('Y-m-d 00:00:00', strtotime('monday this week'));
+        $end = date('Y-m-d 23:59:59', strtotime('sunday this week'));
+        $conditions .= " AND order_date BETWEEN '$start' AND '$end'";
+        break;
+    case 'quarterly':
+        $month = date('n');
+        $quarterStartMonth = floor(($month - 1) / 3) * 3 + 1;
+        $start = date('Y') . '-' . str_pad($quarterStartMonth, 2, '0', STR_PAD_LEFT) . '-01 00:00:00';
+        $end = date('Y-m-t 23:59:59');
+        $conditions .= " AND order_date BETWEEN '$start' AND '$end'";
+        break;
+    case 'monthly':
+    default:
+        $start = date('Y-m-01 00:00:00'); // Start of this month
+        $end = date('Y-m-t 23:59:59'); // End of this month
+        $conditions .= " AND order_date BETWEEN '$start' AND '$end'";
+        break;
+}
+
 ?>
 
 <?php include '../admin/layouts/header.php' ?>
@@ -50,6 +77,14 @@ if (isset($_SESSION['user_id'])) {
 
 
         <div class="col-lg-12">
+            <div class="mb-4">
+                <select id="filter" onchange="changeFilter()" class="form-select">
+                    <option value="monthly" <?php if (isset($_GET['filter']) && $_GET['filter'] == 'monthly')
+                                                echo 'selected'; ?>>Monthly</option>
+                    <option value="quarterly" <?php if (isset($_GET['filter']) && $_GET['filter'] == 'quarterly')
+                                                    echo 'selected'; ?>>Quarterly</option>
+                </select>
+            </div>
             <div class="row g-4">
 
                 <div class="col-xxl-4 col-md-6">
@@ -68,9 +103,13 @@ if (isset($_SESSION['user_id'])) {
                                 </div>
                                 <h1 class="fw-bold text-primary mb-0">
                                     <?php
-                                    $sql = "SELECT * FROM transaction WHERE status = 'in_process' AND rs_id = '" . $user['restaurant_id'] . "'";
+                                    $sql = "SELECT * FROM transaction 
+                                  WHERE status = 'in_process' 
+                                  AND rs_id = '" . $user['restaurant_id'] . "' 
+                                  $conditions";
                                     $result = mysqli_query($index->con, $sql);
                                     echo mysqli_num_rows($result);
+
                                     ?>
                                 </h1>
                             </div>
@@ -92,9 +131,12 @@ if (isset($_SESSION['user_id'])) {
                                 </div>
                                 <h1 class="fw-bold text-success mb-0">
                                     <?php
-                                    $sql = "SELECT * FROM users_orders WHERE status = 'closed'";
+                                    $sql = "SELECT * FROM transaction
+                                 WHERE status = 'order_delivered' 
+                                 $conditions";
                                     $result = mysqli_query($index->con, $sql);
                                     echo mysqli_num_rows($result);
+
                                     ?>
                                 </h1>
                             </div>
@@ -116,9 +158,12 @@ if (isset($_SESSION['user_id'])) {
                                 </div>
                                 <h1 class="fw-bold text-danger mb-0">
                                     <?php
-                                    $sql = "SELECT * FROM users_orders WHERE status = 'rejected'";
+                                    $sql = "SELECT * FROM transaction 
+                                 WHERE status = 'order_cancelled' 
+                                 $conditions";
                                     $result = mysqli_query($index->con, $sql);
                                     echo mysqli_num_rows($result);
+
                                     ?>
                                 </h1>
                             </div>
@@ -196,21 +241,25 @@ if (isset($_SESSION['user_id'])) {
                                 </div>
                                 <h1 class="fw-bold text-success mb-0">
                                     <?php
-                                    $month = date('M');
+                                    $month = date('m'); // Get the current month as a number (01 to 12)
+                                    $year = date('Y'); // Get the current year
 
                                     $query = mysqli_query($index->con, "
-                                        SELECT SUM(transaction.total_price) AS total_earning 
-                                        FROM transaction 
-                                        WHERE transaction.rs_id = '{$user['restaurant_id']}'
-                                        AND transaction.status = 'order_delivered' 
-                                        AND YEAR(transaction.order_date) = '$month'
-                                        ");
+        SELECT SUM(transaction.total_price) AS total_earning 
+        FROM transaction 
+        WHERE transaction.rs_id = '{$user['restaurant_id']}'
+        AND transaction.status = 'order_delivered' 
+        AND MONTH(transaction.order_date) = '$month'
+        AND YEAR(transaction.order_date) = '$year'
+    ");
+
                                     // user_id
                                     $data = mysqli_fetch_assoc($query);
                                     $totalEarnings = $data['total_earning'] ? number_format($data['total_earning'], 2) : "0.00";
                                     echo "₱" . $totalEarnings;
                                     ?>
                                 </h1>
+
                             </div>
                         </div>
                     </div>
@@ -238,7 +287,7 @@ if (isset($_SESSION['user_id'])) {
                                     AND transaction.status = 'order_delivered' 
                                     AND YEAR(transaction.order_date) = '$year'
                                 ");
-                                
+
                                     // user_id
                                     $data = mysqli_fetch_assoc($query);
                                     $totalEarnings = $data['total_earning'] ? number_format($data['total_earning'], 2) : "0.00";
@@ -256,15 +305,7 @@ if (isset($_SESSION['user_id'])) {
                     <div class="card shadow-sm border-0 rounded-4">
                         <div class="card-body">
                             <h5 class="card-title fw-semibold mb-4">Earnings</h5>
-                            <div class="mb-4">
-                                <label for="filter" class="form-label">Select Filter:</label>
-                                <select id="filter" onchange="changeFilter()" class="form-select">
-                                    <option value="monthly" <?php if (isset($_GET['filter']) && $_GET['filter'] == 'monthly')
-                                                                echo 'selected'; ?>>Monthly</option>
-                                    <option value="quarterly" <?php if (isset($_GET['filter']) && $_GET['filter'] == 'quarterly')
-                                                                    echo 'selected'; ?>>Quarterly</option>
-                                </select>
-                            </div>
+
                             <canvas id="earningsChart"></canvas>
                         </div>
                     </div>
@@ -276,86 +317,128 @@ if (isset($_SESSION['user_id'])) {
                         <div class="card-body p-4">
                             <h5 class="card-title fw-semibold mb-4">Recent Orders</h5>
                             <div class="table">
+
                                 <table class="table text-nowrap mb-0 align-middle">
                                     <thead class="text-dark fs-4">
                                         <tr>
-                                            <th class="border-bottom-0">
-                                                <h6 class="fw-semibold mb-0">ID</h6>
+                                            <th>Customer Name
+
                                             </th>
-                                            <th class="border-bottom-0">
-                                                <h6 class="fw-semibold mb-0">Customer</h6>
-                                            </th>
-                                            <th class="border-bottom-0">
-                                                <h6 class="fw-semibold mb-0">Food Item</h6>
-                                            </th>
-                                            <th class="border-bottom-0">
-                                                <h6 class="fw-semibold mb-0">Status</h6>
-                                            </th>
+                                            <th>Total Price</th>
+                                            <th>Status</th>
+                                            <th>Order Date</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td class="border-bottom-0">
-                                                <h6 class="fw-semibold mb-0">1</h6>
-                                            </td>
-                                            <td class="border-bottom-0">
-                                                <h6 class="fw-semibold mb-1">Ana Reyes</h6>
-                                                <span class="fw-normal">#ORD-1001</span>
-                                            </td>
-                                            <td class="border-bottom-0">
-                                                <p class="mb-0 fw-normal">Cheeseburger Combo</p>
-                                            </td>
-                                            <td class="border-bottom-0">
-                                                <span class="badge bg-primary rounded-3 fw-semibold">Pending</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="border-bottom-0">
-                                                <h6 class="fw-semibold mb-0">2</h6>
-                                            </td>
-                                            <td class="border-bottom-0">
-                                                <h6 class="fw-semibold mb-1">Mark Villanueva</h6>
-                                                <span class="fw-normal">#ORD-1002</span>
-                                            </td>
-                                            <td class="border-bottom-0">
-                                                <p class="mb-0 fw-normal">Spaghetti & Garlic Bread</p>
-                                            </td>
-                                            <td class="border-bottom-0">
-                                                <span class="badge bg-secondary rounded-3 fw-semibold">On Hold</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="border-bottom-0">
-                                                <h6 class="fw-semibold mb-0">3</h6>
-                                            </td>
-                                            <td class="border-bottom-0">
-                                                <h6 class="fw-semibold mb-1">Maria Lopez</h6>
-                                                <span class="fw-normal">#ORD-1003</span>
-                                            </td>
-                                            <td class="border-bottom-0">
-                                                <p class="mb-0 fw-normal">Beef Tapa with Rice</p>
-                                            </td>
-                                            <td class="border-bottom-0">
-                                                <span class="badge bg-danger rounded-3 fw-semibold">Cancelled</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="border-bottom-0">
-                                                <h6 class="fw-semibold mb-0">4</h6>
-                                            </td>
-                                            <td class="border-bottom-0">
-                                                <h6 class="fw-semibold mb-1">John Santos</h6>
-                                                <span class="fw-normal">#ORD-1004</span>
-                                            </td>
-                                            <td class="border-bottom-0">
-                                                <p class="mb-0 fw-normal">Chicken Wings & Fries</p>
-                                            </td>
-                                            <td class="border-bottom-0">
-                                                <span class="badge bg-success rounded-3 fw-semibold">Completed</span>
-                                            </td>
-                                        </tr>
+                                        <?php
+                                        $rs_id = $user['restaurant_id'];
+                                        $sql = "SELECT 
+                                        transaction.id, 
+                                        transaction.total_price, 
+                                        transaction.status, 
+                                        transaction.order_date, 
+                                        transaction.rs_id, 
+                                        restaurant.title AS restaurant_name, 
+                                        CONCAT(users.f_name, ' ', users.l_name) AS fullname
+                                    FROM transaction
+                                    LEFT JOIN restaurant ON transaction.rs_id = restaurant.rs_id
+                                    LEFT JOIN users ON transaction.u_id = users.u_id
+                                    WHERE transaction.rs_id = $rs_id
+                                      AND transaction.order_date >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+                                    ORDER BY transaction.order_date DESC
+                                    LIMIT 5";
+
+
+                                        $query = mysqli_query($index->con, $sql);
+
+                                        if (!$query) {
+                                            die("Error fetching data: " . mysqli_error($index->con));
+                                        }
+
+                                        if (!mysqli_num_rows($query) > 0): ?>
+                                            <tr>
+                                                <td colspan="5" class="text-center">No Orders</td>
+                                            </tr>
+                                        <?php else: ?>
+                                            <?php while ($rows = mysqli_fetch_assoc($query)): ?>
+                                                <?php
+                                                $status = $rows['status'];
+                                                switch ($status) {
+                                                    case 'order_confirmation':
+                                                        $statusText = 'Confirmed';
+                                                        $badgeClass = 'bg-success';
+                                                        break;
+                                                    case 'Order_Canceled':
+                                                    case 'Order_Cancelled':
+                                                        $statusText = 'Cancelled';
+                                                        $badgeClass = 'bg-danger';
+                                                        break;
+                                                    case 'Order_Received':
+                                                        $statusText = 'Received';
+                                                        $badgeClass = 'bg-primary';
+                                                        break;
+                                                    case 'in_process':
+                                                        $statusText = 'In Process';
+                                                        $badgeClass = 'bg-warning text-dark';
+                                                        break;
+                                                    case 'order_delivered':
+                                                        $statusText = 'Delivered';
+                                                        $badgeClass = 'bg-success text-dark';
+                                                        break;
+                                                    case 'place_order':
+                                                        $statusText = 'Placed';
+                                                        $badgeClass = 'bg-info text-dark';
+                                                        break;
+                                                    default:
+                                                        $statusText = ucfirst(str_replace('_', ' ', $status));
+                                                        $badgeClass = 'bg-secondary';
+                                                        break;
+                                                }
+                                                ?>
+                                                <tr>
+                                                    <td><?= isset($rows['fullname']) ? htmlspecialchars($rows['fullname']) : 'No Data' ?>
+                                                    </td>
+                                                    <?php $rowStatus = strtolower($rows['status']); ?>
+                                                    <td>₱ <?= number_format($rows['total_price'], 2) ?></td>
+                                                    <td class="status-cell">
+                                                        <span class="badge <?= $badgeClass ?>"><?= $statusText ?></span>
+                                                    </td>
+                                                    <td><?= date("F j, Y, g:i a", strtotime($rows['order_date'])) ?></td>
+                                                    <td>
+                                                        <form action="update_order_status.php" method="POST"
+                                                            class="d-inline update-status-form">
+                                                            <input type="hidden" name="trans_id"
+                                                                value="<?= htmlspecialchars($rows['id']) ?>">
+                                                            <select name="status"
+                                                                class="form-select form-select-sm d-inline w-auto">
+                                                                <option value="place_order" <?= $rowStatus == 'place_order' ? 'selected' : '' ?>>Placed</option>
+                                                                <option value="order_confirmation" <?= $rowStatus == 'order_confirmation' ? 'selected' : '' ?>>Confirmed</option>
+                                                                <option value="in_process" <?= $rowStatus == 'in_process' ? 'selected' : '' ?>>In Process</option>
+                                                                <option value="order_cancelled" <?= in_array($rowStatus, ['order_canceled', 'order_cancelled', 'cancelled']) ? 'selected' : '' ?>>Cancelled</option>
+                                                                <option value="order_received" <?= $rowStatus == 'order_received' ? 'selected' : '' ?>>Received</option>
+                                                                <option value="order_delivered" <?= $rowStatus == 'order_delivered' ? 'selected' : '' ?>>Delivered</option>
+                                                            </select>
+
+                                                            <noscript>
+                                                                <button type="submit"
+                                                                    class="btn btn-sm btn-primary ms-2">Update</button>
+                                                            </noscript>
+                                                        </form>
+                                                        <a href="view_order.php?id=<?= urlencode($rows['id']) ?>"
+                                                            class="btn btn-info btn-sm view-details-btn">
+                                                            <i class="bx bx-show"></i>
+                                                        </a>
+                                                    </td>
+
+                                                </tr>
+                                            <?php endwhile; ?>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
+
+
+
                             </div>
                         </div>
                     </div>

@@ -3,7 +3,7 @@ session_start();
 include("connection/connect.php");
 error_reporting(0);
 
-if (!isset($_SESSION['user_id']) ) {
+if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
@@ -71,7 +71,7 @@ if (empty($_SESSION['user_id'])) {
                             $rider_id = $row['rider_id'];
                             $rs_id = $row['rs_id'];
                             $order_date = $row['order_date'];
-                            // Status Pill
+
                             $badgeClass = 'bg-warning text-dark';
                             $statusText = ucwords(str_replace('_', ' ', strtolower($status)));
                             $progressValue = 30;
@@ -110,7 +110,6 @@ if (empty($_SESSION['user_id'])) {
                                             <?php echo $statusText; ?>
                                         </span>
 
-                                        <!-- Progress Bar -->
                                         <div class="progress mt-3" style="height: 8px;">
                                             <div class="progress-bar <?php echo $progressColor; ?>" role="progressbar"
                                                 style="width: <?php echo $progressValue; ?>%;"
@@ -132,18 +131,38 @@ if (empty($_SESSION['user_id'])) {
                                             <a href="cancel_order.php?order_id=<?php echo $id; ?>"
                                                 onclick="return confirm('Are you sure you want to cancel this order?');"
                                                 class="btn btn-danger btn-sm">Cancel Order</a>
-
-                                        <?php elseif ($status === 'order_delivered') : ?>
-                                           <a href="rate_rider.php?rider_id=<?= $rider_id ?>&transaction_id=<?= $id ?>" 
-                                            class="btn btn-outline-success btn-sm">Rate Rider</a>
-
-                                            <a href="rate_stall.php?restaurant_id=<?php echo $rs_id; ?>"
-                                                class="btn btn-outline-primary btn-sm">Rate Stall</a>
                                         <?php endif; ?>
+
+                                        <?php if ($status === 'order_delivered') :
+
+                                            // Check if rider already rated
+                                            $check_rider = mysqli_query($db, "SELECT * FROM rating_rider WHERE transaction_id = '$id'");
+                                            $already_rated_rider = mysqli_num_rows($check_rider) > 0;
+
+                                            // Check if restaurant already rated
+                                            $check_stall = mysqli_query($db, "SELECT * FROM restaurant_ratings WHERE transaction_id = '$id'");
+                                            $already_rated_stall = mysqli_num_rows($check_stall) > 0;
+                                        ?>
+
+                                            <?php if ($already_rated_rider): ?>
+                                                <button class="btn btn-outline-secondary btn-sm" disabled>Rider Already Rated</button>
+                                            <?php else: ?>
+                                                <a href="rate_rider.php?rider_id=<?= $rider_id ?>&transaction_id=<?= $id ?>"
+                                                    class="btn btn-outline-success btn-sm">Rate Rider</a>
+                                            <?php endif; ?>
+
+                                            <?php if ($already_rated_stall): ?>
+                                                <button class="btn btn-outline-secondary btn-sm" disabled>Stall Already Rated</button>
+                                            <?php else: ?>
+                                                <a href="rate_stall.php?restaurant_id=<?= $rs_id ?>&transaction_id=<?= $id ?>"
+                                                    class="btn btn-outline-primary btn-sm">Rate Stall</a>
+                                            <?php endif; ?>
+
+                                        <?php endif; ?>
+
                                     </div>
                                 </div>
                             </div>
-
 
                     <?php
                         }

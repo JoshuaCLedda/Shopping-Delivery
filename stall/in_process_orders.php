@@ -136,9 +136,9 @@ if (!$query) {
                                                                     <?= $rowStatus == 'order_confirmation' ? 'selected' : '' ?>>
                                                                     Confirmed</option>
                                                                 <option value="in_process" <?= $rowStatus == 'in_process' ? 'selected' : '' ?>>In Process</option>
-                                                                <option value="cancelled" <?= in_array($rowStatus, ['order_canceled', 'order_cancelled', 'cancelled']) ? 'selected' : '' ?>>Cancelled</option>
-                                                                <option value="order_received" <?= $rowStatus == 'order_received' ? 'selected' : '' ?>>Received</option>
+                                                                <option value="order_received" <?= $rowStatus == 'order_received' ? 'selected' : '' ?>>Received (by Rider)</option>
                                                                 <option value="order_delivered" <?= $rowStatus == 'order_delivered' ? 'selected' : '' ?>>Delivered</option>
+                                                                <option value="cancelled" <?= in_array($rowStatus, ['order_canceled', 'order_cancelled', 'cancelled']) ? 'selected' : '' ?>>Cancelled</option>
                                                             </select>
 
                                                             <noscript>

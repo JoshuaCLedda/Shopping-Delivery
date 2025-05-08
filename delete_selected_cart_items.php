@@ -1,8 +1,8 @@
 <?php
 session_start();
-require_once 'admin/Main.php'; // Adjust path
-
-$index = new Index();
+error_reporting(E_ALL);
+include "admin/Main.php";
+$index = new Index;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_items'])) {
     $selectedItems = $_POST['selected_items'];
@@ -11,11 +11,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_items'])) {
         $cartId = intval($cartId);
         $index->deleteCartItem($cartId);
     }
-
     $_SESSION['message'] = [
         'type' => 'success',
-        'message' => 'Selected cart items deleted successfully.'
+        'message' => 'Cart Items Deleted Successfuly.'
     ];
+    
 } else {
     $_SESSION['message'] = [
         'type' => 'warning',

@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 
-if (!isset($_SESSION['user_id']) ) {
+if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
@@ -96,8 +96,9 @@ if (isset($_SESSION['user_id'])) {
     <div class="container py-5">
         <div class="col-lg-10 mx-auto cart-wrapper">
 
-        
-        
+
+        <?php include 'layouts/sweetalert.php'; ?>
+
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h3 class="fw-bold"><i class="fa-solid fa-cart-shopping me-2"></i>My Cart</h3>
                 <a href="#" id="deleteSelectedBtn" class="btn btn-outline-danger btn-sm">
@@ -139,7 +140,7 @@ if (isset($_SESSION['user_id'])) {
 
                                         <div>
                                             <a href="delete_cart_item.php?cartId=<?= $item['cartId']; ?>" class="btn btn-sm btn-outline-danger"
-                                               onclick="return confirm('Remove this item from your cart?');">
+                                                onclick="return confirm('Remove this item from your cart?');">
                                                 <i class='bx bx-trash'></i>
                                             </a>
                                         </div>
@@ -170,7 +171,7 @@ if (isset($_SESSION['user_id'])) {
 </html>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $('form').on('submit', function (e) {
+    $('form').on('submit', function(e) {
         if ($('input[name="selected_items[]"]:checked').length === 0) {
             e.preventDefault();
             alert("Please select at least one item to checkout.");

@@ -76,7 +76,7 @@ if (isset($_POST['submit'])) {
                     <ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item"><a href="#">Admin</a></li>
                         <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Register User</li>
+                        <li class="breadcrumb-item active" aria-current="page">Update Menu</li>
                     </ol>
                 </nav>
             </div>
@@ -84,7 +84,7 @@ if (isset($_POST['submit'])) {
 
 
         <div class="d-flex justify-content-end my-2">
-            <a href="menus.php" class="btn btn-primary">Back
+            <a href="placed_orders.php" class="btn btn-primary">Back
             </a>
         </div>
 

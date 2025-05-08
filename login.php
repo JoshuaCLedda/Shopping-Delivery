@@ -11,9 +11,6 @@ if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
   exit();
 }
 
-
-
-
 if (isset($_POST['submit'])) {
   $username = trim($_POST['username']);
   $password = trim($_POST['password']);
@@ -43,12 +40,24 @@ if (isset($_POST['submit'])) {
       }
 
       if ($isValid) {
+        // Set session variables
         $_SESSION["user_id"] = $row['u_id'];
         $_SESSION["role"] = $row['role'];
         $_SESSION["restaurant_id"] = $row['restaurant_id'];
 
         $_SESSION['message'] = ['type' => 'success', 'message' => 'Welcome'];
 
+        // Log the successful login activity
+        $user_id = $row['u_id'];
+        $activity = 'Logged in';
+        $details = 'Successful login from IP address ' . $_SERVER['REMOTE_ADDR'];
+
+        // Insert log into activity_log table
+        $logStmt = $db->prepare("INSERT INTO activity_log (user_id, activity, details) VALUES (?, ?, ?)");
+        $logStmt->bind_param("iss", $user_id, $activity, $details);
+        $logStmt->execute();
+
+        // Redirect based on user role
         switch ($row['role']) {
           case 0:
             header("Location: index.php");
@@ -83,6 +92,7 @@ if (isset($_POST['submit'])) {
     exit();
   }
 }
+
 
 ?>
 

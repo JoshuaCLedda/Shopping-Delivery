@@ -67,7 +67,7 @@ while ($row = mysqli_fetch_object($result)) {
 
 
         <div class="d-flex justify-content-end my-2">
-            <a href="orders.php" class="btn btn-primary">Back</a>
+            <a href="placed_orders.php" class="btn btn-primary">Back</a>
         </div>
 
 
@@ -151,11 +151,35 @@ while ($row = mysqli_fetch_object($result)) {
                     <textarea class="form-control" id="deliveryAddress" name="delivery_address" rows="3" disabled><?= htmlspecialchars($row->address ?? 'No Address') ?></textarea>
                 </div>
 
-                <div class="form-group col-sm-6 mb-3">
-    <label for="dishesOrder">Dishes Ordered</label>
-    <textarea disabled class="form-control" id="dishesOrder" rows="4" readonly><?= $dishesOrderFormatted ?></textarea>
+                <div class="col-12">
+                                        <label class="form-label mb-3">Order Items</label>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                                <thead class="thead-light">
+                                                    <tr>
+                                                        <th>Dish Name</th>
+                                                        <th>Quantity</th>
+                                                        <th>Total Price</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php
+                                                    $result = $index->viewOrderItems($transacId);
+                                                    while ($row = mysqli_fetch_array($result)): ?>
+                                                        <tr>
+                                                            <td><?= htmlspecialchars($row['dishName'] ?? 'No Data') ?></td>
+                                                            <td><?= htmlspecialchars($row['orderQuantity'] ?? '0') ?></td>
+                                                            <td>₱
+                                                                <?= htmlspecialchars(number_format((float) ($row['orderTotalPrice'] ?? 0), 2)) ?>
+                                                            </td>
+                                                        </tr>
+                                                    <?php endwhile; ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
 
-</div>
+                                    </div>
+
 
 
             
