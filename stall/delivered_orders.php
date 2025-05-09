@@ -48,7 +48,7 @@ if (!$query) {
                     <ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item"><a href="#">Stall Owner</a></li>
                         <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Riders Rating</li>
+                        <li class="breadcrumb-item active" aria-current="page">Delivered Orders</li>
                     </ol>
                 </nav>
             </div>

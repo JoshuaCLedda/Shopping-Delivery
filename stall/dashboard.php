@@ -70,10 +70,22 @@ switch ($filter) {
 <?php include '../admin/layouts/header.php' ?>
 <?php include '../layouts/stall/sidebar.php' ?>
 <?php include '../layouts/stall/navbar.php' ?>
+<?php include '../layouts/sweetalert.php' ?>
+
 
 <div id="main">
     <div class="main-container">
 
+    <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb" class="rounded-3 mb-4">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="#">Stall Owner</a></li>
+                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
 
 
         <div class="col-lg-12">

@@ -219,11 +219,6 @@ if ($filter == 'monthly') {
                         </div>
                     </div>
                 </div>
-
-                <!-- Restro Categories -->
-              
-
-
                 <!-- end row -->
             </div>
 

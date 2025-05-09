@@ -106,74 +106,77 @@ if (isset($_SESSION['user_id'])) {
                 </a>
             </div>
             <form action="checkout.php" method="POST">
-    <?php
-    $result = $index->getUserCart($user_id);
-    if (mysqli_num_rows($result) > 0):
-        $cartByRestaurant = [];
-        while ($row = mysqli_fetch_assoc($result)) {
-            $cartByRestaurant[$row['restaurantName']][] = $row;
-        }
+<?php
+date_default_timezone_set('Asia/Manila'); // Ensure timezone is consistent
+$currentTime = date("H:i");
 
-        foreach ($cartByRestaurant as $restaurantName => $items): ?>
-            <div class="mb-5">
-                <div class="restaurant-header">
-                    <i class="fa-solid fa-store text-warning"></i>
-                    <?= htmlspecialchars($restaurantName) ?>
-                </div>
+$result = $index->getUserCart($user_id);
+if (mysqli_num_rows($result) > 0):
+    $cartByRestaurant = [];
 
-                <?php foreach ($items as $item):
-                    // Get current time in 24-hour format
-                    $currentTime = date("H:i");
+    while ($row = mysqli_fetch_assoc($result)) {
+        $cartByRestaurant[$row['restaurantName']][] = $row;
+    }
 
-                    // Convert operating hours from 12-hour to 24-hour format
-                    $openTime = date("H:i", strtotime($item['o_hr']));
-                    $closeTime = date("H:i", strtotime($item['c_hr']));
+    foreach ($cartByRestaurant as $restaurantName => $items):
+        $o_hr = $items[0]['o_hr'];
+        $c_hr = $items[0]['c_hr'];
 
-                    // Check if current time is within the operating hours
-                    $isOpen = ($currentTime >= $openTime && $currentTime <= $closeTime);
-                ?>
-                    <div class="card mb-3 shadow-sm cart-item border-0 <?= !$isOpen ? 'disabled-card' : ''; ?>">
-                        <div class="card-body d-flex align-items-center gap-3">
+        // Convert to 24-hour format
+        $openTime = date("H:i", strtotime($o_hr));
+        $closeTime = date("H:i", strtotime($c_hr));
+        $isOpen = ($currentTime >= $openTime && $currentTime <= $closeTime);
+?>
+    <div class="mb-5">
+        <div class="restaurant-header d-flex align-items-center gap-2">
+            <i class="fa-solid fa-store text-warning"></i>
+            <span class="<?= !$isOpen ? 'text-danger' : '' ?>">
+                <?= htmlspecialchars($restaurantName) ?>
+                <?= !$isOpen ? '(Stall Closed)' : '' ?>
+            </span>
+        </div>
 
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="selected_items[]" value="<?= $item['cartId']; ?>" 
-                                <?= !$isOpen ? 'disabled' : ''; ?>>
-                            </div>
+        <?php foreach ($items as $item): ?>
+            <div class="card mb-3 shadow-sm cart-item border-0 <?= !$isOpen ? 'disabled-card' : ''; ?>">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="selected_items[]" value="<?= $item['cartId']; ?>" <?= !$isOpen ? 'disabled' : ''; ?>>
+                    </div>
 
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1 fw-semibold"><?= htmlspecialchars($item['dishName']) ?></h6>
-                                <div class="d-flex flex-wrap gap-2">
-                                    <span class="badge bg-success">₱<?= number_format($item['totalPrice'], 2) ?></span>
-                                    <span class="badge bg-secondary">Qty: <?= (int)$item['quantity'] ?></span>
-                                </div>
-                            </div>
-
-                            <div>
-                                <a href="delete_cart_item.php?cartId=<?= $item['cartId']; ?>" class="btn btn-sm btn-danger"
-                                    onclick="return confirm('Remove this item from your cart?');">
-                                    <i class='bx bx-trash'></i>
-                                </a>
-                            </div>
-
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1 fw-semibold <?= !$isOpen ? 'text-muted' : ''; ?>">
+                            <?= htmlspecialchars($item['dishName']) ?>
+                        </h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-success">₱<?= number_format($item['totalPrice'], 2) ?></span>
+                            <span class="badge bg-secondary">Qty: <?= (int)$item['quantity'] ?></span>
                         </div>
                     </div>
-                <?php endforeach; ?>
+
+                    <div>
+                        <a href="delete_cart_item.php?cartId=<?= $item['cartId']; ?>" class="btn btn-sm btn-danger"
+                            onclick="return confirm('Remove this item from your cart?');">
+                            <i class='bx bx-trash'></i>
+                        </a>
+                    </div>
+                </div>
             </div>
         <?php endforeach; ?>
+    </div>
+<?php endforeach; ?>
 
-        <div class="text-center my-4">
-            <button type="submit" class="btn btn-success btn-checkout shadow">
-                <i class="fa-solid fa-cart-arrow-down me-2"></i> Checkout
-            </button>
-        </div>
+    <div class="text-center my-4">
+        <button type="submit" class="btn btn-success btn-checkout shadow">
+            <i class="fa-solid fa-cart-arrow-down me-2"></i> Checkout
+        </button>
+    </div>
 
-    <?php else: ?>
-        <div class="text-center py-5 bg-light border rounded shadow-sm">
-            <img src="assets/images/icons/emptycart.svg" alt="Empty Cart" class="mb-4" style="width: 200px;">
-            <h5 class="text-muted">Your cart is empty 🛒</h5>
-        </div>
-
-    <?php endif; ?>
+<?php else: ?>
+    <div class="text-center py-5 bg-light border rounded shadow-sm">
+        <img src="assets/images/icons/emptycart.svg" alt="Empty Cart" class="mb-4" style="width: 200px;">
+        <h5 class="text-muted">Your cart is empty 🛒</h5>
+    </div>
+<?php endif; ?>
 </form>
 
 
@@ -215,18 +218,24 @@ if (isset($_SESSION['user_id'])) {
 </script>
 <style>
     .disabled-card {
-        opacity: 0.5; /* Reduce opacity to show that it's disabled */
-        background-color: #f8f9fa; /* Light grey background for disabled items */
-        color: #6c757d; /* Greyed out text */
+        opacity: 0.5;
+        /* Reduce opacity to show that it's disabled */
+        background-color: #f8f9fa;
+        /* Light grey background for disabled items */
+        color: #6c757d;
+        /* Greyed out text */
     }
 
     .disabled-card .form-check-input:disabled {
-        background-color: #e0e0e0; /* Disabled checkbox color */
-        border-color: #ccc; /* Border color for the disabled checkbox */
+        background-color: #e0e0e0;
+        /* Disabled checkbox color */
+        border-color: #ccc;
+        /* Border color for the disabled checkbox */
     }
 
     .disabled-card .form-check-label {
-        color: #6c757d; /* Grey out the label for disabled items */
+        color: #6c757d;
+        /* Grey out the label for disabled items */
     }
 
     .disabled-card .btn {

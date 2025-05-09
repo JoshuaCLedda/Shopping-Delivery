@@ -153,6 +153,8 @@ if (isset($_POST['submit'])) {
                                                 while ($row = mysqli_fetch_array($res)) {
                                                     echo ' <option value="' . $row['rs_id'] . '">' . $row['title'] . '</option>';
                                                     ;
+
+                                                    $_SESSION['restaurant_id']
                                                 }
 
                                                 ?>

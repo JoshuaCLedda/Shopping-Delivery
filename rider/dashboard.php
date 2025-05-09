@@ -73,6 +73,7 @@ $totalYearIncome = $yearlyIncomeData['total_year'] ? number_format($yearlyIncome
 <?php include '../admin/layouts/header.php' ?>
 <?php include '../layouts/rider/sidebar.php' ?>
 <?php include '../layouts/rider/navbar.php' ?>
+<?php include '../layouts/sweetalert.php' ?>
 
 
 <div id="main">

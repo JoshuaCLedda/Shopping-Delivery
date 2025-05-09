@@ -15,6 +15,19 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
 <div id="main">
     <div class="main-container">
 
+    <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb" class="rounded-3 mb-4">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="#">Activity Log</a></li>
+
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-12">
                 <div class="col-lg-12">

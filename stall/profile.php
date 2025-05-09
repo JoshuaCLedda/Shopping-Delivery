@@ -75,6 +75,18 @@ if (isset($_POST['submit']) && $user_id) {
 <?php include '../layouts/stall/navbar.php' ?>
 <div id="main">
     <div class="main-container">
+
+    <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb" class="rounded-3 mb-4">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="#">Stall</a></li>
+                        <li class="breadcrumb-item"><a href="#">Profile</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-lg-12">
                 <?php include '../layouts/sweetalert.php'; ?>

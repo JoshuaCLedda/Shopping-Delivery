@@ -63,7 +63,7 @@ if (isset($_POST['submit'])) {
             <div class="col">
                 <nav aria-label="breadcrumb" class="rounded-3 mb-4">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="#">Stall</a></li>
                         <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Register Menu</li>
                     </ol>
@@ -122,16 +122,24 @@ if (isset($_POST['submit'])) {
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="control-label">Select Stall</label>
-                                        <select name="res_name" class="form-control custom-select" required>
-                                            <option>--Select Stall--</option>
-                                            <?php
-                                            $ssql = "SELECT * FROM restaurant";
-                                            $res = mysqli_query($db, $ssql);
-                                            while ($row = mysqli_fetch_array($res)) {
-                                                echo '<option value="' . $row['rs_id'] . '">' . $row['title'] . '</option>';
-                                            }
-                                            ?>
-                                        </select>
+                                        <?php
+$selected_restaurant_id = $_SESSION['restaurant_id'] ?? ''; // fallback to empty if not set
+?>
+<select class="form-control custom-select d-none" name="res_name">
+
+    <option value="">--Select Stall--</option>
+    <?php
+    $ssql = "SELECT * FROM restaurant";
+    $res = mysqli_query($db, $ssql);
+    while ($row = mysqli_fetch_array($res)) {
+        $rs_id = $row['rs_id'];
+        $title = htmlspecialchars($row['title']);
+        $selected = ($rs_id == $selected_restaurant_id) ? 'selected' : '';
+        echo "<option value='$rs_id' $selected>$title</option>";
+    }
+    ?>
+</select>
+
                                     </div>
                                 </div>
                             </div>

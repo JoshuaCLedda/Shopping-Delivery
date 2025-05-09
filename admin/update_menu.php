@@ -76,7 +76,7 @@ if (isset($_POST['submit'])) {
                     <ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item"><a href="#">Admin</a></li>
                         <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Register User</li>
+                        <li class="breadcrumb-item active" aria-current="page">Register Menu</li>
                     </ol>
                 </nav>
             </div>

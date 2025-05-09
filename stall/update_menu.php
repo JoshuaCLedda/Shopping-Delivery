@@ -74,7 +74,7 @@ if (isset($_POST['submit'])) {
             <div class="col">
                 <nav aria-label="breadcrumb" class="rounded-3 mb-4">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="#">Stall</a></li>
                         <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Update Menu</li>
                     </ol>
@@ -102,141 +102,93 @@ if (isset($_POST['submit'])) {
 
                     <div class="widget card-body shadow-sm">
                         <div class="widget-body">
-                            <form action='' method='post' enctype="multipart/form-data">
-                                <div class="form-body">
-                           
+                        <form action="" method="post" enctype="multipart/form-data">
+    <?php
+    $qml = "SELECT * FROM dishes WHERE d_id='{$_GET['menu_upd']}'";
+    $rest = mysqli_query($index->con, $qml);
+    $row = mysqli_fetch_array($rest);
+    $selected_restaurant_id = $_SESSION['restaurant_id'] ?? '';
+    ?>
+    
+    <input type="hidden" name="dishes_id" value="<?= htmlspecialchars($row['d_id']) ?>">
 
-                           <?php
-                                    $qml = "SELECT * FROM dishes WHERE d_id='$_GET[menu_upd]'";
-                                    $rest = mysqli_query($index->con, $qml);
-                                    $row = mysqli_fetch_array($rest);
-                                    ?>
-<input type="hidden" name="dishes_id" value="<?= htmlspecialchars($row['d_id']) ?>">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">Dish Name</label>
+            <input type="text" name="title" value="<?= htmlspecialchars($row['title']) ?>" class="form-control" placeholder="Morzirella">
+        </div>
 
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <div class="form-group">
-                                                <label class="control-label">Dish Name</label>
-                                                <input type="text" name="title"
-                                                    value="<?php echo htmlspecialchars($row['title']); ?>"
-                                                    class="form-control" placeholder="Morzirella">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <div class="form-group has-danger">
-                                                <label class="control-label">Slogan</label>
-                                                <input type="text" name="slogan"
-                                                    value="<?php echo htmlspecialchars($row['slogan']); ?>"
-                                                    class="form-control form-control-danger" placeholder="Slogan">
-                                            </div>
-                                        </div>
+        <div class="col-md-6">
+            <label class="form-label">Slogan</label>
+            <input type="text" name="slogan" value="<?= htmlspecialchars($row['slogan']) ?>" class="form-control" placeholder="Slogan">
+        </div>
 
+        <div class="col-md-6">
+            <label class="form-label">Price</label>
+            <input type="text" name="price" value="<?= htmlspecialchars($row['price']) ?>" class="form-control" placeholder="₱">
+        </div>
 
-                                        <div class="col-md-6 mb-3">
-                                            <div class="form-group">
-                                                <label class="control-label">Price</label>
-                                                <input type="text" name="price"
-                                                    value="<?php echo htmlspecialchars($row['price']); ?>"
-                                                    class="form-control" placeholder="₱">
-                                            </div>
-                                        </div>
+        <div class="col-md-6">
+            <label class="form-label">Available Quantity</label>
+            <input type="text" name="available_quantity" value="<?= htmlspecialchars($row['available_quantity']) ?>" class="form-control">
+        </div>
 
-                                        <div class="col-md-6 mb-3">
-                                            <div class="form-group">
-                                                <label class="control-label">Availble Quantity</label>
-                                                <input type="text" name="available_quantity"
-                                                    value="<?php echo htmlspecialchars($row['available_quantity']); ?>"
-                                                    class="form-control" >
-                                            </div>
-                                        </div>
+        <div class="col-md-6">
+            <label class="form-label">Menu Category</label>
+            <select name="dish_category_id" class="form-control">
+                <option value="">--Select Category--</option>
+                <?php
+                $currentDishCategory = $row['dish_category_id'];
+                $ssql = "SELECT * FROM dish_category";
+                $res = mysqli_query($index->con, $ssql);
+                while ($catRow = mysqli_fetch_array($res)) {
+                    $selected = ($catRow['id'] == $currentDishCategory) ? 'selected' : '';
+                    echo "<option value='" . htmlspecialchars($catRow['id']) . "' $selected>" . htmlspecialchars($catRow['category']) . "</option>";
+                }
+                ?>
+            </select>
+        </div>
 
+        <div class="col-md-6 d-none">
+            <label class="form-label">Stall</label>
+            <select name="res_name" class="form-control">
+                <option value="">--Select Stall--</option>
+                <?php
+                $ssql = "SELECT * FROM restaurant";
+                $res = mysqli_query($db, $ssql);
+                while ($r = mysqli_fetch_array($res)) {
+                    $rs_id = $r['rs_id'];
+                    $title = htmlspecialchars($r['title']);
+                    $selected = ($rs_id == $selected_restaurant_id) ? 'selected' : '';
+                    echo "<option value='$rs_id' $selected>$title</option>";
+                }
+                ?>
+            </select>
+        </div>
 
+        <div class="col-md-6">
+            <label class="form-label">Menu Image</label>
+            <?php if (!empty($row['img']) && file_exists('Res_img/' . $row['img'])): ?>
+                <input type="file" name="image" class="form-control" disabled>
+                <div class="mt-2 d-flex align-items-center gap-3">
+                    <img src="Res_img/<?= htmlspecialchars($row['img']) ?>" alt="Image" class="img-thumbnail" style="max-width: 100px;">
+                    <button type="button" class="btn btn-sm btn-danger" id="deleteImageBtn" data-rs-id="<?= $rs_id ?>">
+                        <i class="bx bx-trash"></i>
+                    </button>
+                </div>
+            <?php else: ?>
+                <input type="file" name="image" class="form-control">
+                <p class="text-danger mt-2">No Image Data</p>
+            <?php endif; ?>
+        </div>
+    </div>
 
+    <div class="mt-4 d-flex justify-content-start gap-2">
+        <input type="submit" name="submit" class="btn btn-primary" value="Save">
+        <a href="all_menu.php" class="btn btn-danger">Cancel</a>
+    </div>
+</form>
 
-
-
-                                        <div class="col-md-6 mb-3">
-                                            <div class="form-group">
-                                                <label class="control-label">Menu Category</label>
-                                                <select name="dish_category_id" class="form-control custom-select"
-                                                    data-placeholder="Choose a Category" tabindex="1">
-                                                    <option value="">--Select Category--</option>
-                                                    <?php
-                                                    $currentDishCategory = $row['dish_category_id']; // This is from your current dish
-                                                    $ssql = "SELECT * FROM dish_category";
-                                                    $res = mysqli_query($index->con, $ssql);
-
-                                                    // Loop through the categories and set the selected attribute
-                                                    while ($catRow = mysqli_fetch_array($res)) {
-                                                        // Check if the current category is the one for this dish
-                                                        $selected = ($catRow['id'] == $currentDishCategory) ? 'selected' : '';
-                                                        echo '<option value="' . htmlspecialchars($catRow['id']) . '" ' . $selected . '>' . htmlspecialchars($catRow['category']) . '</option>';
-                                                    }
-                                                    ?>
-                                                </select>
-
-                                            </div>
-
-                                        </div>
-
-
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label">Select Stall</label>
-                                                <select readonly name="rs_id" class="form-control custom-select"
-                                                    data-placeholder="Choose a Category" tabindex="1">
-                                                    <option value="">--Select Category--</option>
-                                                    <?php
-                                                    $currentRestau = $row['rs_id']; // This is from your current dish
-                                                    $ssql = "SELECT * FROM restaurant";
-                                                    $res = mysqli_query($index->con, $ssql);
-
-                                                    // Loop through the categories and set the selected attribute
-                                                    while ($catRow = mysqli_fetch_array($res)) {
-                                                        // Check if the current category is the one for this dish
-                                                        $selected = ($catRow['rs_id'] == $currentRestau) ? 'selected' : '';
-                                                        echo '<option value="' . htmlspecialchars($catRow['rs_id']) . '" ' . $selected . '>' . htmlspecialchars($catRow['title']) . '</option>';
-                                                    }
-                                                    ?>
-                                                </select>
-
-                                            </div>
-                                        </div>
-
-
-
-                                        <div class="col-md-6">
-
-                                            <?php if (!empty($row['img']) && file_exists('Res_img/' . $row['img'])): ?>
-                                                <div>
-                                                    <label class="control-label">Menu Image</label>
-                                                    <input type="file" name="image" class="form-control" disabled>
-                                                </div>
-                                                <div class="mt-2" id="image-preview">
-                                                    <img src="Res_img/<?= htmlspecialchars($row['img']) ?>"
-                                                        alt="Restaurant Image" class="img-fluid"
-                                                        style="max-width: 100px; max-height: 100px;">
-                                                    <button type="button" class="btn btn-sm btn-danger" id="deleteImageBtn"
-                                                        data-rs-id="<?= $rs_id ?>">
-                                                        <i class="bx bx-trash"></i>
-                                                    </button>
-                                                </div>
-                                            <?php else: ?>
-                                                <div class="mt-2 text-muted">
-                                                    <label class="control-label">Menu Image</label>
-                                                    <input type="file" name="image" class="form-control">
-                                                    <p class="text-danger my-3">No Image Data</p>
-                                                </div>
-                                            <?php endif; ?>
-
-
-                                        </div>
-                                    </div>
-                                    <div class="form-actions my-3">
-                                        <input type="submit" name="submit" class="btn btn-primary" value="Save">
-                                        <a href="all_menu.php" class="btn btn-danger">Cancel</a>
-                                    </div>
-                            </form>
                         </div>
                     </div>
                 </div>

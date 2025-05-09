@@ -66,7 +66,7 @@ if (isset($_POST['submit'])) {
             header("Location: admin/dashboard.php");
             break;
           case 2:
-            header("Location: rider/index.php");
+            header("Location: rider/dashboard.php");
             break;
           case 3:
             header("Location: stall/dashboard.php");
