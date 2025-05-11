@@ -1,7 +1,8 @@
 <?php
-include("../connection/connect.php");
-error_reporting(0);
 session_start();
+include("../connection/connect.php");
+error_reporting(E_ALL);
+include "Main.php";
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
     header("Location: ../login.php");
     exit();
@@ -148,16 +149,18 @@ if (isset($_POST['submit'])) {
                                             <select name="res_name" class="form-control custom-select"
                                                 data-placeholder="Choose a Category" tabindex="1">
                                                 <option>--Select Stall--</option>
-                                                <?php $ssql = "select * from restaurant";
+                                                <?php
+                                                $selected_restaurant_id = $_SESSION['restaurant_id'] ?? '';
+
+                                                $ssql = "SELECT * FROM restaurant";
                                                 $res = mysqli_query($db, $ssql);
+
                                                 while ($row = mysqli_fetch_array($res)) {
-                                                    echo ' <option value="' . $row['rs_id'] . '">' . $row['title'] . '</option>';
-                                                    ;
-
-                                                    $_SESSION['restaurant_id']
+                                                    $selected = ($row['rs_id'] == $selected_restaurant_id) ? 'selected' : '';
+                                                    echo '<option value="' . htmlspecialchars($row['rs_id']) . '" ' . $selected . '>' . htmlspecialchars($row['title']) . '</option>';
                                                 }
-
                                                 ?>
+
                                             </select>
                                         </div>
                                     </div>

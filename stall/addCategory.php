@@ -4,47 +4,56 @@
 include("../connection/connect.php");
 error_reporting(0);
 session_start();
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 3) {
     header("Location: ../login.php");
     exit();
 }
 
+
+
 if (isset($_POST['submit'])) {
     if (empty($_POST['c_name'])) {
         $error = '<div class="alert alert-danger alert-dismissible fade show">
-																<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-																<strong>field Required!</strong>
-															</div>';
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong>Field Required!</strong>
+                  </div>';
+        $_SESSION['message'] = ['type' => 'danger', 'message' => 'Category name is required.'];
     } else {
-
-        $check_cat = mysqli_query($db, "SELECT c_name FROM res_category where c_name = '" . $_POST['c_name'] . "' ");
-
-
+        $c_name = mysqli_real_escape_string($db, $_POST['c_name']);
+        $check_cat = mysqli_query($db, "SELECT c_name FROM res_category WHERE c_name = '$c_name'");
 
         if (mysqli_num_rows($check_cat) > 0) {
             $error = '<div class="alert alert-danger alert-dismissible fade show">
-																<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-																<strong>Category already exist!</strong>
-															</div>';
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <strong>Category already exists!</strong>
+                      </div>';
+            $_SESSION['message'] = ['type' => 'danger', 'message' => 'This category already exists.'];
         } else {
-
-
-            $mql = "INSERT INTO res_category(c_name) VALUES('" . $_POST['c_name'] . "')";
+            $mql = "INSERT INTO res_category(c_name) VALUES('$c_name')";
             mysqli_query($db, $mql);
             $success = '<div class="alert alert-success alert-dismissible fade show">
-																<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-																New Category Added Successfully.</br></div>';
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                          </button>
+                          New category added successfully.
+                        </div>';
+            $_SESSION['message'] = ['type' => 'success', 'message' => 'New category added successfully.'];
         }
     }
 }
 
-
 ?>
 
 
-<?php include 'layouts/header.php' ?>
-<?php include 'layouts/sidebar.php' ?>
-<?php include 'layouts/navbar.php' ?>
+<?php include '../admin/layouts/header.php' ?>
+<?php include '../layouts/stall/sidebar.php' ?>
+<?php include '../layouts/stall/navbar.php' ?>
+<?php include '../layouts/sweetalert.php' ?>
+
 <div id="main">
     <div class="main-container">
 
@@ -52,7 +61,7 @@ if (isset($_POST['submit'])) {
             <div class="col">
                 <nav aria-label="breadcrumb" class="rounded-3 mb-4">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="#">Stall</a></li>
                         <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Add Category</li>
                     </ol>
@@ -61,7 +70,6 @@ if (isset($_POST['submit'])) {
         </div>
 
 
-        <?php include 'layouts/alerts.php' ?>
 
         <div class="row">
             <div class="col-12">
@@ -175,7 +183,7 @@ if (isset($_POST['submit'])) {
                                             <input type="submit" name="submit" class="btn btn-primary" value="Save">
                                             <a href="add_category.php" class="btn btn-danger">Cancel</a>
                                         </div>
-                                </form>
+                                    </form>
                             </div>
                         </div>
 
@@ -190,4 +198,4 @@ if (isset($_POST['submit'])) {
 
             </div>
 
-            <?php include 'layouts/footer.php' ?>
+            <?php include '../admin/layouts/footer.php' ?>

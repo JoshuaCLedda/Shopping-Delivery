@@ -97,18 +97,19 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 3) {
 
 
                                                     <td>
-    <?php
-    $qty = (int) $rows['available_quantity'];
-    $badgeClass = 'bg-success'; // Default: green
-
-    if ($qty < 10) {
-        $badgeClass = 'bg-danger'; // red
-    } elseif ($qty < 20) {
-        $badgeClass = 'bg-warning text-dark'; // yellow
-    }
-    ?>
-    <span class="badge <?= $badgeClass ?>"><?= htmlspecialchars($qty) ?></span>
-</td>
+                                                        <?php
+                                                        $qty = (int) $rows['available_quantity'];
+                                                        $badgeClass = 'bg-success'; // Default: green
+                                                
+                                                        if ($qty < 10) {
+                                                            $badgeClass = 'bg-danger'; // red
+                                                        } elseif ($qty < 20) {
+                                                            $badgeClass = 'bg-warning text-dark'; // yellow
+                                                        }
+                                                        ?>
+                                                        <span
+                                                            class="badge <?= $badgeClass ?>"><?= htmlspecialchars($qty) ?></span>
+                                                    </td>
 
 
 
@@ -116,7 +117,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 3) {
                                                     <td>
                                                         <div class="ratio ratio-4x3" style="max-width: 100px;">
                                                             <?php
-                                                            $imagePath = "../admin/Res_img/dishes/" . htmlspecialchars($rows['img']);
+                                                            $imagePath = "../admin/Res_img/" . htmlspecialchars($rows['img']);
                                                             if (!empty($rows['img']) && file_exists($imagePath)) {
                                                                 ?>
                                                                 <img src="<?= $imagePath ?>"

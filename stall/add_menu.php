@@ -19,7 +19,7 @@ if (isset($_POST['submit'])) {
         $file = $_FILES['file'];
         $fileExt = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         $fileName = uniqid() . '.' . $fileExt;
-        $filePath = "../admin/Res_img/dishes/" . basename($fileName);
+        $filePath = "../admin/Res_img/" . basename($fileName);
 
         // Validate file extension and size
         if (!in_array($fileExt, ['jpg', 'png', 'gif'])) {
@@ -34,9 +34,11 @@ if (isset($_POST['submit'])) {
                 $about = mysqli_real_escape_string($db, $_POST['about']);
                 $price = mysqli_real_escape_string($db, $_POST['price']);
                 $res_name = mysqli_real_escape_string($db, $_POST['res_name']);
+                $dish_category_id = mysqli_real_escape_string($db, $_POST['dish_category_id']);
+                $available_quantity = mysqli_real_escape_string($db, $_POST['available_quantity']);
 
                 // Insert into DB
-                $sql = "INSERT INTO dishes (rs_id, title, slogan, price, img) VALUES ('$res_name', '$d_name', '$about', '$price', '$fileName')";
+                $sql = "INSERT INTO dishes (rs_id, dish_category_id, title, available_quantity, slogan, price, img) VALUES ('$res_name', '$dish_category_id', '$d_name', '$available_quantity', '$about', '$price', '$fileName')";
                 $result = mysqli_query($db, $sql);
 
                 if ($result) {
@@ -84,8 +86,8 @@ if (isset($_POST['submit'])) {
                         <h5 class="mb-0 text-white">Register Menu</h5>
                     </div>
 
-                    <div class="widget card-body shadow-sm">
-                        <form action='' method='post' enctype="multipart/form-data">
+                    <form action='' method='post' enctype="multipart/form-data">
+                            <div class="widget card-body shadow-sm">
                             <div class="row p-t-20">
                                 <div class="col-md-6 mb-3">
                                     <div class="form-group">
@@ -100,9 +102,7 @@ if (isset($_POST['submit'])) {
                                         <input type="text" name="about" class="form-control" required>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="row p-t-20">
                                 <div class="col-md-6 mb-3">
                                     <div class="form-group">
                                         <label class="control-label">Price</label>
@@ -112,42 +112,70 @@ if (isset($_POST['submit'])) {
 
                                 <div class="col-md-6 mb-3">
                                     <div class="form-group">
+                                        <label class="control-label">Available Quantity</label>
+                                        <input type="number" name="available_quantity" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-group">
                                         <label class="control-label">Image</label>
                                         <input type="file" name="file" class="form-control" required>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-6 mb-3">
                                     <div class="form-group">
-                                        <label class="control-label">Select Stall</label>
-                                        <?php
-$selected_restaurant_id = $_SESSION['restaurant_id'] ?? ''; // fallback to empty if not set
-?>
-<select class="form-control custom-select d-none" name="res_name">
+                                        <label class="control-label">Dish Category</label>
+                                        <select class="form-control custom-select" name="dish_category_id">
+                                            <option value="">--Select Category--</option>
+                                            <?php
+                                            $ssql = "SELECT * FROM dish_category";
+                                            $res = mysqli_query($db, $ssql);
+                                            while ($row = mysqli_fetch_array($res)) {
+                                                $id = htmlspecialchars($row['id']);
+                                                $category = htmlspecialchars($row['category']);
+                                                echo "<option value=\"$id\">$category</option>";
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+                                </div>
 
-    <option value="">--Select Stall--</option>
-    <?php
-    $ssql = "SELECT * FROM restaurant";
-    $res = mysqli_query($db, $ssql);
-    while ($row = mysqli_fetch_array($res)) {
-        $rs_id = $row['rs_id'];
-        $title = htmlspecialchars($row['title']);
-        $selected = ($rs_id == $selected_restaurant_id) ? 'selected' : '';
-        echo "<option value='$rs_id' $selected>$title</option>";
-    }
-    ?>
-</select>
+
+
+
+
+                                <div class="col-md-6 mb-3  d-none">
+                                    <div class="form-group">
+                                        <label class="control-label">Stall</label>
+                                        <?php
+                                        $selected_restaurant_id = $_SESSION['restaurant_id'] ?? ''; 
+                                        ?>
+                                        <select class="form-control custom-select" name="res_name">
+                                            <option value="">--Select Stall--</option>
+                                            <?php
+                                            $ssql = "SELECT * FROM restaurant";
+                                            $res = mysqli_query($db, $ssql);
+                                            while ($row = mysqli_fetch_array($res)) {
+                                                $rs_id = $row['rs_id'];
+                                                $title = htmlspecialchars($row['title']);
+                                                $selected = ($rs_id == $selected_restaurant_id) ? 'selected' : '';
+                                                echo "<option value='$rs_id' $selected>$title</option>";
+                                            }
+                                            ?>
+                                        </select>
 
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="form-actions my-2">
-                                <input type="submit" name="submit" class="mr-2 btn btn-primary" value="Save">
-                                <a href="all_menu.php" class="btn btn-danger">Cancel</a>
-                            </div>
+
+
+
+                                <div class="form-actions my-2">
+                                    <input type="submit" name="submit" class="mr-2 btn btn-primary" value="Save">
+                                    <a href="all_menu.php" class="btn btn-danger">Cancel</a>
+                                </div>
                         </form>
                     </div>
                 </div>

@@ -26,7 +26,7 @@
           <span class="hide-menu">Orders</span>
         </li>
 
-        
+
 
         <li class="sidebar-item">
           <a class="sidebar-link" href="menus.php" aria-expanded="false">
@@ -38,7 +38,7 @@
         </li>
 
 
-<!-- Commented for the meantime
+        <!-- Commented for the meantime
         <li class="sidebar-item">
           <a class="sidebar-link" href="orders.php" aria-expanded="false">
             <span>
@@ -85,6 +85,21 @@
         </li>
 
 
+        <li class="nav-small-cap">
+          <i class="bx bx-dots-vertical-rounded nav-small-cap-icon fs-4"></i>
+          <span class="hide-menu">Others</span>
+        </li>
+
+
+
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="addCategory.php" aria-expanded="false">
+            <span>
+              <i class="bx bx-bowl-hot"></i>
+            </span>
+            <span class="hide-menu">Add Category</span>
+          </a>
+        </li>
 
 
 

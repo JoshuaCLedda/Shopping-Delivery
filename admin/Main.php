@@ -118,7 +118,8 @@ class Index
         $o_days,
         $image,
         $address,
-        $c_id
+        $c_id,
+        $owner_id
     ) {
         // Escape variables
         $res_name = mysqli_real_escape_string($this->con, $res_name);
@@ -130,8 +131,9 @@ class Index
         $o_days = mysqli_real_escape_string($this->con, $o_days);
         $address = mysqli_real_escape_string($this->con, $address);
         $c_id = mysqli_real_escape_string($this->con, $c_id);
+        $owner_id = (int) $owner_id;
 
-        // Email uniqueness check
+        // Check for email uniqueness
         $checkQuery = "SELECT * FROM restaurant WHERE email = '$email'";
         $checkResult = mysqli_query($this->con, $checkQuery);
         if (mysqli_num_rows($checkResult) > 0) {
@@ -143,7 +145,6 @@ class Index
         $imageTmp = $image['tmp_name'];
         $imageFolder = "Res_img/";
 
-        // Create folder if it doesn't exist
         if (!is_dir($imageFolder)) {
             mkdir($imageFolder, 0777, true);
         }
@@ -156,7 +157,7 @@ class Index
             return false; // Image upload failed
         }
 
-        // Insert restaurant data with image
+        // Insert restaurant
         $sql = "INSERT INTO restaurant 
             (title, email, phone, url, o_hr, c_hr, o_days, address, c_id, image)
             VALUES 
@@ -165,21 +166,27 @@ class Index
         $result = mysqli_query($this->con, $sql);
 
         if ($result) {
-            // Log the activity (admin adds a new restaurant)
-            $admin_id = $_SESSION["user_id"]; // Assuming the admin is logged in and the user_id is in the session
-            $activity = 'Added new restaurant';
-            $details = 'New restaurant added with name: ' . $res_name;
+            $restaurant_id = mysqli_insert_id($this->con); // get the inserted restaurant's ID
 
-            // Insert log into activity_log table
+            // Update user's restaurant_id
+            $updateUser = "UPDATE users SET restaurant_id = '$restaurant_id' WHERE u_id = '$owner_id'";
+            mysqli_query($this->con, $updateUser);
+
+            // Log the activity
+            $admin_id = $_SESSION["user_id"];
+            $activity = 'Added new restaurant';
+            $details = 'New restaurant "' . $res_name . '" added and assigned to owner ID ' . $owner_id;
+
             $logStmt = $this->con->prepare("INSERT INTO activity_log (user_id, activity, details) VALUES (?, ?, ?)");
             $logStmt->bind_param("iss", $admin_id, $activity, $details);
             $logStmt->execute();
 
-            return true; // Restaurant added successfully
+            return true;
         } else {
-            return false; // Restaurant not added
+            return false;
         }
     }
+
 
 
     public function getRestCategory()
@@ -859,7 +866,76 @@ class Index
         }
     }
 
+    public function updateStallMenu(
+        $dishes_Id,
+        $title,
+        $status,
+        $slogan,
+        $price,
+        $available_quantity,
+        $dish_category_id,
+        $image
+    ) {
+        // Escape variables properly
+        $title = mysqli_real_escape_string($this->con, $title);
+        $slogan = mysqli_real_escape_string($this->con, $slogan);
+        $price = mysqli_real_escape_string($this->con, $price);
+        $available_quantity = mysqli_real_escape_string($this->con, $available_quantity);
+        $dish_category_id = mysqli_real_escape_string($this->con, $dish_category_id);
 
+        // Start building the SQL
+        $sql = "UPDATE dishes SET 
+        title = '$title',
+        slogan = '$slogan',
+        price = '$price',
+        status = '$status',
+        available_quantity = '$available_quantity',
+        dish_category_id = '$dish_category_id'";
+
+        // Handle image upload if a new image is uploaded
+        if (!empty($image) && !empty($image['name'])) {
+            $imageName = basename($image['name']);
+            $imageTmp = $image['tmp_name'];
+            $imageFolder = "Res_img/";
+
+            if (!is_dir($imageFolder)) {
+                mkdir($imageFolder, 0777, true);
+            }
+
+            $newImageName = time() . "_" . $imageName; // Unique file name
+            $targetPath = $imageFolder . $newImageName;
+
+            if (move_uploaded_file($imageTmp, $targetPath)) {
+                $imagePathForDB = mysqli_real_escape_string($this->con, $newImageName);
+                $sql .= ", img = '$imagePathForDB'"; // Append img only if upload succeeded
+            } else {
+                return false; // Image upload failed
+            }
+        }
+
+        // Add the WHERE clause at the end
+        $sql .= " WHERE dishes.d_id = '$dishes_Id'";
+
+        // Execute the update query
+        $result = mysqli_query($this->con, $sql);
+
+        if ($result) {
+            // Log the activity
+            $activity = 'Updated menu item';
+            $details = "Updated dish with ID: $dishes_Id, Title: $title";
+
+            // Insert log into activity_log table
+            $logStmt = $this->con->prepare("INSERT INTO activity_log (user_id, activity, details) VALUES (?, ?, ?)");
+            // Assuming the user performing the action has a session variable `user_id`
+            $user_id = $_SESSION['user_id'];  // This can be set based on your session handling
+            $logStmt->bind_param("iss", $user_id, $activity, $details); // Log the user, activity, and details
+            $logStmt->execute();
+
+            return true;
+        } else {
+            return false;  // Return false if the update failed
+        }
+    }
 
     // category
 
@@ -1180,13 +1256,13 @@ class Index
         $userAddress,
         $address
     ) {
-        $user_id       = mysqli_real_escape_string($this->con, $user_id);
-        $gcash_proof   = mysqli_real_escape_string($this->con, $gcash_proof);
-        $mod           = mysqli_real_escape_string($this->con, $mod);
+        $user_id = mysqli_real_escape_string($this->con, $user_id);
+        $gcash_proof = mysqli_real_escape_string($this->con, $gcash_proof);
+        $mod = mysqli_real_escape_string($this->con, $mod);
         $delivery_type = mysqli_real_escape_string($this->con, $delivery_type);
-        $total_price   = mysqli_real_escape_string($this->con, $total_price);
-        $userAddress   = mysqli_real_escape_string($this->con, $userAddress);
-        $address       = mysqli_real_escape_string($this->con, $address);
+        $total_price = mysqli_real_escape_string($this->con, $total_price);
+        $userAddress = mysqli_real_escape_string($this->con, $userAddress);
+        $address = mysqli_real_escape_string($this->con, $address);
 
         $order_date = date("Y-m-d H:i:s");
         $payment_status = ($mod == "GCash" && $gcash_proof) ? "Pending" : "Paid";
@@ -1275,6 +1351,25 @@ class Index
         // Return the result
         return $result;
     }
+
+    public function getActiveNoStallUsers()
+    {
+        // Correct SQL query
+        $sql = "SELECT * FROM users WHERE restaurant_id IS NULL";
+
+        // Execute the query
+        $result = mysqli_query($this->con, $sql);
+
+        // Check if the query was successful
+        if (!$result) {
+            die('Query failed: ' . mysqli_error($this->con));
+        }
+
+        return $result;
+    }
+
+
+
     public function getActiveRestaurant()
     {
         $sql = "SELECT * FROM restaurant";
