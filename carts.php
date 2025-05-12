@@ -106,78 +106,80 @@ if (isset($_SESSION['user_id'])) {
                 </a>
             </div>
             <form action="checkout.php" method="POST">
-<?php
-date_default_timezone_set('Asia/Manila'); // Ensure timezone is consistent
-$currentTime = date("H:i");
+                <?php
+                date_default_timezone_set('Asia/Manila'); // Ensure timezone is consistent
+                $currentTime = date("H:i");
 
-$result = $index->getUserCart($user_id);
-if (mysqli_num_rows($result) > 0):
-    $cartByRestaurant = [];
+                $result = $index->getUserCart($user_id);
+                if (mysqli_num_rows($result) > 0):
+                    $cartByRestaurant = [];
 
-    while ($row = mysqli_fetch_assoc($result)) {
-        $cartByRestaurant[$row['restaurantName']][] = $row;
-    }
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        $cartByRestaurant[$row['restaurantName']][] = $row;
+                    }
 
-    foreach ($cartByRestaurant as $restaurantName => $items):
-        $o_hr = $items[0]['o_hr'];
-        $c_hr = $items[0]['c_hr'];
+                    foreach ($cartByRestaurant as $restaurantName => $items):
+                        $o_hr = $items[0]['o_hr'];
+                        $c_hr = $items[0]['c_hr'];
 
-        // Convert to 24-hour format
-        $openTime = date("H:i", strtotime($o_hr));
-        $closeTime = date("H:i", strtotime($c_hr));
-        $isOpen = ($currentTime >= $openTime && $currentTime <= $closeTime);
-?>
-    <div class="mb-5">
-        <div class="restaurant-header d-flex align-items-center gap-2">
-            <i class="fa-solid fa-store text-warning"></i>
-            <span class="<?= !$isOpen ? 'text-danger' : '' ?>">
-                <?= htmlspecialchars($restaurantName) ?>
-                <?= !$isOpen ? '(Stall Closed)' : '' ?>
-            </span>
-        </div>
+                        // Convert to 24-hour format
+                        $openTime = date("H:i", strtotime($o_hr));
+                        $closeTime = date("H:i", strtotime($c_hr));
+                        $isOpen = ($currentTime >= $openTime && $currentTime <= $closeTime);
+                        ?>
+                        <div class="mb-5">
+                            <div class="restaurant-header d-flex align-items-center gap-2">
+                                <i class="fa-solid fa-store text-warning"></i>
+                                <span class="<?= !$isOpen ? 'text-danger' : '' ?>">
+                                    <?= htmlspecialchars($restaurantName) ?>
+                                    <?= !$isOpen ? '(Stall Closed)' : '' ?>
+                                </span>
+                            </div>
 
-        <?php foreach ($items as $item): ?>
-            <div class="card mb-3 shadow-sm cart-item border-0 <?= !$isOpen ? 'disabled-card' : ''; ?>">
-                <div class="card-body d-flex align-items-center gap-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="selected_items[]" value="<?= $item['cartId']; ?>" <?= !$isOpen ? 'disabled' : ''; ?>>
-                    </div>
+                            <?php foreach ($items as $item): ?>
+                                <div class="card mb-3 shadow-sm cart-item border-0 <?= !$isOpen ? 'disabled-card' : ''; ?>">
+                                    <div class="card-body d-flex align-items-center gap-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="selected_items[]"
+                                                value="<?= $item['cartId']; ?>" <?= !$isOpen ? 'disabled' : ''; ?>>
+                                        </div>
 
-                    <div class="flex-grow-1">
-                        <h6 class="mb-1 fw-semibold <?= !$isOpen ? 'text-muted' : ''; ?>">
-                            <?= htmlspecialchars($item['dishName']) ?>
-                        </h6>
-                        <div class="d-flex flex-wrap gap-2">
-                            <span class="badge bg-success">₱<?= number_format($item['totalPrice'], 2) ?></span>
-                            <span class="badge bg-secondary">Qty: <?= (int)$item['quantity'] ?></span>
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1 fw-semibold <?= !$isOpen ? 'text-muted' : ''; ?>">
+                                                <?= htmlspecialchars($item['dishName']) ?>
+                                            </h6>
+                                            <div class="d-flex flex-wrap gap-2">
+                                                <span class="badge bg-success">₱<?= number_format($item['totalPrice'], 2) ?></span>
+                                                <span class="badge bg-secondary">Qty: <?= (int) $item['quantity'] ?></span>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <a href="delete_cart_item.php?cartId=<?= $item['cartId']; ?>"
+                                                class="btn btn-sm btn-danger"
+                                                onclick="return confirm('Remove this item from your cart?');">
+                                                <i class='bx bx-trash'></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
                         </div>
+                    <?php endforeach; ?>
+
+                    <div class="text-center my-4">
+                        <button type="submit" class="btn btn-success btn-checkout shadow">
+                            <i class="fa-solid fa-cart-arrow-down me-2"></i> Checkout
+                        </button>
                     </div>
 
-                    <div>
-                        <a href="delete_cart_item.php?cartId=<?= $item['cartId']; ?>" class="btn btn-sm btn-danger"
-                            onclick="return confirm('Remove this item from your cart?');">
-                            <i class='bx bx-trash'></i>
-                        </a>
+                <?php else: ?>
+                    <div class="text-center py-5 bg-light border rounded shadow-sm">
+                        <img src="assets/images/icons/emptycart.svg" alt="Empty Cart" class="mb-4" style="width: 200px;">
+                        <h5 class="text-muted">Your cart is empty 🛒</h5>
                     </div>
-                </div>
-            </div>
-        <?php endforeach; ?>
-    </div>
-<?php endforeach; ?>
-
-    <div class="text-center my-4">
-        <button type="submit" class="btn btn-success btn-checkout shadow">
-            <i class="fa-solid fa-cart-arrow-down me-2"></i> Checkout
-        </button>
-    </div>
-
-<?php else: ?>
-    <div class="text-center py-5 bg-light border rounded shadow-sm">
-        <img src="assets/images/icons/emptycart.svg" alt="Empty Cart" class="mb-4" style="width: 200px;">
-        <h5 class="text-muted">Your cart is empty 🛒</h5>
-    </div>
-<?php endif; ?>
-</form>
+                <?php endif; ?>
+            </form>
 
 
 
@@ -189,7 +191,7 @@ if (mysqli_num_rows($result) > 0):
 </html>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $('form').on('submit', function(e) {
+    $('form').on('submit', function (e) {
         if ($('input[name="selected_items[]"]:checked').length === 0) {
             e.preventDefault();
             alert("Please select at least one item to checkout.");
@@ -199,7 +201,7 @@ if (mysqli_num_rows($result) > 0):
 
 
 <script>
-    document.getElementById('deleteSelectedBtn').addEventListener('click', function(e) {
+    document.getElementById('deleteSelectedBtn').addEventListener('click', function (e) {
         e.preventDefault();
 
         const form = document.querySelector('form');

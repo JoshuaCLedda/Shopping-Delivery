@@ -101,14 +101,15 @@
           </a>
         </li>
 
-        <li class="sidebar-item">
+        <!-- Removed for the comment -->
+        <!-- <li class="sidebar-item">
           <a class="sidebar-link" href="all_menu.php" aria-expanded="false">
             <span>
               <i class="bx bx-food-menu"></i>
             </span>
             <span class="hide-menu">Menus</span>
           </a>
-        </li>
+        </li> -->
 
         <li class="nav-small-cap">
           <i class="ti ti-dots nav-small-cap-icon fs-4"></i>

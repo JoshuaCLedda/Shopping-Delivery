@@ -207,13 +207,13 @@ session_start();
                 <h2 class="fw-bold">Featured Stalls</h2>
                 <p class="lead text-muted">Here are the stalls recomendation</p>
             </div>
-            <!-- Commented for the meantime -->
-            <!-- <div class="col-sm-6 text-sm-end">
+<!--             
+             <div class="col-sm-6 text-sm-end">
                 <ul class="list-inline mb-0">
                     <li class="list-inline-item">
                         <a href="#" class="btn btn-outline-primary btn-sm active" data-filter="*">All</a>
                     </li>
-                    ?php
+                    <?php
                     $res = mysqli_query($db, "SELECT * FROM res_category");
                     while ($row = mysqli_fetch_array($res)) {
                         echo '<li class="list-inline-item">
