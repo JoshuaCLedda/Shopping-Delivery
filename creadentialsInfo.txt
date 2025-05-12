@@ -16,6 +16,27 @@ User
 username: user
 password: Pa$$w0rd!
 
+Stalls
+username: VkSnack
+password: Pa$$w0rd!
+
+username: AlengNeldi
+password: Pa$$w0rd!
+
+username: khishafood
+password: Pa$$w0rd!
+
+username: fritzstall
+password: Pa$$w0rd!
+
+username: bontea
+password: Pa$$w0rd!
+
+Rider
+
+username: johnpaul
+password: Pa$$w0rd!
+
 
 
 🛒 Order Lifecycle Process Guide
