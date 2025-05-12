@@ -213,7 +213,7 @@ if (isset($_POST['submit'])) {
                                 <div class="col-md-6 mb-3">
                                     <div class="form-group">
                                         <label class="control-label">Select Owner</label>
-                                        <select name="owner_id" class="form-control custom-select" required>
+                                        <select name="owner_id" class="form-control custom-select">
                                             <option value="">-- Select Owner --</option>
                                             <?php
                                             $resultType = $index->getActiveNoStallUsers();
