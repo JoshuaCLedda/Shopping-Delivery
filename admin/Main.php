@@ -702,7 +702,8 @@ class Index
         $o_days,
         $c_name,
         $image,
-        $address
+        $address,
+        $owner_id
     ) {
         // Escape variables
         $rs_id = mysqli_real_escape_string($this->con, $rs_id);
@@ -715,8 +716,9 @@ class Index
         $o_days = mysqli_real_escape_string($this->con, $o_days);
         $c_name = mysqli_real_escape_string($this->con, $c_name);
         $address = mysqli_real_escape_string($this->con, $address);
-
-        // Prepare base query
+        $owner_id = mysqli_real_escape_string($this->con, $owner_id);
+    
+        // Prepare base update query
         $sql = "UPDATE restaurant SET 
                     title = '$res_name',
                     email = '$email',
@@ -727,19 +729,19 @@ class Index
                     o_days = '$o_days',
                     address = '$address',
                     c_id = '$c_name'";
-
-        // If image is uploaded, handle it
+    
+        // Handle image upload
         if (!empty($image['name'])) {
             $imageName = basename($image['name']);
             $imageTmp = $image['tmp_name'];
             $imageFolder = "Res_img/";
-
+    
             if (!is_dir($imageFolder)) {
                 mkdir($imageFolder, 0777, true);
             }
-
+    
             $targetPath = $imageFolder . time() . "_" . $imageName;
-
+    
             if (move_uploaded_file($imageTmp, $targetPath)) {
                 $imagePathForDB = mysqli_real_escape_string($this->con, $targetPath);
                 $sql .= ", image = '$imagePathForDB'";
@@ -747,30 +749,35 @@ class Index
                 return false; // Image upload failed
             }
         }
-
-        // Finish query
+    
+        // Finish update query
         $sql .= " WHERE rs_id = '$rs_id'";
-
-        // Execute the update query
+    
+        // Execute update
         $result = mysqli_query($this->con, $sql);
-
+    
         if ($result) {
-            // Log the activity
+            // ✅ Step 1: Unassign previous user from this restaurant
+            mysqli_query($this->con, "UPDATE users SET restaurant_id = NULL WHERE restaurant_id = '$rs_id'");
+    
+            // ✅ Step 2: Assign new owner to this restaurant
+            mysqli_query($this->con, "UPDATE users SET restaurant_id = '$rs_id' WHERE u_id = '$owner_id'");
+    
+            // Log activity
             $activity = 'Updated restaurant details';
             $details = "Updated restaurant with ID: $rs_id, Name: $res_name";
-
-            // Insert log into activity_log table
+    
             $logStmt = $this->con->prepare("INSERT INTO activity_log (user_id, activity, details) VALUES (?, ?, ?)");
-            // Assuming the user performing the action has a session variable `user_id`
-            $user_id = $_SESSION['user_id'];  // This can be set based on your session handling
-            $logStmt->bind_param("iss", $user_id, $activity, $details); // Log the user, activity, and details
+            $user_id = $_SESSION['user_id'];
+            $logStmt->bind_param("iss", $user_id, $activity, $details);
             $logStmt->execute();
-
+    
             return true;
         } else {
-            return false;  // Return false if the update failed
+            return false;
         }
     }
+    
 
 
     public function getAllMenu()
@@ -1355,7 +1362,24 @@ class Index
     public function getActiveNoStallUsers()
     {
         // Correct SQL query
-        $sql = "SELECT * FROM users WHERE restaurant_id IS NULL";
+        $sql = "SELECT * FROM users WHERE restaurant_id IS NULL
+        AND role = 3"; //stall owner
+
+        // Execute the query
+        $result = mysqli_query($this->con, $sql);
+
+        // Check if the query was successful
+        if (!$result) {
+            die('Query failed: ' . mysqli_error($this->con));
+        }
+
+        return $result;
+    }
+
+    public function getActiveStallUsers()
+    {
+        // Correct SQL query
+        $sql = "SELECT * FROM users WHERE role = 3";
 
         // Execute the query
         $result = mysqli_query($this->con, $sql);

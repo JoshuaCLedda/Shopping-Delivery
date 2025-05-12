@@ -29,6 +29,7 @@ if (isset($_POST['submit'])) {
     $c_name = $_POST['c_name'];
     $image = $_FILES['image'];
     $address = $_POST['address'];
+    $owner_id = $_POST['owner_id'];
 
 
 
@@ -44,7 +45,8 @@ if (isset($_POST['submit'])) {
         $o_days,
         $c_name,
         $image,
-        $address
+        $address,
+        $owner_id
 
     );
 
@@ -142,7 +144,8 @@ if (isset($_POST['submit'])) {
 
                                         <div class="col-md-6 mb-3">
                                             <div class="form-group has-danger">
-                                                <label class="control-label">Website <span class="text-success" style="font-style: italic">(if there are)</span></label>
+                                                <label class="control-label">Website <span class="text-success"
+                                                        style="font-style: italic">(if there are)</span></label>
 
                                                 <input type="text" name="url" class="form-control form-control-danger"
                                                     value="<?php echo $row['url']; ?>" placeholder="http://example.com">
@@ -237,9 +240,10 @@ if (isset($_POST['submit'])) {
                                                 <input type="file" name="image" class="form-control">
                                             </div>
                                             <div class="mt-2" id="image-preview">
-                                                <img src="<?= $imagePath ?>" alt="Restaurant Image" class="img-thumbnail" style="max-height: 120px;">
-                                                <button type="button" class="btn btn-sm btn-danger"
-                                                    id="deleteImageBtn" data-rs-id="<?= $rs_id ?>">
+                                                <img src="<?= $imagePath ?>" alt="Restaurant Image" class="img-thumbnail"
+                                                    style="max-height: 120px;">
+                                                <button type="button" class="btn btn-sm btn-danger" id="deleteImageBtn"
+                                                    data-rs-id="<?= $rs_id ?>">
                                                     <i class="bx bx-trash"></i>
                                                 </button>
                                             </div>
@@ -251,12 +255,9 @@ if (isset($_POST['submit'])) {
                                                 <p class="text-danger my-3">No Image Data</p>
                                             </div>
                                         <?php endif; ?>
-
-
-
-
-
                                     </div>
+
+
 
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
@@ -267,18 +268,45 @@ if (isset($_POST['submit'])) {
                                                     class="form-control"> <?php echo $row['address']; ?> </textarea>
                                             </div>
                                         </div>
+
+
+                                        <div class="col-md-6 mb-3">
+                                            <div class="form-group">
+                                                <label class="control-label">Select Owner</label>
+                                                <?php $selectedOwnerId = $row['rs_id']; ?>
+
+                                                <select name="owner_id" class="form-control custom-select" required>
+                                                    <option value="">-- Select Owner --</option>
+                                                    <?php
+                                                    $resultType = $index->getActiveStallUsers();
+                                                    while ($row = mysqli_fetch_array($resultType)) {
+                                                        $rs_id = $row['restaurant_id'];
+                                                        $user_id = $row['u_id'];
+                                                        $f_name = $row['f_name'];
+                                                        $l_name = $row['l_name'];
+
+                                                        $selected = ($rs_id == $selectedOwnerId) ? 'selected' : '';
+                                                        echo '<option value="' . htmlspecialchars($user_id) . '" ' . $selected . '>' . htmlspecialchars($f_name) . ' ' . htmlspecialchars($l_name) . '</option>';
+                                                    }
+                                                    ?>
+                                                </select>
+
+
+                                            </div>
+                                        </div>
+
+
                                     </div>
-
-
                                 </div>
+                                <div class="form-actions">
+                                    <input type="submit" name="submit" class="btn btn-primary" value="Save">
+                                    <a href="all_restaurant.php" class="btn btn-danger">Cancel</a>
+                                </div>
+                            </form>
                         </div>
-                        <div class="form-actions">
-                            <input type="submit" name="submit" class="btn btn-primary" value="Save">
-                            <a href="all_restaurant.php" class="btn btn-danger">Cancel</a>
-                        </div>
-                        </form>
                     </div>
                 </div>
+
             </div>
 
         </div>
@@ -287,11 +315,9 @@ if (isset($_POST['submit'])) {
 
 </div>
 
-</div>
-
 
 <script>
-    $(document).on('click', '#deleteImageBtn', function() {
+    $(document).on('click', '#deleteImageBtn', function () {
         const rs_id = $(this).data('rs-id');
 
         if (confirm('Are you sure you want to delete this image?')) {
@@ -301,7 +327,7 @@ if (isset($_POST['submit'])) {
                 data: {
                     rs_id: rs_id
                 },
-                success: function(response) {
+                success: function (response) {
                     if (response === 'success') {
                         $('#image-preview').fadeOut();
                     } else {
