@@ -21,7 +21,9 @@ if (isset($_POST['submit'])) {
     $address = $_POST['address'];
     $c_id = $_POST['c_id'];
     $user_id = $_POST['user_id'];
+    $owner_id = $_POST['owner_id'];
 
+    
 
     // Call the model function with image path
     $result = $index->addRestaurant(
@@ -34,8 +36,8 @@ if (isset($_POST['submit'])) {
         $o_days,
         $image,
         $address,
-        $c_id
-
+        $c_id,
+        $owner_id
     );
 
 
@@ -178,13 +180,14 @@ if (isset($_POST['submit'])) {
                                 </div>
 
                                 <div class="col-md-6 mb-3">
-    <div class="form-group">
-        <label class="control-label">
-            Image <span class="text-warning text-sm">jpg, jpeg, png</span>
-        </label>
-        <input type="file" name="image" class="form-control" accept="image/png, image/jpeg" required>
-    </div>
-</div>
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            Image <span class="text-warning text-sm">jpg, jpeg, png</span>
+                                        </label>
+                                        <input type="file" name="image" class="form-control"
+                                            accept="image/png, image/jpeg" required>
+                                    </div>
+                                </div>
 
 
 
@@ -207,14 +210,13 @@ if (isset($_POST['submit'])) {
                                 </div>
 
 
-
-                                <!-- <div class="col-md-6 mb-3">
+                                <div class="col-md-6 mb-3">
                                     <div class="form-group">
                                         <label class="control-label">Select Owner</label>
-                                        <select name="user_id" class="form-control custom-select" required>
+                                        <select name="owner_id" class="form-control custom-select">
                                             <option value="">-- Select Owner --</option>
-                                             ?php
-                                            resultType = $index->getActiveUsers();
+                                            <?php
+                                            $resultType = $index->getActiveNoStallUsers();
                                             while ($row = mysqli_fetch_array($resultType)) {
                                                 $u_id = $row['u_id'];
                                                 $f_name = $row['f_name'];
@@ -224,10 +226,7 @@ if (isset($_POST['submit'])) {
                                             ?>
                                         </select>
                                     </div>
-                                </div> -->
-
-
-
+                                </div>
 
 
                                 <div class="col-md-12 mb-3">
@@ -237,6 +236,9 @@ if (isset($_POST['submit'])) {
                                             required></textarea>
                                     </div>
                                 </div>
+
+
+
 
                             </div>
                             <div class="form-actions my-2">

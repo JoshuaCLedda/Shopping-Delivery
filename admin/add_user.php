@@ -67,7 +67,7 @@ if (isset($_POST['submit'])) {
                 $logStmt = $db->prepare("INSERT INTO activity_log (user_id, activity, details) VALUES (?, ?, ?)");
                 $logStmt->bind_param("iss", $user_id, $activity, $details);
                 $logStmt->execute();
-
+                $_SESSION['message'] = ['type' => 'success', 'message' => 'Registration successful!'];
             } else {
                 $_SESSION['message'] = ['type' => 'danger', 'message' => 'Registration failed! Please try again.'];
             }

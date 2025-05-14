@@ -4,7 +4,11 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-// include_once 'product-action.php'; 
+if (isset($_GET['res_id'])) {
+    $_SESSION['dishedId'] = $_GET['res_id'];
+}
+
+$dishesId = $_SESSION['dishedId'] ?? "null";
 
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
@@ -63,20 +67,23 @@ bg-light border-bottom">
         <div class="row text-center">
             <div class="col-12 col-sm-4 mb-2 mb-sm-0">
                 <div class="link-item active">
-                    <i class='bx bx-store-alt fs-3 mb-1'></i> <!-- Icon for Choose Stall -->
+                    <i class='bx bx-store-alt fs-3 mb-1'></i>
                     <a href="#" class="d-block text-decoration-none text-dark">Choose Stall</a>
                 </div>
             </div>
             <div class="col-12 col-sm-4 mb-2 mb-sm-0 ">
                 <div class="link-item">
-                    <i class='bx bx-food-menu fs-3 mb-1 text-primary'></i> <!-- Icon for Pick Your Favorite Food -->
+                    <i class='bx bx-food-menu fs-3 mb-1 text-primary'></i>
                     <a href="#" class="d-block text-decoration-none text-dark">Pick Your Favorite Food</a>
                 </div>
             </div>
             <div class="col-12 col-sm-4">
                 <div class="link-item">
-                    <i class='bx bx-cart fs-3 mb-1'></i> <!-- Icon for Order and Pay -->
-                    <a href="#" class="d-block text-decoration-none text-dark">Order and Pay</a>
+                    <i class='bx bx-cart fs-3 mb-1'></i>
+                    <a href="#" class="d-block text-decoration-none text-dark">Order and Pay
+
+
+                    </a>
                 </div>
             </div>
         </div>
@@ -110,7 +117,8 @@ bg-light border-bottom">
                 </div>
 
                 <!-- Restaurant Info Section -->
-                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 profile-desc d-flex flex-column justify-content-center p-4" style="border-radius: 0 10px 10px 0;">
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 profile-desc d-flex flex-column justify-content-center p-4"
+                    style="border-radius: 0 10px 10px 0;">
                     <div class="right-text">
                         <h6 class="mb-2">
                             <p style="color: black;"><?= htmlspecialchars($rows['title']) ?></a=>
@@ -139,13 +147,48 @@ bg-light border-bottom">
                 <h2 class="fw-bold">Available Dishes</h2>
                 <p class="lead text-muted">Browse the dishes available at the restaurant</p>
             </div>
+
+            <div class="col-md-6 offset-md-3">
+                <label class="form-label">Filter by Category</label>
+                <select name="dish_category_id" id="dishCategorySelect" class="form-control">
+                    <option value="">-- Select Category --</option>
+                    <?php
+                    $query = "SELECT id, category FROM dish_category ORDER BY category ASC";
+                    $result = mysqli_query($db, $query);
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        echo "<option value='{$row['id']}'>" . htmlspecialchars($row['category']) . "</option>";
+                    }
+                    ?>
+                </select>
+
+            </div>
         </div>
 
+
         <!-- Dish Cards -->
-        <div class="row g-4">
+        <div class="row g-4" id="dishContainer">
             <?php
-            $stmt = $index->con->prepare("SELECT * FROM dishes WHERE status = 1 AND rs_id = ?");
-            $stmt->bind_param("i", $_GET['res_id']);
+
+            $cat_id = $_POST['cat_id'] ?? null;
+            $res_id = $dishesId;
+
+            if (!$res_id) {
+                echo "Restaurant ID missing.";
+                exit;
+            }
+
+            $query = "SELECT * FROM dishes WHERE status = 0 AND rs_id = ?";
+            $params = [$res_id];
+            $types = "i";
+
+            if ($cat_id) {
+                $query .= " AND dish_category_id = ?";
+                $types .= "i";
+                $params[] = $cat_id;
+            }
+
+            $stmt = $db->prepare($query);
+            $stmt->bind_param($types, ...$params);
             $stmt->execute();
             $result = $stmt->get_result();
 
@@ -156,58 +199,78 @@ bg-light border-bottom">
                     $dishSlogan = htmlspecialchars($product['slogan']);
                     $dishPrice = htmlspecialchars($product['price']);
                     $dishImage = htmlspecialchars($product['img']);
-            ?>
+                    ?>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                         <div class="card shadow-sm h-100 border-0 position-relative dish-card">
-                            <div class="card-img-top"
-                                style="background-image: url('admin/Res_img/<?= $dishImage ?>');
-                                    background-size: cover;
-                                    background-position: center;
-                                    height: 150px;
-                                    border-top-left-radius: .5rem;
-                                    border-top-right-radius: .5rem;">
+                            <div class="card-img-top" style="background-image: url('admin/Res_img/<?= $dishImage ?>');
+                        background-size: cover;
+                        background-position: center;
+                        height: 150px;
+                        border-top-left-radius: .5rem;
+                        border-top-right-radius: .5rem;">
                             </div>
                             <div class="card-body">
                                 <h5 class="card-title mb-1"><?= $dishTitle ?></h5>
                                 <p class="card-text text-muted small mb-1"><?= $dishSlogan ?></p>
                                 <p class="card-text text-success fw-bold fs-5">₱<?= $dishPrice ?></p>
-
-                                <form method="POST" action="">
-                                    <div class="d-flex align-items-center">
-                                        <input class="form-control form-control-sm me-2" type="number" name="quantity" value="1" min="1" style="width: 100px;">
-                                        <input type="hidden" name="dishes_id" value="<?= $dishId ?>">
-                                        <input type="hidden" name="user_id" value="<?= htmlspecialchars($_SESSION['user_id']) ?>">
-                                        <button type="submit" name="submit" class="btn btn-sm btn-primary">Add to Cart</button>
-                                    </div>
-                                </form>
                             </div>
                         </div>
                     </div>
-                <?php
+                    <?php
                 }
             } else {
-                ?>
-                <div class="py-5 text-center bg-light border rounded shadow-sm col-12">
-                    <img src="assets/images/icons/cancel.svg" alt="No Dishes" class="mb-4" style="width: 200px;">
-                    <h5 class="text-secondary">No dishes available at the moment sorry.</h5>
-                </div>
-            <?php
+                echo '<div class="text-center py-5 bg-light border rounded shadow-sm">
+                        <img src="assets/images/icons/emptycart.svg" alt="Empty Cart" class="mb-4" style="width: 200px;">
+                        <h5 class="text-muted">No available dishes at the moment 🛒</h5>
+                    </div></h5></div>';
             }
             ?>
+
         </div>
 
     </div>
 </section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $('#dishCategorySelect').on('change', function () {
+        var catId = $(this).val();
+        var resId = <?= json_encode($_GET['res_id']) ?>;
+
+        $.ajax({
+            url: 'fetch_dish.php',
+            type: 'POST',
+            data: { cat_id: catId, res_id: resId },
+            beforeSend: function () {
+                $('#dishContainer').html('<div class="text-center">Loading dishes...</div>');
+            },
+            success: function (response) {
+                $('#dishContainer').html(response);
+            },
+            error: function () {
+                $('#dishContainer').html('<div class="text-danger">Failed to load dishes.</div>');
+            }
+        });
+    });
+</script>
+
+<?php include 'layouts/sweetalert.php'; ?>
+
+
+
+<?php include 'layouts/footer.php'; ?>
 
 <style>
     .card {
         max-width: 90%;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+
     .dish-card:hover {
         transform: translateY(-10px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
+
     .card-body {
         transition: transform 0.3s ease;
     }
@@ -216,9 +279,3 @@ bg-light border-bottom">
         transform: scale(1.05);
     }
 </style>
-
-<?php include 'layouts/sweetalert.php'; ?>
-
-
-
-<?php include 'layouts/footer.php'; ?>
