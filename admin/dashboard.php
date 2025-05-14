@@ -77,11 +77,8 @@ if ($filter == 'monthly') {
             </div>
         </div>
 
-
         <div class="col-lg-12">
-
             <div class="row">
-
                 <div class="col-md-6 mb-4">
                     <label for="filter" class="form-label">Select Filter:</label>
                     <select id="filter" onchange="changeFilter()" class="form-select">

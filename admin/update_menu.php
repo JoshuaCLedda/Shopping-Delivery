@@ -153,10 +153,6 @@ if (isset($_POST['submit'])) {
                                         </div>
 
 
-
-
-
-
                                         <div class="col-md-6 mb-3">
                                             <div class="form-group">
                                                 <label class="control-label">Menu Category</label>
@@ -219,7 +215,9 @@ if (isset($_POST['submit'])) {
 
                                             <?php if (!empty($row['img']) && file_exists('Res_img/' . $row['img'])): ?>
                                                 <div>
-                                                    <label class="control-label">Menu Image</label>
+                                                 <label class="control-label">Menu Image 
+    <span class="text-muted small text-danger">(Only PDF or image files allowed)</span>
+</label>
                                                     <input type="file" name="image" class="form-control" disabled>
                                                 </div>
                                                 <div class="mt-2" id="image-preview">
@@ -240,8 +238,12 @@ if (isset($_POST['submit'])) {
                                                 </div>
                                             <?php else: ?>
                                                 <div class="mt-2 text-muted">
-                                                    <label class="control-label">Menu Image</label>
-                                                    <input type="file" name="image" class="form-control">
+                                                   <label class="control-label">Menu Image 
+    <span class="text-muted small text-danger">(Only PDF or image files allowed)</span>
+</label>
+
+                                           <input type="file" name="image" class="form-control" accept="image/*,application/pdf">
+
                                                     <p class="text-muted">Uploading a new image will replace the old one.</p>
 
                                                     <p class="text-danger my-3">No Image Data</p>

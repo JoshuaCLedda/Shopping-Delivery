@@ -4,7 +4,10 @@ include "Main.php";
 $db = new Index;
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
+    header("Location: ../login.php");
+    exit();
+}
 $con = $db->con;
 
 if (isset($_POST['backup'])) {

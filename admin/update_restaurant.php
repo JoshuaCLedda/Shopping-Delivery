@@ -231,30 +231,26 @@ if (isset($_POST['submit'])) {
                                         ?>
 
                                         <?php if (!empty($imagePath) && file_exists($imagePath)): ?>
-
-                                            <div>
-                                                <label class="control-label">Restaurant Profile</label>
-                                                <input type="file" name="image" class="form-control">
+                                            <div class="mb-3">
+                                                <label class="form-label">Restaurant Profile</label>
+                                                <input type="file" name="image" class="form-control" disabled>
                                             </div>
-                                            <div class="mt-2" id="image-preview">
-                                                <img src="<?= $imagePath ?>" alt="Restaurant Image" class="img-thumbnail" style="max-height: 120px;">
-                                                <button type="button" class="btn btn-sm btn-danger"
-                                                    id="deleteImageBtn" data-rs-id="<?= $rs_id ?>">
-                                                    <i class="bx bx-trash"></i>
+
+                                            <div class="d-flex align-items-start gap-3 mt-2" id="image-preview">
+                                                <img src="<?= $imagePath ?>" alt="Restaurant Image" class="img-thumbnail" style="max-height: 120px; width: auto;">
+
+                                                <button type="button" class="btn btn-sm btn-outline-danger mt-2" id="deleteImageBtn" data-rs-id="<?= $rs_id ?>">
+                                                    <i class="bx bx-trash"></i> Delete
                                                 </button>
                                             </div>
 
                                         <?php else: ?>
-                                            <div class="mt-2 text-muted">
-                                                <label class="control">Resturant Profile</label>
+                                            <div class="mb-3">
+                                                <label class="form-label">Restaurant Profile</label>
                                                 <input type="file" name="image" class="form-control">
-                                                <p class="text-danger my-3">No Image Data</p>
+                                                <p class="text-danger mt-2">No Image Data</p>
                                             </div>
                                         <?php endif; ?>
-
-
-
-
 
                                     </div>
 
@@ -263,8 +259,7 @@ if (isset($_POST['submit'])) {
                                             <div class="form-group">
 
                                                 <label class="control-label">Stall Address</label>
-                                                <textarea name="address" type="text" style="height:100px;"
-                                                    class="form-control"> <?php echo $row['address']; ?> </textarea>
+                                                <textarea name="address" type="text" style="height:100px;" class="form-control"><?php echo $row['address']; ?></textarea>
                                             </div>
                                         </div>
                                     </div>

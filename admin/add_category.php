@@ -10,41 +10,53 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
 }
 
 if (isset($_POST['submit'])) {
+    // Check if the category name is empty
     if (empty($_POST['c_name'])) {
-        $error = '<div class="alert alert-danger alert-dismissible fade show">
-																<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-																<strong>field Required!</strong>
-															</div>';
+        $_SESSION['message'] = [
+            'type' => 'danger',
+            'text' => 'Field is required!'
+        ];
     } else {
-
-        $check_cat = mysqli_query($db, "SELECT c_name FROM res_category where c_name = '" . $_POST['c_name'] . "' ");
-
-
+        // Sanitize the category name input
+        $c_name = mysqli_real_escape_string($db, $_POST['c_name']);
+        
+        // Check if category already exists
+        $check_cat = mysqli_query($db, "SELECT c_name FROM res_category WHERE c_name = '$c_name'");
 
         if (mysqli_num_rows($check_cat) > 0) {
-            $error = '<div class="alert alert-danger alert-dismissible fade show">
-																<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-																<strong>Category already exist!</strong>
-															</div>';
+            $_SESSION['message'] = [
+                'type' => 'danger',
+                'text' => 'Category already exists!'
+            ];
         } else {
-
-
-            $mql = "INSERT INTO res_category(c_name) VALUES('" . $_POST['c_name'] . "')";
-            mysqli_query($db, $mql);
-            $success = '<div class="alert alert-success alert-dismissible fade show">
-																<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-																New Category Added Successfully.</br></div>';
+            // Insert new category into the database
+            $mql = "INSERT INTO res_category(c_name) VALUES('$c_name')";
+            if (mysqli_query($db, $mql)) {
+                $_SESSION['message'] = [
+                    'type' => 'success',
+                    'text' => 'New category added successfully.'
+                ];
+            } else {
+                $_SESSION['message'] = [
+                    'type' => 'danger',
+                    'text' => 'Failed to add new category. Please try again.'
+                ];
+            }
         }
     }
+
+    // Redirect to refresh the page and prevent form resubmission
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
 }
-
-
 ?>
 
 
 <?php include 'layouts/header.php' ?>
 <?php include 'layouts/sidebar.php' ?>
 <?php include 'layouts/navbar.php' ?>
+<?php include 'layouts/sweetalert.php' ?>
+
 <div id="main">
     <div class="main-container">
 
@@ -158,9 +170,8 @@ if (isset($_POST['submit'])) {
                         <div class="widget card-body shadow-sm">
 
                             <div class="widget-body">
-                                <form action='' method='post'>
+                                <form action='' method='POST'>
                                     <div class="form-body">
-
                                         <div class="row p-t-20">
                                             <div class="col-md-12">
                                                 <div class="form-group">
