@@ -1,9 +1,10 @@
 <aside class="left-sidebar">
   <!-- Sidebar scroll-->
   <div>
-    <div class="brand-logo d-flex align-items-center justify-content-between">
+<div class="mx-4 brand-logo d-flex align-items-center justify-content-between px-3 py-2 border-bottom">
+  <h5 class="mb-0 fw-bold text-primary">Stall Dashboard</h5>
+</div>
 
-    </div>
     <!-- Sidebar navigation-->
     <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
       <ul id="sidebarnav">
