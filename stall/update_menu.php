@@ -75,7 +75,7 @@ if (isset($_POST['submit'])) {
                         <li class="breadcrumb-item"><a href="#">Stall</a></li>
                         <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Update Menu
-                          
+
                         </li>
                     </ol>
                 </nav>
@@ -157,38 +157,38 @@ if (isset($_POST['submit'])) {
 
 
                                     <div class="col-md-6">
-    <label class="form-label">Status</label>
-    <select name="status" class="form-control">
-        <option value="">--Select Status--</option>
-        <option value="0" <?= ($row['status'] == '0') ? 'selected' : '' ?>>Active</option>
-        <option value="1" <?= ($row['status'] == '1') ? 'selected' : '' ?>>Inactive</option>
-    </select>
-</div>
+                                        <label class="form-label">Status</label>
+                                        <select name="status" class="form-control">
+                                            <option value="">--Select Status--</option>
+                                            <option value="0" <?= ($row['status'] == '0') ? 'selected' : '' ?>>Active</option>
+                                            <option value="1" <?= ($row['status'] == '1') ? 'selected' : '' ?>>Inactive</option>
+                                        </select>
+                                    </div>
 
 
-                                   <div class="col-md-6 mb-3">
-    <div class="form-group">
-        <label class="form-label">Menu Image</label>
-        <?php
-        $imagePath = '../admin/Res_img/' . $row['img'];
-        if (!empty($row['img']) && file_exists($imagePath)): ?>
-            <!-- Disabled file input since the image is already uploaded -->
-            <input type="file" name="image" class="form-control" disabled>
-            <div class="mt-2 d-flex align-items-center gap-3">
-                <!-- Image preview -->
-                <img src="<?= $imagePath ?>" alt="Image" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
-                <!-- Delete button -->
-                <button type="button" class="btn btn-sm btn-danger" id="deleteImageBtn" data-rs-id="<?= htmlspecialchars($rs_id) ?>">
-                    <i class="bx bx-trash"></i> Delete
-                </button>
-            </div>
-        <?php else: ?>
-            <!-- Input for uploading a new image -->
-            <input type="file" name="image" class="form-control">
-            <small class="text-danger mt-2">No image uploaded.</small>
-        <?php endif; ?>
-    </div>
-</div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-group">
+                                            <label class="form-label">Menu Image</label>
+                                            <?php
+                                            $imagePath = '../admin/Res_img/' . $row['img'];
+                                            if (!empty($row['img']) && file_exists($imagePath)): ?>
+                                                <!-- Disabled file input since the image is already uploaded -->
+                                                <input type="file" name="image" class="form-control" disabled>
+                                                <div class="mt-2 d-flex align-items-center gap-3">
+                                                    <!-- Image preview -->
+                                                    <img src="<?= $imagePath ?>" alt="Image" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
+                                                    <!-- Delete button -->
+                                                    <button type="button" class="btn btn-sm btn-danger" id="deleteImageBtn" data-rs-id="<?= htmlspecialchars($rs_id) ?>">
+                                                        <i class="bx bx-trash"></i> Delete
+                                                    </button>
+                                                </div>
+                                            <?php else: ?>
+                                                <!-- Input for uploading a new image -->
+                                                <input type="file" name="image" class="form-control">
+                                                <small class="text-danger mt-2">No image uploaded.</small>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
 
 
 

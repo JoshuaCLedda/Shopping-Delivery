@@ -7,7 +7,7 @@ session_start();
 <?php include "layouts/header.php"; ?>
 <?php include "layouts/navbar.php"; ?>
 
-  <!-- Top Links Navigation -->
+<!-- Top Links Navigation -->
 <div class="top-links 
 bg-light border-bottom">
     <div class="container">
@@ -35,7 +35,6 @@ bg-light border-bottom">
 </div>
 
 
-             
 <section class="popular py-5 bg-light">
     <div class="container">
         <!-- Title -->
@@ -46,8 +45,9 @@ bg-light border-bottom">
 
         <div class="row g-4">
             <?php
-            date_default_timezone_set('Asia/Manila'); // Set your timezone accordingly
-            $current_time = date('H:i'); // Current time in 24-hour format (e.g. 13:30)
+            date_default_timezone_set('Asia/Manila');
+            $current_time = date('H:i');
+            $current_day = date('D'); // e.g., Mon, Tue...
 
             $query_res = mysqli_query($db, "SELECT * FROM restaurant WHERE status = 0");
             while ($r = mysqli_fetch_array($query_res)):
@@ -57,13 +57,35 @@ bg-light border-bottom">
                 $restaurantAddress = htmlspecialchars($r['address']);
                 $o_hr = htmlspecialchars($r['o_hr']);
                 $c_hr = htmlspecialchars($r['c_hr']);
+                $o_days = htmlspecialchars($r['o_days']); // e.g., Mon-Fri
 
-                // Convert opening and closing hours to 24-hour format
                 $open_time = date('H:i', strtotime($o_hr));
                 $close_time = date('H:i', strtotime($c_hr));
 
-                // Check if current time is within operating hours
-                $is_open = ($current_time >= $open_time && $current_time <= $close_time);
+                // Check if today is within the open days
+                $dayOpen = false;
+                if (strpos($o_days, '-') !== false) {
+                    [$startDay, $endDay] = explode('-', $o_days);
+                    $daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                    $startIndex = array_search($startDay, $daysOfWeek);
+                    $endIndex = array_search($endDay, $daysOfWeek);
+
+                    if ($startIndex !== false && $endIndex !== false) {
+                        if ($startIndex <= $endIndex) {
+                            $openDays = array_slice($daysOfWeek, $startIndex, $endIndex - $startIndex + 1);
+                        } else {
+                            $openDays = array_merge(
+                                array_slice($daysOfWeek, $startIndex),
+                                array_slice($daysOfWeek, 0, $endIndex + 1)
+                            );
+                        }
+                        $dayOpen = in_array($current_day, $openDays);
+                    }
+                } else {
+                    $dayOpen = ($current_day == $o_days);
+                }
+
+                $is_open = $dayOpen && ($current_time >= $open_time && $current_time <= $close_time);
             ?>
                 <div class="col-md-6 col-lg-4">
                     <div class="card shadow-sm h-100 border-0 position-relative">
@@ -75,12 +97,12 @@ bg-light border-bottom">
 
                                 <div class="card-img-top"
                                     style="background-image: url('admin/<?= $restaurantImage ?>');
-                                background-size: cover;
-                                background-position: center;
-                                height: 160px;
-                                border-top-left-radius: .5rem;
-                                border-top-right-radius: .5rem;
-                                opacity: <?= $is_open ? '1' : '0.6' ?>;">
+                            background-size: cover;
+                            background-position: center;
+                            height: 160px;
+                            border-top-left-radius: .5rem;
+                            border-top-right-radius: .5rem;
+                            opacity: <?= $is_open ? '1' : '0.6' ?>;">
                                 </div>
                                 <div class="card-body">
                                     <h5 class="card-title mb-1"><?= $restaurantTitle ?></h5>
@@ -89,7 +111,7 @@ bg-light border-bottom">
                                         <?= !empty($restaurantAddress) ? $restaurantAddress : '<em>No Address</em>' ?>
                                     </p>
                                     <p class="card-text text-uppercase text-secondary small">
-                                        <i class='bx bx-time'></i> <?= $o_hr ?> - <?= $c_hr ?>
+                                        <i class='bx bx-time'></i> <?= $o_hr ?> - <?= $c_hr ?> | <?= $o_days ?>
                                     </p>
                                     <?php if (!$is_open): ?>
                                         <span class="badge bg-danger">Store Closed</span>
@@ -105,12 +127,13 @@ bg-light border-bottom">
         </div>
     <?php endwhile; ?>
     </div>
-
-
     </div>
 </section>
-            </div>
-        </div>
-    </section>
 
-    <?php include 'layouts/footer.php'; ?>
+
+
+</div>
+</div>
+</section>
+
+<?php include 'layouts/footer.php'; ?>

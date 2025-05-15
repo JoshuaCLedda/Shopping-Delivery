@@ -87,47 +87,36 @@ if(isset($_POST['submit']))
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="#">
-    <title>Registration</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/font-awesome.min.css" rel="stylesheet">
-    <link href="css/animsition.min.css" rel="stylesheet">
-    <link href="css/animate.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
-</head>
-<body>
+<?php include 'layouts/header.php'  ?>
+
     <div style="background-image: url('images/img/pimg.jpg');">
-        <header id="header" class="header-scroll top-header headrom">
-            <nav class="navbar navbar-dark">
-                <div class="container">
-                    <button class="navbar-toggler hidden-lg-up" type="button" data-toggle="collapse" data-target="#mainNavbarCollapse">&#9776;</button>
-                    <a class="navbar-brand" href="index.php"> <img class="img-rounded" src="images/icn.png" alt=""> </a>
-                    <div class="collapse navbar-toggleable-md  float-lg-right" id="mainNavbarCollapse">
-                        <ul class="nav navbar-nav">
-                            <li class="nav-item"> <a class="nav-link active" href="index.php">Home</a> </li>
-                            <li class="nav-item"> <a class="nav-link active" href="restaurants.php">Stall</a> </li>
-                            <?php
-                                if(empty($_SESSION["user_id"])) {
-                                    echo '<li class="nav-item"><a href="login.php" class="nav-link active">Login</a> </li>';
-                                    echo '<li class="nav-item"><a href="registration.php" class="nav-link active">Register</a> </li>';
-                                } else {
-                                    echo '<li class="nav-item"><a href="your_orders.php" class="nav-link active">My Orders</a> </li>';
-                                    echo '<li class="nav-item"><a href="logout.php" class="nav-link active">Logout</a> </li>';
-                                }
-                            ?>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-        </header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+    <div class="collapse navbar-collapse justify-content-end">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link active" href="index.php">
+                    <i class='bx bx-home me-2'></i> Home
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="restaurants.php">
+                    <i class='bx bx-store me-2'></i> Stalls
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="login.php">
+                    <i class='bx bx-log-in me-2'></i> Login
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="registration.php">
+                    <i class='bx bx-user-plus me-2'></i> Register
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
 
         <div class="page-wrapper">
             <section class="contact-page inner-page">
@@ -135,6 +124,9 @@ if(isset($_POST['submit']))
                     <div class="row">
                         <div class="col-md-12">
                             <div class="widget">
+                                   <center>
+                                        <h2>User Registration</h2>
+                                    </center>
                                 <div class="widget-body">
                          
                                     <form action="" method="post">

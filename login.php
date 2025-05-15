@@ -6,7 +6,7 @@ error_reporting(0);
 // login security
 if (isset($_SESSION["user_id"]) && isset($_SESSION["role"])) {
   $role = $_SESSION["role"];
-  $redirectUrl = ($role == 1) ? "admin/dashboard.php" : (($role == 2) ? "rider/index.php" : (($role == 3) ? "stall/index.php" : "index.php"));
+  $redirectUrl = ($role == 1) ? "admin/dashboard.php" : (($role == 2) ? "rider/dashboard.php" : (($role == 3) ? "stall/dashboard.php" : "dashboard.php"));
   header("Location: $redirectUrl");
   exit();
 }
@@ -96,19 +96,7 @@ if (isset($_POST['submit'])) {
 
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <title>Login | Food Portal</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Bootstrap 5 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Boxicons -->
-  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-  <!-- Custom Style -->
+<?php include 'layouts/header.php'  ?>
   <style>
     body,
     html {
@@ -146,20 +134,25 @@ if (isset($_POST['submit'])) {
   </style>
 </head>
 
-<body>
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
-    <div class="collapse navbar-collapse justify-content-end">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link active" href="index.php">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="restaurants.php">Stalls</a>
-        </li>
-      </ul>
-    </div>
-  </nav>
+
+ <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+  <div class="collapse navbar-collapse justify-content-end">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link active" href="index.php">
+          <i class='bx bx-home me-2'></i> Home
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" href="restaurants.php">
+          <i class='bx bx-store me-2'></i> Stalls
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
 
   <div class="bg-cover d-flex justify-content-center align-items-center">
     <div class="card login-card p-4 shadow-lg">

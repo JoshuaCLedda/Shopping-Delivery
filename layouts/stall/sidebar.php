@@ -28,14 +28,6 @@
 
 
 
-        <li class="sidebar-item">
-          <a class="sidebar-link" href="menus.php" aria-expanded="false">
-            <span>
-              <i class="bx bx-bowl-hot"></i>
-            </span>
-            <span class="hide-menu">Food Menus</span>
-          </a>
-        </li>
 
 
         <!-- Commented for the meantime
@@ -91,6 +83,14 @@
         </li>
 
 
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="menus.php" aria-expanded="false">
+            <span>
+              <i class="bx bx-bowl-hot"></i>
+            </span>
+            <span class="hide-menu">Food Menus</span>
+          </a>
+        </li>
 
         <li class="sidebar-item">
           <a class="sidebar-link" href="addCategory.php" aria-expanded="false">

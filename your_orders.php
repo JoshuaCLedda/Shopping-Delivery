@@ -14,34 +14,8 @@ if (empty($_SESSION['user_id'])) {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Orders</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-<style>
-        .order-card {
-            background: #f8f9fa;
-            border-radius: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-
-        .order-card:hover {
-            transform: scale(1.02);
-        }
-    </style>
-</head>
-
-<body>
-
-    <?php include 'layouts/navbar.php'; ?>
-
+<?php include 'layouts/header.php'; ?>
+<?php include 'layouts/navbar.php'; ?>
     <div class="page-wrapper py-4">
         <section class="container">
             <div class="row justify-content-center">

@@ -89,91 +89,153 @@ bg-light border-bottom">
         </div>
     </div>
 </div>
+<section class="inner-page-hero position-relative" style="background-image: url('images/img/rest.png'); background-size: cover; background-position: center; min-height: 340px;">
 
+    <!-- Overlay -->
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background-color: rgba(0, 0, 0, 0.55); z-index: 1;"></div>
 
-
-
-<section class="inner-page-hero bg-image" data-image-src="images/img/rest.png">
-    <?php $ress = mysqli_query($index->con, "select * from restaurant where rs_id='$_GET[res_id]'");
+    <?php
+    $ress = mysqli_query($index->con, "SELECT * FROM restaurant WHERE rs_id='{$_GET['res_id']}'");
     $rows = mysqli_fetch_array($ress);
-
     ?>
 
-    <div class="profile">
-        <div class="container">
-            <div class="row align-items-center" style="min-height: 250px;">
-                <!-- Restaurant Logo Section -->
-                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 text-center">
-                    <a class="restaurant-logo" href="dishes.php?res_id=<?= $restaurantId ?>">
-                        <div style="
-                            background-image: url('admin/<?= htmlspecialchars($rows['image']) ?>');
-                            background-size: cover;
-                            background-position: center;
-                            width: 100%;
-                            height: 220px;
-                            border-radius: 8px;">
-                        </div>
-                    </a>
-                </div>
+    <div class="profile position-relative text-white" style="z-index: 2;">
+        <div class="container py-5">
+            <div class="row align-items-center g-4">
 
-                <!-- Restaurant Info Section -->
-                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 profile-desc d-flex flex-column justify-content-center p-4"
-                    style="border-radius: 0 10px 10px 0;">
-                    <div class="right-text">
-                        <h6 class="mb-2">
-                            <p style="color: black;"><?= htmlspecialchars($rows['title']) ?></a=>
-                        </h6>
-                        <p style="color: black;">
-                            <?= htmlspecialchars($rows['address'] ?? 'No address available') ?>
-                        </p>
-
-                        <span class="product-name" style="text-transform: uppercase; color: #333"> Open From:
-                            <?= htmlspecialchars($rows['o_hr']) ?> - <?= htmlspecialchars($rows['c_hr']) ?>
-                        </span>
+                <!-- Restaurant Image -->
+                <div class="col-sm-4 text-center">
+                    <div style="
+                        background-image: url('admin/<?= htmlspecialchars($rows['image']) ?>');
+                        background-size: cover;
+                        background-position: center;
+                        width: 220px;
+                        height: 220px;
+                        margin: 0 auto;
+                        border-radius: 12px;
+                        border: 3px solid #fff;
+                        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);">
                     </div>
                 </div>
+
+                <?php
+                $restaurant_id = htmlspecialchars($rows['rs_id']);
+
+                // Fetch average rating and review count
+                $rating_query = mysqli_query($index->con, "SELECT AVG(rating) AS avg_rating, COUNT(*) AS total_reviews FROM restaurant_ratings WHERE restaurant_id = '$restaurant_id'");
+                $rating_data = mysqli_fetch_assoc($rating_query);
+
+                $avg_rating = number_format($rating_data['avg_rating'], 1); // Format to 1 decimal place
+                $total_reviews = $rating_data['total_reviews'];
+                ?>
+                <?php
+                function expandDayRange($range)
+                {
+                    $daysMap = [
+                        'mon' => 'Monday',
+                        'tue' => 'Tuesday',
+                        'wed' => 'Wednesday',
+                        'thu' => 'Thursday',
+                        'thur' => 'Thursday',
+                        'fri' => 'Friday',
+                        'sat' => 'Saturday',
+                        'sun' => 'Sunday'
+                    ];
+
+                    $parts = explode('-', strtolower($range));
+                    $start = $daysMap[trim($parts[0])] ?? ucfirst($parts[0]);
+                    $end = isset($parts[1]) ? ($daysMap[trim($parts[1])] ?? ucfirst($parts[1])) : '';
+
+                    return $end ? "$start – $end" : $start;
+                }
+
+                $openDaysFormatted = expandDayRange($rows['o_days']);
+                ?>
+
+                <div class="col-sm-8">
+                    <h2 class="fw-bold mb-2 text-white"><?= htmlspecialchars($rows['title']) ?></h2>
+
+                    <p class="mb-2"><i class='bx bx-map me-2'></i><?= htmlspecialchars($rows['address'] ?? 'No address available') ?></p>
+
+                    <p class="mb-2"><i class='bx bx-time-five me-2'></i><strong>Open Hours:</strong> <?= htmlspecialchars($rows['o_hr']) ?> - <?= htmlspecialchars($rows['c_hr']) ?></p>
+                    <p class="mb-2">
+                        <i class='bx bx-calendar me-2'></i>
+                        <strong>Open Days:</strong>
+                        <?= htmlspecialchars($openDaysFormatted) ?>
+                    </p>
+                    <div class="row g-3 mt-3">
+                        <div class="col-md-6">
+                            <p class="mb-1">
+                                <i class='bx bxs-star text-warning me-2'></i>
+                                <strong>Rating:</strong> <?= $avg_rating ?> (<?= $total_reviews ?> reviews)
+                            </p>
+                            <!-- <p class="mb-1">
+                                <i class='bx bx-food-menu me-2'></i>
+                                <strong>Cuisine:</strong> Filipino, Street Food
+                            </p> -->
+                        </div>
+
+                        <div class="col-md-6">
+                            <p class="mb-1"><i class='bx bx-timer me-2'></i><strong>Delivery Time:</strong> 25-35 mins</p>
+                            <p class="mb-1"><i class='bx bx-cart me-2'></i><strong>Min Order:</strong> ₱50.00</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <a href="#menu" class="btn btn-primary px-4 rounded-pill">
+                            <i class='bx bx-restaurant me-2'></i>Browse Dishes
+                        </a>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 </section>
 
 
-<section class="featured-dishes py-5 bg-light">
+<section class="featured-dishes py-5 bg-light" id="menu">
     <div class="container">
 
+
         <!-- Header -->
-        <div class="row align-items-center mb-4">
-            <div class="text-center mb-4">
-                <h2 class="fw-bold">Available Dishes</h2>
-                <p class="lead text-muted">Browse the dishes available at the restaurant</p>
-            </div>
+        <div class="text-center mb-5">
+            <h2 class="fw-bold display-6">
+                <i class='bx bxs-bowl-hot text-danger align-middle'></i> Available Dishes
+            </h2>
+            <p class="text-muted fs-5">Browse through our freshly prepared meals and delights</p>
+        </div>
 
-            <div class="col-md-6 offset-md-3">
-                <label class="form-label">Filter by Category</label>
-                <select name="dish_category_id" id="dishCategorySelect" class="form-control">
-                    <option value="">-- Select Category --</option>
-                    <?php
-                    $query = "SELECT id, category FROM dish_category ORDER BY category ASC";
-                    $result = mysqli_query($db, $query);
-                    while ($row = mysqli_fetch_assoc($result)) {
-                        echo "<option value='{$row['id']}'>" . htmlspecialchars($row['category']) . "</option>";
-                    }
-                    ?>
-                </select>
-
+        <!-- Filter Card -->
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-8 col-lg-6">
+                <div class="card border-0 shadow-sm p-4 rounded-4 bg-white">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class='bx bx-filter-alt fs-4 text-primary me-2'></i>
+                        <h5 class="mb-0 fw-semibold">Filter by Category</h5>
+                    </div>
+                    <select name="dish_category_id" id="dishCategorySelect" class="form-select mt-2 shadow-sm">
+                        <option value="">-- Select a Category --</option>
+                        <?php
+                        $query = "SELECT id, category FROM dish_category ORDER BY category ASC";
+                        $result = mysqli_query($db, $query);
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            echo "<option value='{$row['id']}'>" . htmlspecialchars($row['category']) . "</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
             </div>
         </div>
 
-
         <!-- Dish Cards -->
-        <div class="row g-4" id="dishContainer">
+        <div class="row g-4 justify-content-center" id="dishContainer">
             <?php
-
             $cat_id = $_POST['cat_id'] ?? null;
             $res_id = $dishesId;
 
             if (!$res_id) {
-                echo "Restaurant ID missing.";
+                echo "<div class='text-center text-danger'>Restaurant ID missing.</div>";
                 exit;
             }
 
@@ -199,55 +261,79 @@ bg-light border-bottom">
                     $dishSlogan = htmlspecialchars($product['slogan']);
                     $dishPrice = htmlspecialchars($product['price']);
                     $dishImage = htmlspecialchars($product['img']);
-                    ?>
+            ?>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                        <div class="card shadow-sm h-100 border-0 position-relative dish-card">
-                            <div class="card-img-top" style="background-image: url('admin/Res_img/<?= $dishImage ?>');
-                        background-size: cover;
-                        background-position: center;
-                        height: 150px;
-                        border-top-left-radius: .5rem;
-                        border-top-right-radius: .5rem;">
+                        <div class="card shadow-sm h-100 border-0 dish-card position-relative">
+                            <!-- Badge (optional enhancement) -->
+                            <span class="badge bg-success position-absolute top-0 start-0 m-2">Popular</span>
+
+                            <!-- Image -->
+                            <div class="card-img-top" style="
+                                background-image: url('admin/Res_img/<?= $dishImage ?>');
+                                background-size: cover;
+                                background-position: center;
+                                height: 160px;
+                                border-top-left-radius: .5rem;
+                                border-top-right-radius: .5rem;">
                             </div>
-                            <div class="card-body">
-                                <h5 class="card-title mb-1"><?= $dishTitle ?></h5>
-                                <p class="card-text text-muted small mb-1"><?= $dishSlogan ?></p>
-                                <p class="card-text text-success fw-bold fs-5">₱<?= $dishPrice ?></p>
+
+                            <!-- Body -->
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title mb-1"><i class='bx bxs-bowl-rice text-warning'></i> <?= $dishTitle ?></h5>
+                                <p class="card-text text-muted small mb-2"><i class='bx bx-info-circle'></i> <?= $dishSlogan ?></p>
+                                <p class="card-text text-success fw-bold fs-5 mb-3"><i class='bx bx-money'></i> ₱<?= $dishPrice ?></p>
+
+                                <!-- Add to Cart -->
+                                <form method="POST" action="" class="mt-auto">
+                                    <div class="d-flex align-items-center">
+                                        <input class="form-control form-control-sm me-2" type="number" name="quantity" value="1" min="1" style="width: 80px;">
+                                        <input type="hidden" name="dishes_id" value="<?= $dishId ?>">
+                                        <input type="hidden" name="user_id" value="<?= htmlspecialchars($_SESSION['user_id'] ?? 0) ?>">
+                                        <button type="submit" name="submit" class="btn btn-sm btn-outline-primary">
+                                            <i class='bx bx-cart-alt'></i> Add
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
-                    <?php
+            <?php
                 }
             } else {
-                echo '<div class="text-center py-5 bg-light border rounded shadow-sm">
+                echo '
+                <div class="col-12 d-flex justify-content-center align-items-center" style="min-height: 300px;">
+                    <div class="text-center">
                         <img src="assets/images/icons/emptycart.svg" alt="Empty Cart" class="mb-4" style="width: 200px;">
                         <h5 class="text-muted">No available dishes at the moment 🛒</h5>
-                    </div></h5></div>';
+                    </div>
+                </div>';
             }
             ?>
-
         </div>
-
     </div>
 </section>
 
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $('#dishCategorySelect').on('change', function () {
+    $('#dishCategorySelect').on('change', function() {
         var catId = $(this).val();
         var resId = <?= json_encode($_GET['res_id']) ?>;
 
         $.ajax({
             url: 'fetch_dish.php',
             type: 'POST',
-            data: { cat_id: catId, res_id: resId },
-            beforeSend: function () {
+            data: {
+                cat_id: catId,
+                res_id: resId
+            },
+            beforeSend: function() {
                 $('#dishContainer').html('<div class="text-center">Loading dishes...</div>');
             },
-            success: function (response) {
+            success: function(response) {
                 $('#dishContainer').html(response);
             },
-            error: function () {
+            error: function() {
                 $('#dishContainer').html('<div class="text-danger">Failed to load dishes.</div>');
             }
         });

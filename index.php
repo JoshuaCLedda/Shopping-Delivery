@@ -70,8 +70,9 @@ session_start();
 
         <div class="row g-4">
             <?php
-            date_default_timezone_set('Asia/Manila'); // Set your timezone accordingly
-            $current_time = date('H:i'); // Current time in 24-hour format (e.g. 13:30)
+            date_default_timezone_set('Asia/Manila');
+            $current_time = date('H:i');
+            $current_day = date('D'); // e.g., Mon, Tue, Wed...
 
             $query_res = mysqli_query($db, "SELECT * FROM restaurant WHERE status = 0");
             while ($r = mysqli_fetch_array($query_res)):
@@ -81,13 +82,40 @@ session_start();
                 $restaurantAddress = htmlspecialchars($r['address']);
                 $o_hr = htmlspecialchars($r['o_hr']);
                 $c_hr = htmlspecialchars($r['c_hr']);
+                $o_days = htmlspecialchars($r['o_days']); // Format: 'Mon-Fri'
 
-                // Convert opening and closing hours to 24-hour format
+                // Convert opening and closing hours
                 $open_time = date('H:i', strtotime($o_hr));
                 $close_time = date('H:i', strtotime($c_hr));
 
-                // Check if current time is within operating hours
-                $is_open = ($current_time >= $open_time && $current_time <= $close_time);
+                // Day check
+                $dayOpen = false;
+
+                if (strpos($o_days, '-') !== false) {
+                    [$startDay, $endDay] = explode('-', $o_days);
+                    $daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                    $startIndex = array_search($startDay, $daysOfWeek);
+                    $endIndex = array_search($endDay, $daysOfWeek);
+
+                    if ($startIndex !== false && $endIndex !== false) {
+                        if ($startIndex <= $endIndex) {
+                            $openDays = array_slice($daysOfWeek, $startIndex, $endIndex - $startIndex + 1);
+                        } else {
+                            // Handle wrap-around like Fri-Mon
+                            $openDays = array_merge(
+                                array_slice($daysOfWeek, $startIndex),
+                                array_slice($daysOfWeek, 0, $endIndex + 1)
+                            );
+                        }
+
+                        $dayOpen = in_array($current_day, $openDays);
+                    }
+                } else {
+                    // Handle single-day format like 'Mon'
+                    $dayOpen = ($current_day == $o_days);
+                }
+
+                $is_open = $dayOpen && ($current_time >= $open_time && $current_time <= $close_time);
             ?>
                 <div class="col-md-6 col-lg-4">
                     <div class="card shadow-sm h-100 border-0 position-relative">
@@ -99,13 +127,21 @@ session_start();
 
                                 <div class="card-img-top"
                                     style="background-image: url('admin/<?= $restaurantImage ?>');
-                                background-size: cover;
-                                background-position: center;
-                                height: 160px;
-                                border-top-left-radius: .5rem;
-                                border-top-right-radius: .5rem;
-                                opacity: <?= $is_open ? '1' : '0.6' ?>;">
+                                    background-size: cover;
+                                    background-position: center;
+                                    height: 160px;
+                                    border-top-left-radius: .5rem;
+                                    border-top-right-radius: .5rem;
+                                    opacity: <?= $is_open ? '1' : '0.6' ?>;">
                                 </div>
+                                <?php
+// Get average rating and count
+$ratingsQuery = mysqli_query($db, "SELECT AVG(rating) AS avg_rating, COUNT(*) AS review_count FROM restaurant_ratings WHERE restaurant_id = '$restaurantId'");
+$ratingsData = mysqli_fetch_assoc($ratingsQuery);
+$avgRating = number_format($ratingsData['avg_rating'], 1);
+$reviewCount = $ratingsData['review_count'];
+?>
+
                                 <div class="card-body">
                                     <h5 class="card-title mb-1"><?= $restaurantTitle ?></h5>
                                     <p class="card-text text-muted small mb-1">
@@ -113,11 +149,16 @@ session_start();
                                         <?= !empty($restaurantAddress) ? $restaurantAddress : '<em>No Address</em>' ?>
                                     </p>
                                     <p class="card-text text-uppercase text-secondary small">
-                                        <i class='bx bx-time'></i> <?= $o_hr ?> - <?= $c_hr ?>
+                                        <i class='bx bx-time'></i> <?= $o_hr ?> - <?= $c_hr ?> | <?= $o_days ?>
                                     </p>
                                     <?php if (!$is_open): ?>
                                         <span class="badge bg-danger">Store Closed</span>
                                     <?php endif; ?>
+                                    <p class="card-text text-warning small mb-1">
+    <i class='bx bxs-star'></i>
+    <?= $avgRating ?> <span class="text-muted">(<?= $reviewCount ?> reviews)</span>
+</p>
+
                                 </div>
 
                                 <?php if ($is_open): ?>
@@ -207,7 +248,7 @@ session_start();
                 <h2 class="fw-bold">Featured Stalls</h2>
                 <p class="lead text-muted">Here are the stalls recomendation</p>
             </div>
-<!--             
+            <!--             
              <div class="col-sm-6 text-sm-end">
                 <ul class="list-inline mb-0">
                     <li class="list-inline-item">
@@ -226,69 +267,107 @@ session_start();
         </div>
 
         <!-- Restaurant Cards -->
-        <div class="row g-4">
-            <?php
-            date_default_timezone_set('Asia/Manila'); // Adjust to your timezone
-            $current_time = date('H:i');
+      <div class="row g-4">
+    <?php
+    date_default_timezone_set('Asia/Manila'); // Adjust to your timezone
+    $current_time = date('H:i');
+    $current_day = date('D'); // e.g., Mon, Tue, Wed...
 
-            $ress = mysqli_query($db, "SELECT * FROM restaurant");
-            while ($rows = mysqli_fetch_array($ress)) {
-                $query = mysqli_query($db, "SELECT * FROM res_category WHERE c_id = '" . $rows['c_id'] . "'");
-                $rowss = mysqli_fetch_array($query);
+    $ress = mysqli_query($db, "SELECT * FROM restaurant");
+    while ($rows = mysqli_fetch_array($ress)) {
+        $query = mysqli_query($db, "SELECT * FROM res_category WHERE c_id = '" . $rows['c_id'] . "'");
+        $rowss = mysqli_fetch_array($query);
 
-                $categoryClass = htmlspecialchars($rowss['c_name']);
-                $restaurantId = htmlspecialchars($rows['rs_id']);
-                $restaurantTitle = htmlspecialchars($rows['title']);
-                $restaurantAddress = htmlspecialchars($rows['address']);
-                $restaurantImage = htmlspecialchars($rows['image']);
-                $o_hr = htmlspecialchars($rows['o_hr']);
-                $c_hr = htmlspecialchars($rows['c_hr']);
+        $categoryClass = htmlspecialchars($rowss['c_name']);
+        $restaurantId = htmlspecialchars($rows['rs_id']);
+        $restaurantTitle = htmlspecialchars($rows['title']);
+        $restaurantAddress = htmlspecialchars($rows['address']);
+        $restaurantImage = htmlspecialchars($rows['image']);
+        $o_hr = htmlspecialchars($rows['o_hr']);
+        $c_hr = htmlspecialchars($rows['c_hr']);
+        $o_days = htmlspecialchars($rows['o_days']); // Example: "Mon-Fri"
 
-                // Convert to 24-hour format
-                $open_time = date('H:i', strtotime($o_hr));
-                $close_time = date('H:i', strtotime($c_hr));
-                $is_open = ($current_time >= $open_time && $current_time <= $close_time);
-            ?>
-                <div class="col-md-6 col-lg-4 <?= $categoryClass ?>">
-                    <div class="card shadow-sm h-100 border-0 position-relative">
-                        <?php if ($is_open): ?>
-                            <a href="dishes.php?res_id=<?= $restaurantId ?>" class="text-decoration-none text-dark">
-                            <?php else: ?>
-                                <div class="text-decoration-none text-muted" style="cursor: not-allowed;">
-                                <?php endif; ?>
+        // Time conversion
+        $open_time = date('H:i', strtotime($o_hr));
+        $close_time = date('H:i', strtotime($c_hr));
 
-                                <div class="card-img-top"
-                                    style="background-image: url('admin/<?= $restaurantImage ?>');
-                                background-size: cover;
-                                background-position: center;
-                                height: 150px;
-                                border-top-left-radius: .5rem;
-                                border-top-right-radius: .5rem;
-                                opacity: <?= $is_open ? '1' : '0.6' ?>;">
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title mb-1"><?= $restaurantTitle ?></h5>
-                                    <p class="card-text text-muted small mb-1">
-                                        <i class='bx bx-map-pin'></i>
-                                        <?= !empty($restaurantAddress) ? $restaurantAddress : '<em>No Address</em>' ?>
-                                    </p>
-                                    <p class="card-text text-uppercase text-secondary small">
-                                        <i class='bx bx-time'></i> <?= $o_hr ?> - <?= $c_hr ?>
-                                    </p>
-                                    <?php if (!$is_open): ?>
-                                        <span class="badge bg-danger">Store Closed</span>
-                                    <?php endif; ?>
-                                </div>
+        // Day logic
+        $dayOpen = false;
+        if (strpos($o_days, '-') !== false) {
+            [$startDay, $endDay] = explode('-', $o_days);
+            $daysOfWeek = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+            $startIndex = array_search($startDay, $daysOfWeek);
+            $endIndex = array_search($endDay, $daysOfWeek);
 
-                                <?php if ($is_open): ?>
-                            </a>
-                        <?php else: ?>
+            if ($startIndex !== false && $endIndex !== false) {
+                if ($startIndex <= $endIndex) {
+                    $openDays = array_slice($daysOfWeek, $startIndex, $endIndex - $startIndex + 1);
+                } else {
+                    // Handle wrap-around (e.g., Fri-Mon)
+                    $openDays = array_merge(
+                        array_slice($daysOfWeek, $startIndex),
+                        array_slice($daysOfWeek, 0, $endIndex + 1)
+                    );
+                }
+
+                $dayOpen = in_array($current_day, $openDays);
+            }
+        } else {
+            // Single day like "Sun"
+            $dayOpen = ($current_day == $o_days);
+        }
+
+        $is_open = $dayOpen && ($current_time >= $open_time && $current_time <= $close_time);
+    ?>
+        <div class="col-md-6 col-lg-4 <?= $categoryClass ?>">
+            <div class="card shadow-sm h-100 border-0 position-relative">
+                <?php if ($is_open): ?>
+                    <a href="dishes.php?res_id=<?= $restaurantId ?>" class="text-decoration-none text-dark">
+                <?php else: ?>
+                    <div class="text-decoration-none text-muted" style="cursor: not-allowed;">
+                <?php endif; ?>
+
+                    <div class="card-img-top"
+                        style="background-image: url('admin/<?= $restaurantImage ?>');
+                        background-size: cover;
+                        background-position: center;
+                        height: 150px;
+                        border-top-left-radius: .5rem;
+                        border-top-right-radius: .5rem;
+                        opacity: <?= $is_open ? '1' : '0.6' ?>;">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title mb-1"><?= $restaurantTitle ?></h5>
+                        <p class="card-text text-muted small mb-1">
+                            <i class='bx bx-map-pin'></i>
+                            <?= !empty($restaurantAddress) ? $restaurantAddress : '<em>No Address</em>' ?>
+                        </p>
+                        <p class="card-text text-uppercase text-secondary small">
+                            <i class='bx bx-time'></i> <?= $o_hr ?> - <?= $c_hr ?> | <?= $o_days ?>
+                        </p>
+                        <?php if (!$is_open): ?>
+                            <span class="badge bg-danger">Store Closed</span>
+                        <?php endif; ?>
+                              <p class="card-text text-warning small mb-1">
+    <i class='bx bxs-star'></i>
+    <?= $avgRating ?> <span class="text-muted">(<?= $reviewCount ?> reviews)</span>
+</p>
+
+                    </div>
+
+                <?php if ($is_open): ?>
+                    </a>
+                <?php else: ?>
                     </div>
                 <?php endif; ?>
-                </div>
+            </div>
         </div>
     <?php } ?>
-    </div>
+</div>
+
+
+
+
 
     </div>
 </section>

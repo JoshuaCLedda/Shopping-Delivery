@@ -60,46 +60,38 @@ if (isset($_POST['submit'])) {
 ?>
 
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="#">
-    <title>Registration</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/font-awesome.min.css" rel="stylesheet">
-    <link href="css/animsition.min.css" rel="stylesheet">
-    <link href="css/animate.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
-    <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-</head>
+<?php include 'layouts/header.php'  ?>
 
 <body>
     <div style="background-image: url('images/img/pimg.jpg');">
 
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+    <div class="collapse navbar-collapse justify-content-end">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link active" href="index.php">
+                    <i class='bx bx-home me-2'></i> Home
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="restaurants.php">
+                    <i class='bx bx-store me-2'></i> Stalls
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="login.php">
+                    <i class='bx bx-log-in me-2'></i> Login
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="registration.php">
+                    <i class='bx bx-user-plus me-2'></i> Register
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
 
-            <div class="collapse navbar-collapse justify-content-end">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="index.php">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="restaurants.php">Stalls</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="login.php">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="registration.php">Register</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
 
         <div class="page-wrapper">
             <section class="contact-page inner-page">
@@ -163,7 +155,7 @@ if (isset($_POST['submit'])) {
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-4 my-3">
                                                 <p><input type="submit" value="Register" name="submit" class="btn btn-primary"></p>
                                             </div>
                                         </div>

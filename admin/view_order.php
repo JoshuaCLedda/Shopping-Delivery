@@ -67,9 +67,11 @@ while ($row = mysqli_fetch_object($result)) {
         </div>
 
 
+
         <div class="d-flex justify-content-end my-2">
-            <a href="dashboard.php" class="btn btn-primary">Back</a>
+            <a href="<?= htmlspecialchars($backUrl) ?>" class="btn btn-primary">Back</a>
         </div>
+
 
         <?php include 'layouts/sweetalert.php'; ?>
 
