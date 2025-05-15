@@ -119,7 +119,7 @@
 
 
         <li class="sidebar-item">
-          <a class="sidebar-link" href="../logout.php" aria-expanded="false">
+         <a class="sidebar-link" href="../logout.php" onclick="return confirm('Are you sure you want to log out?');">
             <span>
               <i class="bx bx-log-out"></i>
             </span>

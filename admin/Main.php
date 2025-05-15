@@ -1146,7 +1146,7 @@ class Index
         FROM rating_rider
         LEFT JOIN users ON
         users.u_id = rating_rider.user_id 
-        WHERE rating_rider.orders_id = '$transacId'
+        WHERE rating_rider.transaction_id = '$transacId'
         ORDER BY rating_rider.created_at DESC";
 
         $result = mysqli_query($this->con, $sql);
@@ -1168,7 +1168,7 @@ class Index
                     ROUND(AVG(rating), 1) AS avg_rating, 
                     COUNT(*) AS total 
                 FROM rating_rider 
-                WHERE orders_id = $transacId";
+                WHERE transaction_id = $transacId";
 
         $result = mysqli_query($this->con, $sql);
 

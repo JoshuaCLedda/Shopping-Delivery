@@ -71,7 +71,7 @@ while ($row = mysqli_fetch_object($result)) {
 
 
         <div class="d-flex justify-content-end my-2">
-            <a href="index.php" class="btn btn-primary">Back</a>
+            <a href="delivered_orders.php" class="btn btn-primary">Back</a>
         </div>
 
         <?php include '../layouts/sweetalert.php'; ?>

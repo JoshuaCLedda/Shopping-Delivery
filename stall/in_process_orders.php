@@ -8,7 +8,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 3) {
     header("Location: ../login.php");
     exit();
 }
-
 include "../admin/Main.php";
 $index = new Index;
 

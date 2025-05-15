@@ -365,7 +365,65 @@ $reviewCount = $ratingsData['review_count'];
     <?php } ?>
 </div>
 
+<div class="accordion mt-5" id="faqAccordion">
+    <!-- Q1 -->
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="faq1">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+                How do I add multiple dishes?
+            </button>
+        </h2>
+        <div id="collapse1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+                Simply adjust the quantity for each dish and click "Add". You can add multiple different dishes one by one.
+            </div>
+        </div>
+    </div>
 
+    <!-- Q2 -->
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="faq2">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
+                Can I edit my cart later?
+            </button>
+        </h2>
+        <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+                Yes, go to your cart page to change quantities or remove items before checkout.
+            </div>
+        </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="faq3">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
+                What payment methods do you accept?
+            </button>
+        </h2>
+        <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+                We currently accept cash on delivery, GCash, and Cash on Delivery. More options will be added soon!
+            </div>
+        </div>
+    </div>
+
+   
+
+    <!-- Q5 -->
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="faq5">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5">
+                What if a dish is out of stock?
+            </button>
+        </h2>
+        <div id="collapse5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+                If a dish becomes unavailable after placing an order, our team will contact you to suggest an alternative or refund.
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
@@ -384,6 +442,8 @@ $reviewCount = $ratingsData['review_count'];
 <script src="js/jquery.isotope.min.js"></script>
 <script src="js/headroom.js"></script>
 <script src="js/foodpicky.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
 </body>
 
 </html>
