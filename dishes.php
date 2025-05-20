@@ -228,7 +228,8 @@ bg-light border-bottom">
             </div>
         </div>
 
-        <!-- Dish Cards -->
+<div class="py-5 bg-light border rounded shadow-sm">
+    <div class="container"> 
         <div class="row g-4 justify-content-center" id="dishContainer">
             <?php
             $cat_id = $_POST['cat_id'] ?? null;
@@ -310,7 +311,14 @@ bg-light border-bottom">
             }
             ?>
         </div>
+
+
+        
     </div>
+    </div>
+
+    </div>
+
 </section>
 
 

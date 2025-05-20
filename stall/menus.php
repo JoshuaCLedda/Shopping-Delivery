@@ -100,7 +100,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 3) {
                                                         <?php
                                                         $qty = (int) $rows['available_quantity'];
                                                         $badgeClass = 'bg-success'; // Default: green
-                                                
+
                                                         if ($qty < 10) {
                                                             $badgeClass = 'bg-danger'; // red
                                                         } elseif ($qty < 20) {
@@ -111,15 +111,13 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 3) {
                                                             class="badge <?= $badgeClass ?>"><?= htmlspecialchars($qty) ?></span>
                                                     </td>
 
-
-
                                                     <td>₱<?= htmlspecialchars($rows['price']) ?></td>
                                                     <td>
                                                         <div class="ratio ratio-4x3" style="max-width: 100px;">
                                                             <?php
                                                             $imagePath = "../admin/Res_img/" . htmlspecialchars($rows['img']);
                                                             if (!empty($rows['img']) && file_exists($imagePath)) {
-                                                                ?>
+                                                            ?>
                                                                 <img src="<?= $imagePath ?>"
                                                                     class="rounded shadow-sm object-fit-cover w-100 h-100"
                                                                     alt="Dish Image">

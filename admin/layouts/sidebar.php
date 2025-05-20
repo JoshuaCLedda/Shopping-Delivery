@@ -1,9 +1,9 @@
 <aside class="left-sidebar">
   <!-- Sidebar scroll-->
   <div>
- <div class="mx-4 brand-logo d-flex align-items-center justify-content-between px-3 py-2 border-bottom">
-  <h5 class="mb-0 fw-bold text-primary">Admin Dashboard</h5>
-</div>
+    <div class="mx-4 brand-logo d-flex align-items-center justify-content-between px-3 py-2 border-bottom">
+      <h5 class="mb-0 fw-bold text-primary">Admin Dashboard</h5>
+    </div>
     <!-- Sidebar navigation-->
     <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
       <ul id="sidebarnav">
@@ -26,7 +26,7 @@
           <span class="hide-menu">Main</span>
         </li>
 
-      <!-- Commented for the meantime
+        <!-- Commented for the meantime
         <li class="sidebar-item">
           <a class="sidebar-link" href="all_orders.php" aria-expanded="false">
             <span>
@@ -54,25 +54,25 @@
           </a>
         </li>
 
-        
+
         <li class="sidebar-item">
-  <a class="sidebar-link" href="delivered_orders.php" aria-expanded="false">
-    <span>
-    <i class="bx bx-check-circle"></i>
-    </span>
-    <span class="hide-menu">Delivered Orders</span>
-  </a>
-</li>
+          <a class="sidebar-link" href="delivered_orders.php" aria-expanded="false">
+            <span>
+              <i class="bx bx-check-circle"></i>
+            </span>
+            <span class="hide-menu">Delivered Orders</span>
+          </a>
+        </li>
 
 
         <li class="sidebar-item">
-  <a class="sidebar-link" href="cancelled_orders.php" aria-expanded="false">
-    <span>
-      <i class='bx bx-x-circle'></i>
-    </span>
-    <span class="hide-menu">Cancelled Orders</span>
-  </a>
-</li>
+          <a class="sidebar-link" href="cancelled_orders.php" aria-expanded="false">
+            <span>
+              <i class='bx bx-x-circle'></i>
+            </span>
+            <span class="hide-menu">Cancelled Orders</span>
+          </a>
+        </li>
 
 
 
@@ -114,6 +114,23 @@
         <li class="nav-small-cap">
           <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
           <span class="hide-menu">Others</span>
+        </li>
+
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="popular_dishes.php" aria-expanded="false">
+            <span>
+              <i class="bi-cup-straw"></i>
+            </span>
+            <span class="hide-menu">Popular Dishes</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="popular_stall.php" aria-expanded="false">
+            <span>
+              <i class='bx bx-store'></i>
+            </span>
+            <span class="hide-menu">Popular Stall</span>
+          </a>
         </li>
 
         <li class="sidebar-item">

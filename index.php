@@ -1,12 +1,14 @@
 <?php
+session_start();
 include("connection/connect.php");
 error_reporting(0);
-session_start();
 
 ?>
 
 <?php include "layouts/header.php"; ?>
 <?php include 'layouts/navbar.php'; ?>
+<?php include 'layouts/sweetalert.php'; ?>
+
 
 
 
