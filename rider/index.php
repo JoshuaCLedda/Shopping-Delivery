@@ -78,7 +78,6 @@ if (isset($_POST['submit'])) {
                                             <th>Total Price</th>
                                             <th>Stall</th>
                                             <th>Contact</th>
-                                            <th>Status</th>
                                             <th>Order Date</th>
                                             <th>Action</th>
 
@@ -134,12 +133,6 @@ if (isset($_POST['submit'])) {
                                                 <td>₱<?= number_format($row['total_price'] ?? 0, 2) ?></td>
                                                 <td><?= htmlspecialchars($row['stall_id'] ?? 'No Data') ?></td>
                                                 <td><?= htmlspecialchars($row['customerPhone'] ?? 'No Data') ?></td>
-                                               
-                                                <td>
-                                                    <span class="badge rounded-pill <?= $badgeClass ?>">
-                                                        <?= $statusText ?>
-                                                    </span>
-                                                </td>
                                                 <td><?= $formattedDate ?? 'No Date' ?></td>
                                                 <td>
                                                 <form action="" method="POST" class="d-inline">

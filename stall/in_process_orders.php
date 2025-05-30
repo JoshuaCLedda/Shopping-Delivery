@@ -60,7 +60,7 @@ if (!$query) {
                     <div class="card card-outline-primary">
 
                         <div class="card-header bg-primary">
-                            <h5 class="mb-0 text-white">Customer Orders</h5>
+                            <h5 class="mb-0 text-white">In Process Orders</h5>
                         </div>
 
                         <div class="card-body">
@@ -74,7 +74,6 @@ if (!$query) {
                                             <th>Total Price</th>
                                             <th>Status</th>
                                             <th>Order Date</th>
-                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -124,18 +123,18 @@ if (!$query) {
                                                     </td>
                                                     <td><?= date("F j, Y, g:i a", strtotime($rows['order_date'])) ?></td>
                                                     <td>
-                                                        <form action="update_order_status.php" method="POST"
+                                                        <!-- <form action="update_order_status.php" method="POST"
                                                             class="d-inline update-status-form">
                                                             <input type="hidden" name="trans_id"
                                                                 value="<?= htmlspecialchars($rows['id']) ?>">
                                                             <select name="status"
                                                                 class="form-select form-select-sm d-inline w-auto">
                                                                 <option value="place_order" <?= $rowStatus == 'place_order' ? 'selected' : '' ?>>Placed</option>
-                                                                <option value="order_confirmation"
+                                                               <option value="order_confirmation"
                                                                     <?= $rowStatus == 'order_confirmation' ? 'selected' : '' ?>>
                                                                     Confirmed</option>
                                                                 <option value="in_process" <?= $rowStatus == 'in_process' ? 'selected' : '' ?>>In Process</option>
-                                                                <option value="order_received" <?= $rowStatus == 'order_received' ? 'selected' : '' ?>>Received (by Rider)</option>
+                                                                 <option value="order_received" <?= $rowStatus == 'order_received' ? 'selected' : '' ?>>Received (by Rider)</option>
                                                                 <option value="order_delivered" <?= $rowStatus == 'order_delivered' ? 'selected' : '' ?>>Delivered</option>
                                                                 <option value="cancelled" <?= in_array($rowStatus, ['order_canceled', 'order_cancelled', 'cancelled']) ? 'selected' : '' ?>>Cancelled</option>
                                                             </select>
@@ -144,7 +143,7 @@ if (!$query) {
                                                                 <button type="submit"
                                                                     class="btn btn-sm btn-primary ms-2">Update</button>
                                                             </noscript>
-                                                        </form>
+                                                        </form> -->
                                                         <a href="view_order.php?id=<?= urlencode($rows['id']) ?>"
                                                             class="btn btn-info btn-sm view-details-btn">
                                                             <i class="bx bx-show"></i>

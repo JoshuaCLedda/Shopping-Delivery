@@ -10,7 +10,7 @@ if (isset($_GET['transaction_id'])) {
     $transaction_id = intval($_GET['transaction_id']);
 }
 
-$stall_name = ''; 
+$stall_name = '';
 
 // Get the restaurant (stall) details if ID is passed
 if (isset($_GET['restaurant_id'])) {
@@ -35,9 +35,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = $index->addRestaurantRating($stall_name, $restaurant_id, $rating, $complaint, $user_id, $transaction_id);
 
         if ($result) {
-            $_SESSION['message'] = ['type' => 'success', 'message' => 'Restaurant rating submitted successfully!'];
+            $_SESSION['message'] = ['type' => 'success', 'message' => 'Stall rating submitted successfully!'];
         } else {
-            $_SESSION['message'] = ['type' => 'danger', 'message' => 'Restaurant rating submission failed. Please try again.'];
+            $_SESSION['message'] = ['type' => 'danger', 'message' => 'Stall rating submission failed. Please try again.'];
         }
     } else {
         $_SESSION['message'] = ['type' => 'danger', 'message' => 'Invalid input. Please check all required fields.'];
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 ?>
 
-    <?php include 'layouts/header.php'; ?>
+<?php include 'layouts/header.php'; ?>
 
 
 <?php include 'layouts/navbar.php'; ?>
@@ -70,11 +70,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
         <div class="col-md-4 mb-2">
-    <div class="bg-primary text-white p-2 rounded fw-bold">
-        <i class='bx bxs-star'></i>
-        <span class="ms-1">3. Rate Stall</span>
-    </div>
-</div>
+            <div class="bg-primary text-white p-2 rounded fw-bold">
+                <i class='bx bxs-star'></i>
+                <span class="ms-1">3. Rate Stall</span>
+            </div>
+        </div>
 
     </div>
 </div>
@@ -89,14 +89,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php include 'layouts/sweetalert.php'; ?>
 
             <form action="" method="POST">
-            <input type="hidden" name="transaction_id" value="<?= $transaction_id ?>">
+                <input type="hidden" name="transaction_id" value="<?= $transaction_id ?>">
 
                 <div class="mb-3">
                     <label for="stall" class="form-label">
                         <i class='bx bx-restaurant'></i> Restaurant:
                     </label>
                     <input type="text" class="form-control" id="stall" name="stall_name"
-                           value="<?= htmlspecialchars($stall_name); ?>" readonly>
+                        value="<?= htmlspecialchars($stall_name); ?>" readonly>
                     <input type="hidden" name="restaurant_id" value="<?= $restaurant_id; ?>">
                 </div>
 
@@ -111,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?php endfor; ?>
                     </div>
                 </div>
-                
+
                 <div class="mb-3">
                     <label for="complaint" class="form-label">
                         <i class='bx bx-message-dots'></i> Feedback (Optional):

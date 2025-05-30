@@ -68,28 +68,14 @@ if ($reportType === 'orders') {
     while ($row = $result->fetch_assoc()) {
         $status = $row['status'];
         switch ($status) {
-            case 'order_confirmation':
-                $statusText = 'Confirmed';
-                break;
+            case 'order_confirmation': $statusText = 'Confirmed'; break;
             case 'Order_Canceled':
-            case 'Order_Cancelled':
-                $statusText = 'Cancelled';
-                break;
-            case 'Order_Received':
-                $statusText = 'Received';
-                break;
-            case 'in_process':
-                $statusText = 'In Process';
-                break;
-            case 'order_delivered':
-                $statusText = 'Delivered';
-                break;
-            case 'place_order':
-                $statusText = 'Placed';
-                break;
-            default:
-                $statusText = ucfirst(str_replace('_', ' ', $status));
-                break;
+            case 'Order_Cancelled': $statusText = 'Cancelled'; break;
+            case 'Order_Received': $statusText = 'Received'; break;
+            case 'in_process': $statusText = 'In Process'; break;
+            case 'order_delivered': $statusText = 'Delivered'; break;
+            case 'place_order': $statusText = 'Placed'; break;
+            default: $statusText = ucfirst(str_replace('_', ' ', $status)); break;
         }
 
         echo "<tr>
@@ -101,14 +87,8 @@ if ($reportType === 'orders') {
         </tr>";
     }
 
-}
-elseif ($reportType === 'sales') {
-    echo "
-    <th>Name</th>
-    <th>Total Price</th>
-    <th>Payment Status</th>
-    <th>Order Date</th></tr>";
-
+} elseif ($reportType === 'sales') {
+    echo "<th>Name</th><th>Total Price</th><th>Payment Status</th><th>Order Date</th></tr>";
     $stmt = $conn->con->prepare("
         SELECT transaction.id, transaction.total_quantity, transaction.order_date, transaction.payment_status, transaction.total_price,
                CONCAT(users.f_name, ' ', users.l_name) AS Name
@@ -116,7 +96,6 @@ elseif ($reportType === 'sales') {
         LEFT JOIN users ON transaction.u_id = users.u_id
         WHERE transaction.status = 'order_delivered' AND transaction.order_date BETWEEN ? AND ?
     ");
-
     $stmt->bind_param("ss", $startDate, $endDate);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -129,22 +108,14 @@ elseif ($reportType === 'sales') {
             <td>" . date("F j, Y", strtotime($row['order_date'])) . "</td>
         </tr>";
     }
-}
 
-elseif ($reportType === 'users') {
-    echo "
-    <th>Name</th>
-    <th>Username</th>
-    <th>Email</th>
-    <th>Phone</th>
-    <th>Registered Date</th>
-    </tr>";
+} elseif ($reportType === 'users') {
+    echo "<th>Name</th><th>Username</th><th>Email</th><th>Phone</th><th>Registered Date</th></tr>";
     $stmt = $conn->con->prepare("
-    SELECT u_id, CONCAT(f_name, ' ', l_name) AS NAME, username, email, phone, created_at 
-    FROM users 
-    WHERE created_at BETWEEN ? AND ?
-");
-
+        SELECT u_id, CONCAT(f_name, ' ', l_name) AS NAME, username, email, phone, created_at 
+        FROM users 
+        WHERE created_at BETWEEN ? AND ?
+    ");
     $stmt->bind_param("ss", $startDate, $endDate);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -157,9 +128,60 @@ elseif ($reportType === 'users') {
             <td>" . date("F j, Y", strtotime($row['created_at'])) . "</td>
         </tr>";
     }
+
+} elseif ($reportType === 'stalls') {
+    echo "<th>Stall Name</th><th>Phone</th><th>Status</th><th>Date Registered</th></tr>";
+    $stmt = $conn->con->prepare("
+        SELECT 
+            restaurant.title, 
+            restaurant.phone,
+            restaurant.status, 
+            restaurant.created_at 
+        FROM restaurant 
+        WHERE restaurant.created_at BETWEEN ? AND ?
+    ");
+    $stmt->bind_param("ss", $startDate, $endDate);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $statusText = $row['status'] == 0 ? 'Active' : 'Inactive';
+        echo "<tr>
+            <td>{$row['title']}</td>
+            <td>{$row['phone']}</td>
+            <td>{$statusText}</td>
+            <td>" . date("F j, Y", strtotime($row['created_at'])) . "</td>
+        </tr>";
+    }
+
+} elseif ($reportType === 'riders') {
+    echo "<th>Name</th><th>Email</th><th>Phone</th><th>Status</th><th>Registered</th></tr>";
+    $stmt = $conn->con->prepare("
+        SELECT users.f_name, users.l_name, users.email, users.phone, users.status, users.created_at 
+        FROM users 
+        WHERE role = 2
+        AND users.created_at BETWEEN ? AND ?
+    ");
+    $stmt->bind_param("ss", $startDate, $endDate);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $statusText = $row['status'] == 0 ? 'Available' : 'Unavailable';
+        echo "<tr>
+            <td>" . htmlspecialchars($row['f_name'] . ' ' . $row['l_name']) . "</td>
+            <td>{$row['email']}</td>
+            <td>{$row['phone']}</td>
+            <td>{$statusText}</td>
+            <td>" . date("F j, Y", strtotime($row['created_at'])) . "</td>
+        </tr>";
+    }
+
 } else {
     echo "<td colspan='5'>Invalid Report Type</td></tr>";
 }
+
+
+
+
 
 echo "</table>";
 ?>

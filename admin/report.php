@@ -14,7 +14,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
 <div id="main">
     <div class="main-container">
 
-    <div class="row">
+        <div class="row">
             <div class="col">
                 <nav aria-label="breadcrumb" class="rounded-3 mb-4">
                     <ol class="breadcrumb mb-0">
@@ -45,7 +45,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
                             <div id="danger-alert" class="alert alert-danger" role="alert" style="display: none;"></div>
 
 
-                            <form id="profileForm" action="../report/generate_report.php" method="POST" target="_blank">
+                         <form id="profileForm" action="../report/generate_report.php" method="POST" target="_blank">
                                 <div class="row mb-3">
                                     <div class="col-sm-3">
                                         <p class="mb-0">Types of Report</p>
@@ -56,6 +56,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
                                             <option value="sales">Sales Report</option>
                                             <option value="orders">Orders Report</option>
                                             <option value="users">User Report</option>
+                                            <option value="stalls">Stall Report</option>
+                                            <option value="riders">Rider Report</option>
                                         </select>
                                     </div>
                                 </div>
@@ -86,9 +88,11 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
                                         <p class="mb-0">Download Format</p>
                                     </div>
                                     <div class="col-sm-9">
-                                        <select name="format" class="form-control">
+                                        <select name="format" class="form-control" id="formatSelector">
                                             <option value="">-- Select Report Format --</option>
                                             <option value="pdf">PDF</option>
+                                            <option value="excel">Excel</option>
+
                                         </select>
                                     </div>
                                 </div>
@@ -105,6 +109,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
                         </form>
 
 
+
+
                     </div>
                 </div>
 
@@ -119,5 +125,19 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
 </div>
 </div>
 
+<script>
+    document.getElementById('formatSelector').addEventListener('change', function () {
+        const form = document.getElementById('profileForm');
+        const selectedFormat = this.value;
+
+        if (selectedFormat === 'excel') {
+            form.action = '../reportExcel/generate_report.php';
+        } else if (selectedFormat === 'pdf') {
+            form.action = '../report/generate_report.php';
+        } else {
+            form.action = ''; // or keep default
+        }
+    });
+</script>
 
 <?php include 'layouts/footer.php' ?>
