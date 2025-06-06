@@ -8,7 +8,7 @@ if (isset($_GET['res_id'])) {
     $_SESSION['dishedId'] = $_GET['res_id'];
 }
 
-$dishesId = $_SESSION['dishedId'] ?? "null";
+$restaurantId = $_SESSION['dishedId'] ?? "null";
 
 if (isset($_SESSION['user_id'])) {
     $user_id = $_SESSION['user_id'];
@@ -82,17 +82,19 @@ bg-light border-bottom">
                     <i class='bx bx-cart fs-3 mb-1'></i>
                     <a href="#" class="d-block text-decoration-none text-dark">Order and Pay
 
-
+                    
                     </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<section class="inner-page-hero position-relative" style="background-image: url('images/img/rest.png'); background-size: cover; background-position: center; min-height: 340px;">
+<section class="inner-page-hero position-relative"
+    style="background-image: url('images/img/rest.png'); background-size: cover; background-position: center; min-height: 340px;">
 
     <!-- Overlay -->
-    <div class="position-absolute top-0 start-0 w-100 h-100" style="background-color: rgba(0, 0, 0, 0.55); z-index: 1;"></div>
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background-color: rgba(0, 0, 0, 0.55); z-index: 1;">
+    </div>
 
     <?php
     $ress = mysqli_query($index->con, "SELECT * FROM restaurant WHERE rs_id='{$_GET['res_id']}'");
@@ -155,9 +157,12 @@ bg-light border-bottom">
                 <div class="col-sm-8">
                     <h2 class="fw-bold mb-2 text-white"><?= htmlspecialchars($rows['title']) ?></h2>
 
-                    <p class="mb-2"><i class='bx bx-map me-2'></i><?= htmlspecialchars($rows['address'] ?? 'No address available') ?></p>
+                    <p class="mb-2"><i
+                            class='bx bx-map me-2'></i><?= htmlspecialchars($rows['address'] ?? 'No address available') ?>
+                    </p>
 
-                    <p class="mb-2"><i class='bx bx-time-five me-2'></i><strong>Open Hours:</strong> <?= htmlspecialchars($rows['o_hr']) ?> - <?= htmlspecialchars($rows['c_hr']) ?></p>
+                    <p class="mb-2"><i class='bx bx-time-five me-2'></i><strong>Open Hours:</strong>
+                        <?= htmlspecialchars($rows['o_hr']) ?> - <?= htmlspecialchars($rows['c_hr']) ?></p>
                     <p class="mb-2">
                         <i class='bx bx-calendar me-2'></i>
                         <strong>Open Days:</strong>
@@ -176,7 +181,8 @@ bg-light border-bottom">
                         </div>
 
                         <div class="col-md-6">
-                            <p class="mb-1"><i class='bx bx-timer me-2'></i><strong>Delivery Time:</strong> 25-35 mins</p>
+                            <p class="mb-1"><i class='bx bx-timer me-2'></i><strong>Delivery Time:</strong> 25-35 mins
+                            </p>
                             <p class="mb-1"><i class='bx bx-cart me-2'></i><strong>Min Order:</strong> ₱50.00</p>
                         </div>
                     </div>
@@ -228,94 +234,104 @@ bg-light border-bottom">
             </div>
         </div>
 
-<div class="py-5 bg-light border rounded shadow-sm">
-    <div class="container"> 
-        <div class="row g-4 justify-content-center" id="dishContainer">
-            <?php
-            $cat_id = $_POST['cat_id'] ?? null;
-            $res_id = $dishesId;
+        <div class="py-5 bg-light border rounded shadow-sm">
+            <div class="container">
+                <div class="row g-4 justify-content-center" id="dishContainer">
+                    <?php
+                    $cat_id = $_POST['cat_id'] ?? null;
+                    $res_id = $restaurantId;
 
-            if (!$res_id) {
-                echo "<div class='text-center text-danger'>Restaurant ID missing.</div>";
-                exit;
-            }
+                    if (!$res_id) {
+                        echo "<div class='text-center text-danger'>Restaurant ID missing.</div>";
+                        exit;
+                    }
 
-            $query = "SELECT * FROM dishes WHERE status = 0 AND rs_id = ?";
-            $params = [$res_id];
-            $types = "i";
+                    $query = "SELECT * FROM dishes WHERE status = 0 AND rs_id = ?";
+                    $params = [$res_id];
+                    $types = "i";
 
-            if ($cat_id) {
-                $query .= " AND dish_category_id = ?";
-                $types .= "i";
-                $params[] = $cat_id;
-            }
+                    if ($cat_id) {
+                        $query .= " AND dish_category_id = ?";
+                        $types .= "i";
+                        $params[] = $cat_id;
+                    }
 
-            $stmt = $db->prepare($query);
-            $stmt->bind_param($types, ...$params);
-            $stmt->execute();
-            $result = $stmt->get_result();
+                    $stmt = $db->prepare($query);
+                    $stmt->bind_param($types, ...$params);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
 
-            if ($result->num_rows > 0) {
-                while ($product = $result->fetch_assoc()) {
-                    $dishId = htmlspecialchars($product['d_id']);
-                    $dishTitle = htmlspecialchars($product['title']);
-                    $dishSlogan = htmlspecialchars($product['slogan']);
-                    $dishPrice = htmlspecialchars($product['price']);
-                    $dishImage = htmlspecialchars($product['img']);
-            ?>
-                    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                        <div class="card shadow-sm h-100 border-0 dish-card position-relative">
-                            <!-- Badge (optional enhancement) -->
-                            <span class="badge bg-success position-absolute top-0 start-0 m-2">Popular</span>
+                    if ($result->num_rows > 0) {
+                        while ($product = $result->fetch_assoc()) {
+                            $dishId = htmlspecialchars($product['d_id']);
+                            $dishTitle = htmlspecialchars($product['title']);
+                            $dishSlogan = htmlspecialchars($product['slogan']);
+                            $dishPrice = htmlspecialchars($product['price']);
+                            $dishImage = htmlspecialchars($product['img']);
+                            ?>
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                <div class="card shadow-sm h-100 border-0 dish-card position-relative">
+                                    <!-- Badge (optional enhancement) -->
+                                    <span class="badge bg-success position-absolute top-0 start-0 m-2">Popular</span>
 
-                            <!-- Image -->
-                            <div class="card-img-top" style="
+                                    <!-- Image -->
+                                    <div class="card-img-top" style="
                                 background-image: url('admin/Res_img/<?= $dishImage ?>');
                                 background-size: cover;
                                 background-position: center;
                                 height: 160px;
                                 border-top-left-radius: .5rem;
                                 border-top-right-radius: .5rem;">
-                            </div>
-
-                            <!-- Body -->
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title mb-1"><i class='bx bxs-bowl-rice text-warning'></i> <?= $dishTitle ?></h5>
-                                <p class="card-text text-muted small mb-2"><i class='bx bx-info-circle'></i> <?= $dishSlogan ?></p>
-                                <p class="card-text text-success fw-bold fs-5 mb-3"><i class='bx bx-money'></i> ₱<?= $dishPrice ?></p>
-
-                                <!-- Add to Cart -->
-                                <form method="POST" action="" class="mt-auto">
-                                    <div class="d-flex align-items-center">
-                                        <input class="form-control form-control-sm me-2" type="number" name="quantity" value="1" min="1" style="width: 80px;">
-                                        <input type="hidden" name="dishes_id" value="<?= $dishId ?>">
-                                        <input type="hidden" name="user_id" value="<?= htmlspecialchars($_SESSION['user_id'] ?? 0) ?>">
-                                        <button type="submit" name="submit" class="btn btn-sm btn-outline-primary">
-                                            <i class='bx bx-cart-alt'></i> Add
-                                        </button>
                                     </div>
-                                </form>
+
+                                    <!-- Body -->
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title mb-1"><i class='bx bxs-bowl-rice text-warning'></i>
+                                            <?= $dishTitle ?></h5>
+                                        <p class="card-text text-muted small mb-2"><i class='bx bx-info-circle'></i>
+                                            <?= $dishSlogan ?></p>
+                                        <p class="card-text text-success fw-bold fs-5 mb-3"><i class='bx bx-money'></i>
+                                            ₱<?= $dishPrice ?></p>
+
+                                        <!-- Add to Cart -->
+                                        <form method="POST" action="" class="mt-auto">
+                                            <div class="d-flex align-items-center">
+                                                <input class="form-control form-control-sm me-2" type="number" name="quantity"
+                                                    value="1" min="1" style="width: 80px;">
+                                                <input type="hidden" name="dishes_id" value="<?= $dishId ?>">
+                                                <input type="hidden" name="user_id"
+                                                    value="<?= htmlspecialchars($_SESSION['user_id'] ?? 0) ?>">
+                                                <button type="submit" name="submit" class="btn btn-sm btn-outline-primary">
+                                                    <i class='bx bx-cart-alt'></i> Add
+                                                </button>
+                                           <a href="viewDishes.php?dish_id=<?= $dishId ?>&restaurant_id=<?= $restaurantId ?>"
+   class="btn btn-sm btn-outline-primary mx-2">
+   View Dish 
+</a>
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-            <?php
-                }
-            } else {
-                echo '
+                            <?php
+                        }
+                    } else {
+                        echo '
                 <div class="col-12 d-flex justify-content-center align-items-center" style="min-height: 300px;">
                     <div class="text-center">
                         <img src="assets/images/icons/emptycart.svg" alt="Empty Cart" class="mb-4" style="width: 200px;">
                         <h5 class="text-muted">No available dishes at the moment 🛒</h5>
                     </div>
                 </div>';
-            }
-            ?>
+                    }
+                    ?>
+                </div>
+
+
+
+            </div>
         </div>
-
-
-        
-    </div>
-    </div>
 
     </div>
 
@@ -324,7 +340,7 @@ bg-light border-bottom">
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $('#dishCategorySelect').on('change', function() {
+    $('#dishCategorySelect').on('change', function () {
         var catId = $(this).val();
         var resId = <?= json_encode($_GET['res_id']) ?>;
 
@@ -335,13 +351,13 @@ bg-light border-bottom">
                 cat_id: catId,
                 res_id: resId
             },
-            beforeSend: function() {
+            beforeSend: function () {
                 $('#dishContainer').html('<div class="text-center">Loading dishes...</div>');
             },
-            success: function(response) {
+            success: function (response) {
                 $('#dishContainer').html(response);
             },
-            error: function() {
+            error: function () {
                 $('#dishContainer').html('<div class="text-danger">Failed to load dishes.</div>');
             }
         });
