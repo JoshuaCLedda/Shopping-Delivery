@@ -79,6 +79,8 @@ if (isset($_SESSION['user_id'])) {
     }
 </style>
 <?php include 'layouts/navbar.php'; ?>
+<?php include 'layouts/sweetalert.php'; ?>
+
 
 <div class="container py-5">
     <div class="col-lg-10 mx-auto cart-wrapper">

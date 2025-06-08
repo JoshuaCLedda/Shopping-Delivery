@@ -15,8 +15,7 @@ if ($userId && !empty($selectedDishes)) {
         $stmt->execute();
     }
 
-    // ✅ Set session message
-    $_SESSION['success'] = count($selectedDishes) . " item(s) added to your cart.";
+    $_SESSION['message'] = ['type' => 'success', 'message' => 'Succesfully Added to Cart.'];
 
     header("Location: carts.php");
     exit;
