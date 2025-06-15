@@ -30,48 +30,66 @@ $stmt->bind_param($types, ...$params);
 $stmt->execute();
 $result = $stmt->get_result();
 
-if ($result->num_rows > 0) {
-    while ($product = $result->fetch_assoc()) {
+if ($result->num_rows > 0):
+    while ($product = $result->fetch_assoc()):
         $dishId = htmlspecialchars($product['d_id']);
         $dishTitle = htmlspecialchars($product['title']);
         $dishSlogan = htmlspecialchars($product['slogan']);
         $dishPrice = htmlspecialchars($product['price']);
         $dishImage = htmlspecialchars($product['img']);
+        $restaurantId = htmlspecialchars($product['rs_id']);
         ?>
         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-            <div class="card shadow-sm h-100 border-0 position-relative dish-card">
-                <div class="card-img-top" style="background-image: url('admin/Res_img/<?= $dishImage ?>');
-                        background-size: cover;
-                        background-position: center;
-                        height: 150px;
-                        border-top-left-radius: .5rem;
-                        border-top-right-radius: .5rem;">
-                </div>
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title mb-1"><?= $dishTitle ?></h5>
-                    <p class="card-text text-muted small mb-1"><?= $dishSlogan ?></p>
-                    <p class="card-text text-success fw-bold fs-5 mb-3">₱<?= $dishPrice ?></p>
+            <div class="card shadow-sm h-100 border-0 dish-card position-relative rounded-4">
 
-                    <form method="POST" action="" class="mt-auto">
-                        <div class="d-flex align-items-center">
-                            <input class="form-control form-control-sm me-2" type="number" name="quantity" value="1" min="1" style="width: 80px;">
-                            <input type="hidden" name="dishes_id" value="<?= $dishId ?>">
-                            <input type="hidden" name="user_id" value="<?= htmlspecialchars($_SESSION['user_id'] ?? 0) ?>">
-                            <button type="submit" name="submit" class="btn btn-sm btn-primary">Add to Cart</button>
-                        </div>
-                    </form>
+                <!-- Badge -->
+                <span class="badge bg-success position-absolute top-0 start-0 m-2">Popular</span>
+
+                <!-- Image -->
+                <div class="card-img-top" style="
+                    background-image: url('admin/Res_img/<?= $dishImage ?>');
+                    background-size: cover;
+                    background-position: center;
+                    height: 130px;
+                    border-top-left-radius: .75rem;
+                    border-top-right-radius: .75rem;">
+                </div>
+
+                <!-- Card Body -->
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title mb-1">
+                        <i class='bx bxs-bowl-rice text-warning'></i> <?= $dishTitle ?>
+                    </h5>
+                    <p class="card-text text-muted small mb-2">
+                        <i class='bx bx-info-circle'></i> <?= $dishSlogan ?>
+                    </p>
+                    <p class="card-text text-success fw-bold fs-5 mb-3">
+                        <i class='bx bx-money'></i> ₱<?= $dishPrice ?>
+                    </p>
+
+                    <!-- Checkbox Selection -->
+                    <div class="form-check mb-3 mt-auto">
+                        <input class="form-check-input" type="checkbox" name="selected_dishes[]"
+                            value="<?= $dishId ?>" id="dish<?= $dishId ?>">
+                        <label class="form-check-label small" for="dish<?= $dishId ?>">
+                            Add this dish
+                        </label>
+                    </div>
+
+                    <!-- View Button -->
+                    <a href="viewDishes.php?dish_id=<?= $dishId ?>&restaurant_id=<?= $restaurantId ?>"
+                        class="btn btn-sm btn-outline-secondary">
+                        View
+                    </a>
                 </div>
             </div>
         </div>
-        <?php
-    }
-} else {
-    echo '
+    <?php endwhile;
+else: ?>
     <div class="col-12 d-flex justify-content-center align-items-center" style="min-height: 300px;">
         <div class="text-center">
-            <img src="assets/images/icons/emptycart.svg" alt="Empty Cart" class="mb-4" style="width: 200px;">
+            <img src="assets/images/icons/emptycart.svg" alt="No Dishes" class="mb-4" style="width: 200px;">
             <h5 class="text-muted">No available dishes at the moment 🛒</h5>
         </div>
-    </div>';
-}
-?>
+    </div>
+<?php endif; ?>
