@@ -233,106 +233,112 @@ bg-light border-bottom">
             </div>
         </div>
 
-        <div class="py-5 bg-light border rounded shadow-sm">
-            <div class="container">
-                <div class="row g-4 justify-content-center" id="dishContainer">
-                    <?php
-                    $cat_id = $_POST['cat_id'] ?? null;
-                    $res_id = $restaurantId;
+        <form method="POST" action="addToCart.php" class="dishes-form">
+            <input type="hidden" name="user_id" value="<?= htmlspecialchars($_SESSION['user_id'] ?? 0) ?>">
 
-                    if (!$res_id) {
-                        echo "<div class='text-center text-danger'>Restaurant ID missing.</div>";
-                        exit;
-                    }
+            <div class="py-5 bg-light border rounded shadow-sm">
+                <div class="container">
+                    <div class="row g-4 justify-content-center" id="dishContainer">
+                        <?php
+                        $cat_id = $_POST['cat_id'] ?? null;
+                        $res_id = $restaurantId;
 
-                    $query = "SELECT * FROM dishes WHERE status = 0 AND rs_id = ?";
-                    $params = [$res_id];
-                    $types = "i";
+                        if (!$res_id) {
+                            echo "<div class='text-center text-danger'>Restaurant ID missing.</div>";
+                            exit;
+                        }
 
-                    if ($cat_id) {
-                        $query .= " AND dish_category_id = ?";
-                        $types .= "i";
-                        $params[] = $cat_id;
-                    }
+                        $query = "SELECT * FROM dishes WHERE status = 0 AND rs_id = ?";
+                        $params = [$res_id];
+                        $types = "i";
 
-                    $stmt = $db->prepare($query);
-                    $stmt->bind_param($types, ...$params);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
+                        if ($cat_id) {
+                            $query .= " AND dish_category_id = ?";
+                            $types .= "i";
+                            $params[] = $cat_id;
+                        }
 
-                    if ($result->num_rows > 0) {
-                        while ($product = $result->fetch_assoc()) {
-                            $dishId = htmlspecialchars($product['d_id']);
-                            $dishTitle = htmlspecialchars($product['title']);
-                            $dishSlogan = htmlspecialchars($product['slogan']);
-                            $dishPrice = htmlspecialchars($product['price']);
-                            $dishImage = htmlspecialchars($product['img']);
-                            ?>
-                            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                                <div class="card shadow-sm h-100 border-0 dish-card position-relative rounded-4">
-                                    <!-- Optional Badge -->
-                                    <span class="badge bg-success position-absolute top-0 start-0 m-2">Popular</span>
+                        $stmt = $db->prepare($query);
+                        $stmt->bind_param($types, ...$params);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
 
-                                    <!-- Image -->
-                                    <div class="card-img-top" style="
-                    background-image: url('admin/Res_img/<?= $dishImage ?>');
-                    background-size: cover;
-                    background-position: center;
-                    height: 130px;
-                    border-top-left-radius: .75rem;
-                    border-top-right-radius: .75rem;">
-                                    </div>
+                        if ($result->num_rows > 0) {
+                            while ($product = $result->fetch_assoc()) {
+                                $dishId = htmlspecialchars($product['d_id']);
+                                $dishTitle = htmlspecialchars($product['title']);
+                                $dishSlogan = htmlspecialchars($product['slogan']);
+                                $dishPrice = htmlspecialchars($product['price']);
+                                $dishImage = htmlspecialchars($product['img']);
+                                ?>
+                                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                    <div class="card shadow-sm h-100 border-0 dish-card position-relative rounded-4">
 
-                                    <!-- Body -->
-                                    <div class="card-body d-flex flex-column">
-                                        <h5 class="card-title mb-1">
-                                            <i class='bx bxs-bowl-rice text-warning'></i> <?= $dishTitle ?>
-                                        </h5>
-                                        <p class="card-text text-muted small mb-2">
-                                            <i class='bx bx-info-circle'></i> <?= $dishSlogan ?>
-                                        </p>
-                                        <p class="card-text text-success fw-bold fs-5 mb-3">
-                                            <i class='bx bx-money'></i> ₱<?= $dishPrice ?>
-                                        </p>
+                                        <!-- Badge -->
+                                        <span class="badge bg-success position-absolute top-0 start-0 m-2">Popular</span>
 
-                                        <!-- Add to Cart -->
-                                        <form method="POST" action="" class="mt-auto">
-                                            <div class="d-flex flex-wrap align-items-center gap-2">
-                                                <input class="form-control form-control-sm" type="number" name="quantity"
-                                                    value="1" min="1" style="width: 70px;">
-                                                <input type="hidden" name="dishes_id" value="<?= $dishId ?>">
-                                                <input type="hidden" name="user_id"
-                                                    value="<?= htmlspecialchars($_SESSION['user_id'] ?? 0) ?>">
+                                        <!-- Image -->
+                                        <div class="card-img-top" style="
+                                    background-image: url('admin/Res_img/<?= $dishImage ?>');
+                                    background-size: cover;
+                                    background-position: center;
+                                    height: 130px;
+                                    border-top-left-radius: .75rem;
+                                    border-top-right-radius: .75rem;">
+                                        </div>
 
-                                                <button type="submit" name="submit" class="btn btn-sm text-white"
-                                                    style="background-color: #d70f64;">
-                                                    <i class='bx bx-cart-alt'></i> Add
-                                                </button>
+                                        <!-- Body -->
+                                        <div class="card-body d-flex flex-column">
+                                            <h5 class="card-title mb-1">
+                                                <i class='bx bxs-bowl-rice text-warning'></i> <?= $dishTitle ?>
+                                            </h5>
+                                            <p class="card-text text-muted small mb-2">
+                                                <i class='bx bx-info-circle'></i> <?= $dishSlogan ?>
+                                            </p>
+                                            <p class="card-text text-success fw-bold fs-5 mb-3">
+                                                <i class='bx bx-money'></i> ₱<?= $dishPrice ?>
+                                            </p>
 
-                                                <a href="viewDishes.php?dish_id=<?= $dishId ?>&restaurant_id=<?= $restaurantId ?>"
-                                                    class="btn btn-sm btn-outline-secondary">
-                                                    View
-                                                </a>
+                                            <!-- Checkbox above View button -->
+                                            <div class="form-check mb-3 mt-auto">
+                                                <input class="form-check-input" type="checkbox" name="selected_dishes[]"
+                                                    value="<?= $dishId ?>" id="dish<?= $dishId ?>">
+                                                <label class="form-check-label small" for="dish<?= $dishId ?>">Add this
+                                                    dish</label>
                                             </div>
-                                        </form>
+
+                                            <!-- View Button -->
+                                            <a href="viewDishes.php?dish_id=<?= $dishId ?>&restaurant_id=<?= $restaurantId ?>"
+                                                class="btn btn-sm btn-outline-secondary">
+                                                View
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <?php
+                                <?php
+                            }
+                        } else {
+                            echo '
+                    <div class="col-12 d-flex justify-content-center align-items-center" style="min-height: 300px;">
+                        <div class="text-center">
+                            <img src="assets/images/icons/emptycart.svg" alt="Empty Cart" class="mb-4" style="width: 200px;">
+                            <h5 class="text-muted">No available dishes at the moment 🛒</h5>
+                        </div>
+                    </div>';
                         }
-                    } else {
-                        echo '
-              <div class="col-12 d-flex justify-content-center align-items-center" style="min-height: 300px;">
-                <div class="text-center">
-                  <img src="assets/images/icons/emptycart.svg" alt="Empty Cart" class="mb-4" style="width: 200px;">
-                  <h5 class="text-muted">No available dishes at the moment 🛒</h5>
-                </div>
-              </div>';
-                    }
-                    ?>
+                        ?>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-pink btn-lg px-5 rounded-pill shadow-sm">
+                            <i class="bx bx-cart"></i> Add to Cart
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </form>
+
     </div>
 </section>
 
@@ -366,26 +372,57 @@ bg-light border-bottom">
 
 <?php include 'layouts/sweetalert.php'; ?>
 
-
-
 <?php include 'layouts/footer.php'; ?>
 
 <style>
-    .card {
-        max-width: 90%;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    .text-pink {
+        color: #d70f64;
     }
 
-    .dish-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    .btn-pink {
+        background-color: #d70f64;
+        color: #fff;
+        border: none;
+        transition: background-color 0.3s ease;
     }
 
-    .card-body {
+    .btn-pink:hover {
+        background-color: #b70d56;
+    }
+
+    .btn-outline-pink {
+        color: #d70f64;
+        border-color: #d70f64;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-pink:hover {
+        background-color: #d70f64;
+        color: #fff;
+    }
+
+    .dish-image {
+        background-size: cover;
+        background-position: center;
+        height: 170px;
         transition: transform 0.3s ease;
     }
 
-    .dish-card:hover .card-body {
+    .transition-hover:hover .dish-image {
         transform: scale(1.05);
+    }
+
+    .card:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+
+    .card-body h5,
+    .card-body h3 {
+        transition: color 0.2s ease-in-out;
+    }
+
+    .card:hover h5,
+    .card:hover h3 {
+        color: #d70f64;
     }
 </style>

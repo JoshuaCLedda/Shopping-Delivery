@@ -128,10 +128,19 @@ if (isset($_SESSION['user_id'])) {
             <?php foreach ($items as $item): ?>
               <div class="card mb-3 shadow-sm border-0 <?= !$isOpen ? 'disabled-card' : ''; ?>">
                 <div class="card-body d-flex align-items-center gap-3">
+
+                  <!-- Checkbox -->
                   <div class="form-check">
                     <input class="form-check-input" type="checkbox" name="selected_items[]" value="<?= $item['cartId']; ?>" <?= !$isOpen ? 'disabled' : ''; ?>>
                   </div>
 
+                  <!-- Dish Image -->
+                  <div>
+                    <img src="admin/Res_img/<?= htmlspecialchars($item['dishImage']) ?>" alt="Dish Image"
+                         class="rounded border" style="width: 80px; height: 80px; object-fit: cover;">
+                  </div>
+
+                  <!-- Dish Info -->
                   <div class="flex-grow-1">
                     <h6 class="mb-1 fw-semibold <?= !$isOpen ? 'text-muted' : ''; ?>">
                       <?= htmlspecialchars($item['dishName']) ?>
@@ -142,6 +151,7 @@ if (isset($_SESSION['user_id'])) {
                     </div>
                   </div>
 
+                  <!-- Delete Button -->
                   <div>
                     <a href="delete_cart_item.php?cartId=<?= $item['cartId']; ?>"
                       class="btn btn-sm btn-outline-danger"
@@ -149,12 +159,14 @@ if (isset($_SESSION['user_id'])) {
                       <i class='bx bx-trash'></i>
                     </a>
                   </div>
+
                 </div>
               </div>
             <?php endforeach; ?>
           </div>
         <?php endforeach; ?>
 
+        <!-- Checkout Button -->
         <div class="text-center my-4">
           <button type="submit" class="btn btn-success btn-lg px-4 shadow">
             <i class='bx bxs-cart-alt me-2'></i> Checkout
@@ -162,6 +174,7 @@ if (isset($_SESSION['user_id'])) {
         </div>
 
       <?php else: ?>
+        <!-- Empty Cart -->
         <div class="text-center py-5 bg-light border rounded shadow-sm">
           <img src="assets/images/icons/emptycart.svg" alt="Empty Cart" class="mb-4" style="width: 200px;">
           <h5 class="text-muted">Your cart is empty 🛒</h5>
@@ -170,6 +183,7 @@ if (isset($_SESSION['user_id'])) {
     </form>
   </div>
 </div>
+
 
 
 

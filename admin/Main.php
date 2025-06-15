@@ -1214,7 +1214,8 @@ class Index
                     dishes.rs_id,
                     restaurant.title AS restaurantName,
                     restaurant.o_hr,  -- Operating hour (open)
-                    restaurant.c_hr   -- Closing hour
+                    restaurant.c_hr,   -- Closing hour
+                    dishes.img AS dishImage
                 FROM carts
                 LEFT JOIN dishes ON dishes.d_id = carts.dishes_id
                 LEFT JOIN restaurant ON restaurant.rs_id = dishes.rs_id
