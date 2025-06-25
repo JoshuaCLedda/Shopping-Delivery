@@ -300,12 +300,30 @@ bg-light border-bottom">
                                             </p>
 
                                             <!-- Checkbox above View button -->
-                                            <div class="form-check mb-3 mt-auto">
-                                                <input class="form-check-input" type="checkbox" name="selected_dishes[]"
-                                                    value="<?= $dishId ?>" id="dish<?= $dishId ?>">
-                                                <label class="form-check-label small" for="dish<?= $dishId ?>">Add this
-                                                    dish</label>
-                                            </div>
+                                        <!-- Checkbox and Quantity -->
+<div class="form-check mb-3 mt-auto">
+    <!-- Checkbox -->
+    <input class="form-check-input" type="checkbox" name="selected_dishes[]"
+        value="<?= $dishId ?>" id="dish<?= $dishId ?>" onchange="toggleQuantity(this)">
+    <label class="form-check-label small" for="dish<?= $dishId ?>">
+        <i class='bx bx-plus-circle'></i> Add this dish
+    </label>
+
+    <!-- Available Quantity Badge -->
+    <div class="mt-2">
+        <?php if ((int)$product['available_quantity'] <= 5): ?>
+            <span class="badge bg-danger-subtle border border-danger text-danger-emphasis rounded-pill px-3 py-1">
+                Only <?= $product['available_quantity'] ?> left!
+            </span>
+        <?php else: ?>
+            <span class="badge bg-light border border-secondary text-secondary rounded-pill px-3 py-1">
+                <?= $product['available_quantity'] ?> in stock
+            </span>
+        <?php endif; ?>
+    </div>
+</div>
+
+
 
                                             <!-- View Button -->
                                             <a href="viewDishes.php?dish_id=<?= $dishId ?>&restaurant_id=<?= $restaurantId ?>"
@@ -313,6 +331,8 @@ bg-light border-bottom">
                                                 View
                                             </a>
                                         </div>
+
+                                        
                                     </div>
                                 </div>
                                 <?php
