@@ -6,38 +6,31 @@ include("connection/connect.php");
 // Redirect if already logged in
 if (isset($_SESSION['user_id'])) {
     switch ($_SESSION['role']) {
-      case 1:
-        header("Location: admin/dashboard.php");
-        break;
-      case 2:
-        header("Location: rider/index.php");
-        break;
-      case 3:
-        header("Location: stall/dashboard.php");
-        break;
-      default:
-        header("Location: index.php");
-        break;
+        case 1:
+            header("Location: admin/dashboard.php");
+            break;
+        case 2:
+            header("Location: rider/index.php");
+            break;
+        case 3:
+            header("Location: stall/dashboard.php");
+            break;
+        default:
+            header("Location: index.php");
+            break;
     }
     exit();
-  }
+}
 
-if(isset($_POST['submit'])) 
-{
-    if(empty($_POST['username']) || 
-       empty($_POST['firstname']) || 
-       empty($_POST['lastname']) || 
-       empty($_POST['email']) ||  
-       empty($_POST['phone']) ||
-       empty($_POST['password']) ||
-       empty($_POST['cpassword']) ||
-       empty($_POST['security_questions']) ||
-       empty($_POST['answer']))
-    {
-        echo "<script>alert('All fields must be required!');</script>";
-    }
-    else
-    {
+if (isset($_POST['submit'])) {
+    if (
+        empty($_POST['username']) || empty($_POST['firstname']) || empty($_POST['lastname']) ||
+        empty($_POST['email']) || empty($_POST['phone']) ||
+        empty($_POST['password']) || empty($_POST['cpassword']) ||
+        empty($_POST['security_questions']) || empty($_POST['answer'])
+    ) {
+        $_SESSION['message'] = ['type' => 'error', 'message' => 'All fields must be required!'];
+    } else {
         $username = mysqli_real_escape_string($db, $_POST['username']);
         $firstname = mysqli_real_escape_string($db, $_POST['firstname']);
         $lastname = mysqli_real_escape_string($db, $_POST['lastname']);
@@ -51,43 +44,38 @@ if(isset($_POST['submit']))
         $check_username = mysqli_query($db, "SELECT username FROM users WHERE username = '$username'");
         $check_email = mysqli_query($db, "SELECT email FROM users WHERE email = '$email'");
 
-        if($password !== $cpassword) {  
-            echo "<script>alert('Passwords do not match');</script>"; 
-        }
-        elseif(strlen($password) < 6) {
-            echo "<script>alert('Password must be at least 6 characters');</script>"; 
-        }
-        elseif(strlen($phone) < 10) {
-            echo "<script>alert('Invalid phone number!');</script>"; 
-        }
-        elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            echo "<script>alert('Invalid email address!');</script>"; 
-        }
-        elseif(mysqli_num_rows($check_username) > 0) {
-            echo "<script>alert('Username already exists!');</script>"; 
-        }
-        elseif(mysqli_num_rows($check_email) > 0) {
-            echo "<script>alert('Email already exists!');</script>"; 
-        }
-        else
-        {
-            // Secure password hashing using bcrypt
+        if ($password !== $cpassword) {
+            $_SESSION['message'] = ['type' => 'error', 'message' => 'Passwords do not match'];
+        } elseif (strlen($password) < 6) {
+            $_SESSION['message'] = ['type' => 'error', 'message' => 'Password must be at least 6 characters'];
+        } elseif (strlen($phone) < 10) {
+            $_SESSION['message'] = ['type' => 'error', 'message' => 'Invalid phone number!'];
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $_SESSION['message'] = ['type' => 'error', 'message' => 'Invalid email address!'];
+        } elseif (mysqli_num_rows($check_username) > 0) {
+            $_SESSION['message'] = ['type' => 'error', 'message' => 'Username already exists!'];
+        } elseif (mysqli_num_rows($check_email) > 0) {
+            $_SESSION['message'] = ['type' => 'error', 'message' => 'Email already exists!'];
+        } else {
             $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
-            // Insert user details into the database
             $mql = "INSERT INTO users(username, f_name, l_name, email, phone, password, security_questions, answer) 
                     VALUES('$username', '$firstname', '$lastname', '$email', '$phone', '$hashed_password', '$security_questions', '$answer')";
 
             mysqli_query($db, $mql);
 
-            echo "<script>alert('Registration Successful!');</script>";
-            header("refresh:0.1;url=login.php");
+            $_SESSION['message'] = ['type' => 'success', 'message' => 'Registration successful!'];
+            header("Location: login.php");
+            exit();
         }
     }
 }
 ?>
 
+
 <?php include 'layouts/header.php'  ?>
+<?php include 'layouts/sweetalert.php'  ?>
+
 
     <div style="background-image: url('images/img/pimg.jpg');">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
