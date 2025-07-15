@@ -176,7 +176,7 @@ if (isset($_POST['submit'])) {
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label class="control-label">Category</label>
-                                                    <input type="text" name="c_name" class="form-control">
+                                                    <input type="text" name="c_name" class="form-control" required>
                                                 </div>
                                             </div>
 
