@@ -9,9 +9,13 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 3) {
     header("Location: ../login.php");
     exit();
 }
+
 include "../admin/Main.php";
 $index = new Index;
 
+$user_id = $_SESSION['user_id'];
+
+// nested query
 $sql = "SELECT 
             transaction.id, 
             transaction.total_price, 
@@ -19,16 +23,20 @@ $sql = "SELECT
             transaction.order_date, 
             transaction.rs_id, 
             restaurant.title AS restaurant_name, 
-            CONCAT(users.f_name, ' ', users.l_name) AS fullname
+            CONCAT(u.f_name, ' ', u.l_name) AS fullname
         FROM transaction
         LEFT JOIN restaurant ON transaction.rs_id = restaurant.rs_id
-        LEFT JOIN users ON transaction.u_id = users.u_id
+        LEFT JOIN users u ON transaction.u_id = u.u_id
         WHERE transaction.status = 'place_order'
+          AND transaction.rs_id = (
+              SELECT restaurant_id 
+              FROM users 
+              WHERE u_id = '$user_id'
+          )
         ORDER BY transaction.order_date DESC";
 
-
-
 $query = mysqli_query($index->con, $sql);
+
 
 if (!$query) {
     die("Error fetching data: " . mysqli_error($index->con));

@@ -96,8 +96,19 @@ if (isset($_POST['submit'])) {
                                     <tbody>
 
                                         <?php
-                                        $sql = "SELECT * FROM res_category ORDER BY c_id DESC";
+                                        $user_id = $_SESSION['user_id'];
+
+                                        $sql = "SELECT * 
+        FROM res_category 
+        WHERE rs_id = (
+            SELECT restaurant_id 
+            FROM users 
+            WHERE u_id = '$user_id'
+        ) 
+        ORDER BY c_id DESC";
+
                                         $query = mysqli_query($db, $sql);
+
 
                                         if (mysqli_num_rows($query) <= 0) {
                                             echo '<tr><td colspan="7"><center>No Categories-Data!</center></td></tr>';
@@ -118,7 +129,7 @@ if (isset($_POST['submit'])) {
                                                         $badgeClass = 'bg-secondary';
                                                         break;
                                                 }
-                                                ?>
+                                        ?>
                                                 <tr>
                                                     <td><?= htmlspecialchars($rows['c_id']) ?></td>
                                                     <td><?= htmlspecialchars($rows['c_name']) ?></td>
@@ -141,7 +152,7 @@ if (isset($_POST['submit'])) {
                                                         </a>
                                                     </td>
                                                 </tr>
-                                                <?php
+                                        <?php
                                             }
                                         }
                                         ?>
@@ -183,7 +194,7 @@ if (isset($_POST['submit'])) {
                                             <input type="submit" name="submit" class="btn btn-primary" value="Save">
                                             <a href="add_category.php" class="btn btn-danger">Cancel</a>
                                         </div>
-                                    </form>
+                                </form>
                             </div>
                         </div>
 

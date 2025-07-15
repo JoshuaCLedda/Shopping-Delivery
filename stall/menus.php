@@ -9,6 +9,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 3) {
     header("Location: ../login.php");
     exit();
 }
+
 ?>
 <?php include '../admin/layouts/header.php' ?>
 <?php include '../layouts/stall/sidebar.php' ?>
@@ -63,8 +64,19 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 3) {
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $sql = "SELECT * FROM dishes ORDER BY d_id DESC";
+                                        $user_id = $_SESSION['user_id'];
+
+                                        $sql = "SELECT * 
+        FROM dishes 
+        WHERE rs_id = (
+            SELECT restaurant_id 
+            FROM users 
+            WHERE u_id = '$user_id'
+        ) 
+        ORDER BY d_id DESC";
+
                                         $query = mysqli_query($db, $sql);
+
                                         ?>
 
                                         <?php if (!mysqli_num_rows($query) > 0): ?>

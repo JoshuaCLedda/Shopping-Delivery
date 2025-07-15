@@ -12,6 +12,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 3) {
 include "../admin/Main.php";
 $index = new Index;
 
+$user_id = $_SESSION['user_id'];
+
 $sql = "SELECT 
             transaction.id, 
             transaction.total_price, 
@@ -24,10 +26,15 @@ $sql = "SELECT
         LEFT JOIN restaurant ON transaction.rs_id = restaurant.rs_id
         LEFT JOIN users ON transaction.u_id = users.u_id
         WHERE transaction.status = 'Order_Cancelled'
+          AND transaction.rs_id = (
+              SELECT restaurant_id 
+              FROM users 
+              WHERE u_id = '$user_id'
+          )
         ORDER BY transaction.order_date DESC";
 
-
 $query = mysqli_query($index->con, $sql);
+
 
 if (!$query) {
     die("Error fetching data: " . mysqli_error($index->con));
@@ -172,7 +179,7 @@ if (!$query) {
 
 
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             toastr.options = {
                 "closeButton": true,
                 "progressBar": true,
@@ -213,7 +220,7 @@ if (!$query) {
             }
 
             // Handle status change
-            $(document).on('change', 'select[name="status"]', function () {
+            $(document).on('change', 'select[name="status"]', function() {
                 var form = $(this).closest('form');
                 var transId = form.find('input[name="trans_id"]').val();
                 var newStatus = $(this).val();
@@ -233,7 +240,7 @@ if (!$query) {
                         trans_id: transId,
                         status: newStatus
                     },
-                    success: function (response) {
+                    success: function(response) {
                         if (response.success) {
                             // Use dynamic badge instead of plain text
                             statusCell.html(getBadgeHTML(newStatus));
@@ -243,11 +250,11 @@ if (!$query) {
                             toastr.error(response.message);
                         }
                     },
-                    error: function (xhr, status, error) {
+                    error: function(xhr, status, error) {
                         selectElement.val(selectElement.data('original'));
                         toastr.error('Error updating status: ' + error);
                     },
-                    complete: function () {
+                    complete: function() {
                         selectElement.prop('disabled', false);
                         loader.remove();
                     }
@@ -255,7 +262,7 @@ if (!$query) {
             });
 
             // Prevent form submission (we're handling via AJAX)
-            $(document).on('submit', '.update-status-form', function (e) {
+            $(document).on('submit', '.update-status-form', function(e) {
                 e.preventDefault();
             });
         });

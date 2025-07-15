@@ -5,12 +5,16 @@ ini_set('display_errors', 1);  // Ensure errors are displayed
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 
+
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 3) {
     header("Location: ../login.php");
     exit();
 }
+
 include "../admin/Main.php";
 $index = new Index;
+
+$user_id = $_SESSION['user_id'];
 
 $sql = "SELECT 
             transaction.id, 
@@ -24,10 +28,17 @@ $sql = "SELECT
         LEFT JOIN restaurant ON transaction.rs_id = restaurant.rs_id
         LEFT JOIN users ON transaction.u_id = users.u_id
         WHERE transaction.status = 'order_delivered'
+          AND transaction.rs_id = (
+              SELECT restaurant_id 
+              FROM users 
+              WHERE u_id = '$user_id'
+          )
         ORDER BY transaction.order_date DESC";
 
-
 $query = mysqli_query($index->con, $sql);
+
+
+
 
 if (!$query) {
     die("Error fetching data: " . mysqli_error($index->con));

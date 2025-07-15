@@ -76,7 +76,7 @@ switch ($filter) {
 <div id="main">
     <div class="main-container">
 
-        <div class="row">
+    <div class="row">
             <div class="col">
                 <nav aria-label="breadcrumb" class="rounded-3 mb-4">
                     <ol class="breadcrumb mb-0">
@@ -116,10 +116,9 @@ switch ($filter) {
                                 <h1 class="fw-bold text-primary mb-0">
                                     <?php
                                     $sql = "SELECT * FROM transaction 
-        WHERE status = 'in_process' 
-        AND rs_id = '" . $user['restaurant_id'] . "' 
-        $conditions";
-
+                                  WHERE status = 'in_process' 
+                                  AND rs_id = '" . $user['restaurant_id'] . "' 
+                                  $conditions";
                                     $result = mysqli_query($index->con, $sql);
                                     echo mysqli_num_rows($result);
 
@@ -144,11 +143,9 @@ switch ($filter) {
                                 </div>
                                 <h1 class="fw-bold text-success mb-0">
                                     <?php
-                                    $sql = "SELECT * FROM transaction 
-        WHERE status = 'order_delivered' 
-        AND rs_id = '" . $user['restaurant_id'] . "' 
-        $conditions";
-
+                                    $sql = "SELECT * FROM transaction
+                                 WHERE status = 'order_delivered' 
+                                 $conditions";
                                     $result = mysqli_query($index->con, $sql);
                                     echo mysqli_num_rows($result);
 
@@ -174,10 +171,8 @@ switch ($filter) {
                                 <h1 class="fw-bold text-danger mb-0">
                                     <?php
                                     $sql = "SELECT * FROM transaction 
-        WHERE status = 'order_cancelled' 
-        AND rs_id = '" . $user['restaurant_id'] . "' 
-        $conditions";
-
+                                 WHERE status = 'order_cancelled' 
+                                 $conditions";
                                     $result = mysqli_query($index->con, $sql);
                                     echo mysqli_num_rows($result);
 
@@ -201,19 +196,19 @@ switch ($filter) {
                                     </div>
                                 </div>
                                 <h1 class="fw-bold text-success mb-0">
-                                    <?php
-                                    $user_id = $_SESSION['user_id'];
+<?php
+$user_id = $_SESSION['user_id'];
 
-                                    $sql = "SELECT * FROM dishes 
+$sql = "SELECT * FROM dishes 
         WHERE rs_id = (
             SELECT restaurant_id 
             FROM users 
             WHERE u_id = '$user_id'
         )";
 
-                                    $result = mysqli_query($index->con, $sql);
-                                    echo mysqli_num_rows($result);
-                                    ?>
+$result = mysqli_query($index->con, $sql);
+echo mysqli_num_rows($result);
+?>
 
                                 </h1>
                             </div>
@@ -237,8 +232,8 @@ switch ($filter) {
                                 </div>
                                 <h1 class="fw-bold text-warning mb-0">
                                     <?php
-
-                                    $sql = "SELECT AVG(rating) AS avg_rating 
+                          
+$sql = "SELECT AVG(rating) AS avg_rating 
         FROM restaurant_ratings 
         WHERE restaurant_id = (
             SELECT restaurant_id 
@@ -246,10 +241,10 @@ switch ($filter) {
             WHERE u_id = '$user_id'
         )";
 
-                                    $query = mysqli_query($index->con, $sql);
-                                    $data = mysqli_fetch_assoc($query);
-                                    $avgRating = $data['avg_rating'] ? round($data['avg_rating'], 1) : 0;
-                                    echo $avgRating . " ★";
+$query = mysqli_query($index->con, $sql);
+$data = mysqli_fetch_assoc($query);
+$avgRating = $data['avg_rating'] ? round($data['avg_rating'], 1) : 0;
+echo $avgRating . " ★";
                                     ?>
                                 </h1>
                             </div>
@@ -275,30 +270,24 @@ switch ($filter) {
                                 </div>
                                 <h1 class="fw-bold text-success mb-0">
                                     <?php
-                                    $user_id = $_SESSION['user_id'];
+                                    $month = date('m'); // Get the current month as a number (01 to 12)
+                                    $year = date('Y'); // Get the current year
 
-                                    // Get the current user's restaurant_id
-                                    $getUser = mysqli_query($index->con, "SELECT restaurant_id FROM users WHERE u_id = '$user_id'");
-                                    $user = mysqli_fetch_assoc($getUser);
-
-                                    // Make sure restaurant_id is available
-                                    $restaurant_id = $user['restaurant_id'];
-
-                                    // Query for total earnings (with filter conditions)
                                     $query = mysqli_query($index->con, "
-        SELECT SUM(total_price) AS total_earning 
+        SELECT SUM(transaction.total_price) AS total_earning 
         FROM transaction 
-        WHERE status = 'order_delivered' 
-        AND rs_id = '$restaurant_id'
-        $conditions
+        WHERE transaction.rs_id = '{$user['restaurant_id']}'
+        AND transaction.status = 'order_delivered' 
+        AND MONTH(transaction.order_date) = '$month'
+        AND YEAR(transaction.order_date) = '$year'
     ");
 
+                                    // user_id
                                     $data = mysqli_fetch_assoc($query);
                                     $totalEarnings = $data['total_earning'] ? number_format($data['total_earning'], 2) : "0.00";
                                     echo "₱" . $totalEarnings;
                                     ?>
                                 </h1>
-
 
                             </div>
                         </div>
@@ -319,29 +308,21 @@ switch ($filter) {
                                 </div>
                                 <h1 class="fw-bold text-primary mb-0">
                                     <?php
-                                    $user_id = $_SESSION['user_id'];
-
-                                    // Get the current user's restaurant_id (only if not already available in $user)
-                                    $getUser = mysqli_query($index->con, "SELECT restaurant_id FROM users WHERE u_id = '$user_id'");
-                                    $user = mysqli_fetch_assoc($getUser);
-
-                                    $restaurant_id = $user['restaurant_id'];
                                     $year = date('Y');
-
                                     $query = mysqli_query($index->con, "
-        SELECT SUM(total_price) AS total_earning 
-        FROM transaction 
-        WHERE rs_id = '$restaurant_id'
-        AND status = 'order_delivered' 
-        AND YEAR(order_date) = '$year'
-    ");
+                                    SELECT SUM(transaction.total_price) AS total_earning 
+                                    FROM transaction 
+                                    WHERE transaction.rs_id = '" . $user['restaurant_id'] . "'
+                                    AND transaction.status = 'order_delivered' 
+                                    AND YEAR(transaction.order_date) = '$year'
+                                ");
 
+                                    // user_id
                                     $data = mysqli_fetch_assoc($query);
                                     $totalEarnings = $data['total_earning'] ? number_format($data['total_earning'], 2) : "0.00";
                                     echo "₱" . $totalEarnings;
                                     ?>
                                 </h1>
-
                             </div>
                         </div>
                     </div>
