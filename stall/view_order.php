@@ -59,8 +59,7 @@ while ($row = mysqli_fetch_object($result)) {
             <div class="col">
                 <nav aria-label="breadcrumb" class="rounded-3 mb-4">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="#">Stall Owner</a></li>
-                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+  <li class="breadcrumb-item"><a href="#">Stall Owner</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Order Details</li>
                     </ol>
                 </nav>

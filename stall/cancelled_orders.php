@@ -53,8 +53,7 @@ if (!$query) {
             <div class="col">
                 <nav aria-label="breadcrumb" class="rounded-3 mb-4">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="#">Stall Owner</a></li>
-                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+  <li class="breadcrumb-item"><a href="#">Stall Owner</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Cancelled Orders</li>
                     </ol>
                 </nav>
@@ -132,7 +131,7 @@ if (!$query) {
                                                     </td>
                                                     <td><?= date("F j, Y, g:i a", strtotime($rows['order_date'])) ?></td>
                                                     <td>
-                                                        <form action="update_order_status.php" method="POST"
+                                                        <!-- <form action="update_order_status.php" method="POST"
                                                             class="d-inline update-status-form">
                                                             <input type="hidden" name="trans_id"
                                                                 value="<?= htmlspecialchars($rows['id']) ?>">
@@ -152,10 +151,10 @@ if (!$query) {
                                                                 <button type="submit"
                                                                     class="btn btn-sm btn-primary ms-2">Update</button>
                                                             </noscript>
-                                                        </form>
+                                                        </form> -->
                                                         <a href="view_order.php?id=<?= urlencode($rows['id']) ?>"
                                                             class="btn btn-info btn-sm view-details-btn">
-                                                            <i class="bx bx-show"></i>
+                                                            View Details
                                                         </a>
                                                     </td>
 

@@ -58,7 +58,6 @@ if (!$query) {
                 <nav aria-label="breadcrumb" class="rounded-3 mb-4">
                     <ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item"><a href="#">Stall Owner</a></li>
-                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Delivered Orders</li>
                     </ol>
                 </nav>
@@ -136,7 +135,7 @@ if (!$query) {
                                                     </td>
                                                     <td><?= date("F j, Y, g:i a", strtotime($rows['order_date'])) ?></td>
                                                     <td>
-                                                        <form action="update_order_status.php" method="POST"
+                                                        <!-- <form action="update_order_status.php" method="POST"
                                                             class="d-inline update-status-form">
                                                             <input type="hidden" name="trans_id"
                                                                 value="<?= htmlspecialchars($rows['id']) ?>">
@@ -156,10 +155,10 @@ if (!$query) {
                                                                 <button type="submit"
                                                                     class="btn btn-sm btn-primary ms-2">Update</button>
                                                             </noscript>
-                                                        </form>
+                                                        </form> -->
                                                         <a href="view_order.php?id=<?= urlencode($rows['id']) ?>"
                                                             class="btn btn-info btn-sm view-details-btn">
-                                                            <i class="bx bx-show"></i>
+                                                           View Details
                                                         </a>
                                                     </td>
 
@@ -183,7 +182,7 @@ if (!$query) {
 
 
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             toastr.options = {
                 "closeButton": true,
                 "progressBar": true,
@@ -224,7 +223,7 @@ if (!$query) {
             }
 
             // Handle status change
-            $(document).on('change', 'select[name="status"]', function () {
+            $(document).on('change', 'select[name="status"]', function() {
                 var form = $(this).closest('form');
                 var transId = form.find('input[name="trans_id"]').val();
                 var newStatus = $(this).val();
@@ -244,7 +243,7 @@ if (!$query) {
                         trans_id: transId,
                         status: newStatus
                     },
-                    success: function (response) {
+                    success: function(response) {
                         if (response.success) {
                             // Use dynamic badge instead of plain text
                             statusCell.html(getBadgeHTML(newStatus));
@@ -254,11 +253,11 @@ if (!$query) {
                             toastr.error(response.message);
                         }
                     },
-                    error: function (xhr, status, error) {
+                    error: function(xhr, status, error) {
                         selectElement.val(selectElement.data('original'));
                         toastr.error('Error updating status: ' + error);
                     },
-                    complete: function () {
+                    complete: function() {
                         selectElement.prop('disabled', false);
                         loader.remove();
                     }
@@ -266,7 +265,7 @@ if (!$query) {
             });
 
             // Prevent form submission (we're handling via AJAX)
-            $(document).on('submit', '.update-status-form', function (e) {
+            $(document).on('submit', '.update-status-form', function(e) {
                 e.preventDefault();
             });
         });

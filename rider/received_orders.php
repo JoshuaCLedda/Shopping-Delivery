@@ -49,8 +49,7 @@ if (isset($_POST['submit'])) {
             <div class="col">
                 <nav aria-label="breadcrumb" class="rounded-3 mb-4">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="#">Rider</a></li>
-                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+<li class="breadcrumb-item"><a href="#">Rider</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Riders Rating</li>
                     </ol>
                 </nav>
